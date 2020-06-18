@@ -205,14 +205,14 @@
 <li><strong>优点:</strong> 由于每一步都利用了训练集中的所有数据,因此当损失函数达到最小值以后,能够保证此时计算出的梯度为0,换句话说,就是能够收敛(曲线比较平滑),因此,使用BGD时不需要逐渐降低学习率.</li>
 <li><strong>缺点:</strong> 由于每一步都要用到所有训练数据,因此随着数据集的增大,运行速度会越来越慢.<h3 id="SGD与MBGD"><a href="#SGD与MBGD" class="headerlink" title="SGD与MBGD"></a>SGD与MBGD</h3>MBGD是指在训练中,每次使用小批量(一个小批量训练m个样本)的随机采样进行梯度下降.训练方法与BGD一样,只是BGD最后对训练集的所有样本取平均,而MBGD只对小批量的m个样本取平均.SGD是指在训练中每次仅使用一个样本.MBGD与SGD统称为SGD.因为小批量不能代表整个训练集,使得梯度估计引入噪声源,因此SGD并不是每次迭代都向着整体最优化方向.虽然SGD包含一定的随机性(表现为损失函数的震荡),但是从期望来看,它是等于正确的导数的(表现为损失函数有减小的趋势).</li>
 <li><strong>优点:</strong> 训练速度比较快</li>
-<li><strong>缺点:</strong> 在样本数量较大的情况下,可能只用到了其中一部分数据就完成了训练,得到的只是局部最优解.另外,小批量样本的噪声较大,所以每次执行梯度下降,并不一定总是朝着最优的方向前进.<br><img src="./images/SGD与BGD.png" alt=""><h3 id="参数更新"><a href="#参数更新" class="headerlink" title="参数更新"></a>参数更新</h3><script type="math/tex; mode=display">\left \{
+<li><strong>缺点:</strong> 在样本数量较大的情况下,可能只用到了其中一部分数据就完成了训练,得到的只是局部最优解.另外,小批量样本的噪声较大,所以每次执行梯度下降,并不一定总是朝着最优的方向前进.<br><img src="./images/SGD与BGD.png" alt><h3 id="参数更新"><a href="#参数更新" class="headerlink" title="参数更新"></a>参数更新</h3><script type="math/tex; mode=display">\left \{
 \begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}\right) } \\ {\boldsymbol{\theta}_{t} =\boldsymbol{\theta}_{t-1}+\boldsymbol{v}_{t}}\end{array} \right.</script>其中，$\eta$代表学习率，$\theta<em>t$表示$t$时刻的参数，$\triangledown </em>\theta J(\theta_t)$代表参数$\theta$在$t$时刻的导数，$v_t$代表参数的更新速度。<h2 id="Momentum"><a href="#Momentum" class="headerlink" title="Momentum"></a>Momentum</h2>在训练中，采取的策略与SGD一样，不同的是学习率的更新方式。动量的参数更新方式为：<script type="math/tex; mode=display">\left \{
 \begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}\right)+\alpha \boldsymbol{v}_{t-1}} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script>$\alpha$一般取值0.9.</li>
 </ul>
-<p>直观理解为：<br><img src="./images/momentum.jpg" alt=""><br>动量方法旨在加速学习（加快梯度的下降速度），特别是处理高曲率、小但一致的梯度，或是带噪声的梯度。动量算法累积了之前梯度指数级衰减的移动平均，并且继续沿该方向移动。</p>
-<table align=center>
+<p>直观理解为：<br><img src="./images/momentum.jpg" alt><br>动量方法旨在加速学习（加快梯度的下降速度），特别是处理高曲率、小但一致的梯度，或是带噪声的梯度。动量算法累积了之前梯度指数级衰减的移动平均，并且继续沿该方向移动。</p>
+<table align="center">
     <tr>
-        <td ><center><img height="200" width ="300" src="./images/momentum.gif" ></center></td>
+        <td><center><img height="200" width="300" src="./images/momentum.gif"></center></td>
     </tr>
 </table>
 
@@ -229,10 +229,10 @@
 <h2 id="Nesterov-NAG"><a href="#Nesterov-NAG" class="headerlink" title="Nesterov(NAG)"></a>Nesterov(NAG)</h2><p>Nesterov动量是Momentum的变种，即在计算参数梯度之前，前瞻一步，超前一个动量单位处：$\theta<em>t + \gamma v</em>{t-1}$,Nesterov动量可以理解为往Momentum动量中加入了一个校正因子。参数更新公式为：</p>
 <script type="math/tex; mode=display">\left \{
 \begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}+\gamma \boldsymbol{v}_{t-1}\right)+\alpha \boldsymbol{v}_{t-1}} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>Momentum动量与Nesterov动量的对比如下图所示，其中$\eta \triangledown<em>1$代表A节点 ($\theta_t$)的梯度，$\eta \triangledown_2$代表B节点($\theta</em>{t}+\gamma \boldsymbol{v}<em>{t-1}$的梯度)，灰色实线代表$t-1$时刻的速度$\alpha v</em>{t-1}$.</p>
-<table align=center>
+<table align="center">
     <tr>
-        <td ><center><img height="230" width ="250" src="./images/nesterov.png" ></center></td>
-        <td ><center><img height="230" width ="300" src="./images/nesterov.bmp" ></center></td>
+        <td><center><img height="230" width="250" src="./images/nesterov.png"></center></td>
+        <td><center><img height="230" width="300" src="./images/nesterov.bmp"></center></td>
     </tr>
 </table>
 

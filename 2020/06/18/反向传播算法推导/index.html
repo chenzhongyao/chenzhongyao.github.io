@@ -198,15 +198,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="反向传播算法详细推导过程"><a href="#反向传播算法详细推导过程" class="headerlink" title="反向传播算法详细推导过程"></a><strong>反向传播算法详细推导过程</strong></h1><h2 id="1-前向传播"><a href="#1-前向传播" class="headerlink" title="1. 前向传播"></a><strong>1. 前向传播</strong></h2><p><img src="./images/feedfoward.jpg" alt=""></p>
+        <h1 id="反向传播算法详细推导过程"><a href="#反向传播算法详细推导过程" class="headerlink" title="反向传播算法详细推导过程"></a><strong>反向传播算法详细推导过程</strong></h1><h2 id="1-前向传播"><a href="#1-前向传播" class="headerlink" title="1. 前向传播"></a><strong>1. 前向传播</strong></h2><p><img src="./images/feedfoward.jpg" alt></p>
 <p>假设$X$为$N\times m$的矩阵（其中，$N$为样本个数（batch size），$m$为特征维数）</p>
 <p>$h<em>1$与$Z_1$的维数为$m_1 \rightarrow W_1$为$m\times m_1$的矩阵，$b_1 \in \mathbb{R}^{m_1},\$<br>$h_2$与$Z_2$的维数为$m_2 \rightarrow W_2$为$m_1\times m_2$的矩阵，$b_2 \in \mathbb{R}^{m_2},\$<br>${\vdots}\$<br>$h_L$与$Z_L$的维数为$m_L \rightarrow W_L$为$m</em>{L-1}\times m_L$的矩阵，$b_L \in \mathbb{R}^{m_L}$</p>
 <h3 id="前向算法："><a href="#前向算法：" class="headerlink" title="前向算法："></a>前向算法：</h3><script type="math/tex; mode=display">
 \begin{array}{l}{h_{1}=x W_{1}+\tilde{b}_{1}, Z_{1}=f_{1}\left(h_{1}\right), \tilde{b}_{1}}为b_1^T沿着行方向扩展成N行 \\ {h_{2}=Z_{1} W_{2}+\tilde{b}_{2}, Z_{2}=f_{2}\left(h_{2}\right)} \\ {\vdots} \\ {h_{L}=Z_{L-1} W_{L}+\tilde{b}_{L}, Z_{L}=f_{L}\left(h_{L}\right)} \\ {\text { out }=Z_{L} W_{L+1}+\tilde{b}_{L+1}}\end{array}</script><p>假设输出为$n$维，则$out$为大小为$N\times n$的矩阵，根据MSE或CE准则可以求得$\frac{\partial J}{\partial out}$，对于回归问题与分类问题，$\frac{\partial J}{\partial out}$的求解方法如下：</p>
-<table align=center>
+<table align="center">
     <tr>
-        <td ><center><img height="200" src="./images/回归问题.jpg" >回归问题</center></td>
-        <td ><center><img height="200" src="./images/分类问题.jpg">分类问题</center></td>
+        <td><center><img height="200" src="./images/回归问题.jpg">回归问题</center></td>
+        <td><center><img height="200" src="./images/分类问题.jpg">分类问题</center></td>
     </tr>
 </table>
 
