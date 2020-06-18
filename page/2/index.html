@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="https://chenzhongyao.github.io/page/2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chenzhongyao.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-LSTM" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/18/LSTM/" class="article-date">
+  <time datetime="2020-06-18T13:41:36.863Z" itemprop="datePublished">2020-06-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/06/18/LSTM/">LSTM</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="LSTM前向传播与反向传播算法推导（非常详细）"><a href="#LSTM前向传播与反向传播算法推导（非常详细）" class="headerlink" title="LSTM前向传播与反向传播算法推导（非常详细）"></a>LSTM前向传播与反向传播算法推导（非常详细）</h2><h3 id="1-长短期记忆网络LSTM"><a href="#1-长短期记忆网络LSTM" class="headerlink" title="1.长短期记忆网络LSTM"></a>1.长短期记忆网络LSTM</h3><p>LSTM(Long short-term memory)通过刻意的设计来避免长期依赖问题，是一种特殊的RNN。长时间记住信息实际上是 LSTM 的默认行为，而不是需要努力学习的东西！</p>
+<p>所有递归神经网络都具有神经网络的链式重复模块。在标准的RNN中，这个重复模块具有非常简单的结构，例如只有单个tanh层，如下图所示。<br><img src="./images/lstm-rnn.jpg" alt=""><br>LSTM具有同样的结构，但是重复的模块拥有不同的结构，如下图所示。与RNN的单一神经网络层不同，这里有四个网络层，并且以一种非常特殊的方式进行交互。<br><img src="./images/lstm.jpg" alt=""></p>
+<h4 id="1-1-LSTM–遗忘门"><a href="#1-1-LSTM–遗忘门" class="headerlink" title="1.1 LSTM–遗忘门"></a>1.1 LSTM–遗忘门</h4><p><img src="./images/lstm-1.jpg" alt=""><br>LSTM 的第一步要决定从细胞状态中舍弃哪些信息。这一决定由所谓“遗忘门层”的 S 形网络层做出。它接收 $h_{t-1}$ 和 $x_t$，并且对细胞状态 $C_{t−1}$ 中的每一个数来说输出值都介于 0 和 1 之间。1 表示“完全接受这个”，0 表示“完全忽略这个”。</p>
+<h4 id="1-2-LSTM–输入门"><a href="#1-2-LSTM–输入门" class="headerlink" title="1.2 LSTM–输入门"></a>1.2 LSTM–输入门</h4><p><img src="./images/lstm-2.jpg" alt=""><br>下一步就是要确定需要在细胞状态中保存哪些新信息。这里分成两部分。第一部分，一个所谓“输入门层”的 S 形网络层确定哪些信息需要更新。第二部分，一个 tanh 形网络层创建一个新的备选值向量—— $\tilde{C}_t$，可以用来添加到细胞状态。在下一步中我们将上面的两部分结合起来，产生对状态的更新。</p>
+<h4 id="1-3-LSTM–细胞状态更新"><a href="#1-3-LSTM–细胞状态更新" class="headerlink" title="1.3 LSTM–细胞状态更新"></a>1.3 LSTM–细胞状态更新</h4><p><img src="./images/lstm-3.jpg" alt=""><br>现在更新旧的细胞状态 $C_{t−1}$ 更新到 $C_t$。先前的步骤已经决定要做什么，我们只需要照做就好。<br>我们对旧的状态乘以 $f_t$，用来忘记我们决定忘记的事。然后我们加上 $i_t\odot\tilde{C}_t$，这是新的候选值，根据我们对每个状态决定的更新值按比例进行缩放。</p>
+<h4 id="1-4-LSTM–输出门"><a href="#1-4-LSTM–输出门" class="headerlink" title="1.4 LSTM–输出门"></a>1.4 LSTM–输出门</h4><p><img src="./images/lstm-4.jpg" alt=""><br>最后，我们需要确定输出值。输出依赖于我们的细胞状态，但会是一个“过滤的”版本。首先我们运行 S 形网络层，用来确定细胞状态中的哪些部分可以输出。然后，我们把细胞状态输入 tanh（把数值调整到 −1 和 1 之间）再和 S 形网络层的输出值相乘，部这样我们就可以输出想要输出的分。</p>
+<h3 id="2-LSTM的变种以及前向、反向传播"><a href="#2-LSTM的变种以及前向、反向传播" class="headerlink" title="2. LSTM的变种以及前向、反向传播"></a>2. LSTM的变种以及前向、反向传播</h3><p>目前所描述的还只是一个相当一般化的 LSTM 网络。但并非所有 LSTM 网络都和之前描述的一样。事实上，几乎所有文章都会改进 LSTM 网络得到一个特定版本。差别是次要的，但有必要认识一下这些变种。</p>
+<h4 id="2-1-带有”窥视孔连接”的LSTM"><a href="#2-1-带有”窥视孔连接”的LSTM" class="headerlink" title="2.1 带有”窥视孔连接”的LSTM"></a>2.1 带有”窥视孔连接”的LSTM</h4><p>一个流行的 LSTM 变种由 Gers 和 Schmidhuber 提出，在 LSTM 的基础上添加了一个“窥视孔连接”，这意味着我们可以让门网络层输入细胞状态。<br><img src="./images/lstm-5.jpg" alt=""><br>上图中我们为所有门添加窥视孔，但许多论文只为部分门添加。</p>
+<p><strong>前向传播：</strong><br>在t时刻的前向传播公式为：<br>$$<br>\left{<br>\begin{array}{l}<br>    {i_t=\sigma(\tilde{i}<em>t)=\sigma(W</em>{xi}x_t+W_{hi}h_{t-1}+W_{ci}c_{t-1}+b_i)} \<br>    {f_t=\sigma(\tilde{f}<em>t)=\sigma(W</em>{xf}x_t+W_{hf}h_{t-1}+W_{cf}c_{t-1}+b_f) }\<br>    {g_t=\tanh(\tilde{g}<em>t)=\tanh(W</em>{xg}x_t+W_{hg}h_{t-1}+b_g)} \<br>    {o_t=\sigma(\tilde{o}<em>t)=\sigma(W</em>{xo}x_t+W_{ho}h_{t-1}+W_{co}c_{t}+b_o) }\<br>    {c_t=c_{t-1}\odot f_t+g_t\odot i_t}\<br>    {m_t=\tanh(c_t)}\<br>    {h_t=o_t\odot m_t}\<br>    {y_t=W_{yh}h_t+b_y}</p>
+<p>\end{array}\right.$$<br><strong>反向传播：</strong><br>为了更直观的推导反向传播算法，将上图转化为下图：<br><img src="./images/lstm-bp.png" alt=""><br>对反向传播算法了解不够透彻的，请参考<a href="https://zhuanlan.zhihu.com/p/79657669，这里有详细的推导过程，本文将直接使用https://zhuanlan.zhihu.com/p/79657669的结论。" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669，这里有详细的推导过程，本文将直接使用https://zhuanlan.zhihu.com/p/79657669的结论。</a></p>
+<p>已知：$\frac{\partial J}{\partial y_t},\frac{\partial J}{\partial c_{t+1}},\frac{\partial J}{\partial \tilde{o}<em>{t+1}},\frac{\partial J}{\partial \tilde{f}</em>{t+1}},\frac{\partial J}{\partial \tilde{i}<em>{t+1}},\frac{\partial J}{\partial \tilde{g}</em>{t+1}}$,求某个节点梯度时，首先应该找到该节点的输出节点，然后分别计算所有输出节点的梯度乘以输出节点对该节点的梯度，最后相加即可得到该节点的梯度。如计算$\frac{\partial J}{\partial h_t}$时，找到$h_t$节点的所有输出节点$y_t、 \tilde{o}<em>{t+1}、\tilde{f}</em>{t+1}、\tilde{i}<em>{t+1}、\tilde{g}</em>{t+1}$，然后分别计算输出节点的梯度(如$\frac{\partial J}{\partial y_t}$)与输出节点对$h_t$的梯度的乘积（如$\frac{\partial J}{\partial y_t}W_{yh}^T$），最后相加即可得到节点$h_t$的梯度:<br>$$<br>\frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{yh}^T+\frac{\partial J}{\partial \tilde{o}<em>{t+1}}W</em>{ho}^T+\frac{\partial J}{\partial \tilde{f}<em>{t+1}}W</em>{hf}^T+\frac{\partial J}{\partial \tilde{i}<em>{t+1}}W</em>{hi}^T+\frac{\partial J}{\partial \tilde{g}<em>{t+1}}W</em>{hg}^T<br>$$<br>同理可得t时刻其它节点的梯度：<br>$$<br>\left {\begin{array}{l}<br>    \frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{yh}^T+\frac{\partial J}{\partial \tilde{o}<em>{t+1}}W</em>{ho}^T+\frac{\partial J}{\partial \tilde{f}<em>{t+1}}W</em>{hf}^T+\frac{\partial J}{\partial \tilde{i}<em>{t+1}}W</em>{hi}^T+\frac{\partial J}{\partial \tilde{g}<em>{t+1}}W</em>{hg}^T \ \<br>    \frac{\partial J}{\partial m_t} = \frac{\partial J}{\partial h_t} \odot o_t \ \<br>    \frac{\partial J}{\partial c_t} = \frac{\partial J}{\partial m_t}\frac{dm_t}{dc_t}+ \frac{\partial J}{\partial c_{t+1}}\odot f_{t+1} +\frac{\partial J}{\partial \tilde{f}<em>{t+1}}W</em>{cf}^T+\frac{\partial J}{\partial \tilde{i}<em>{t+1}}W</em>{ci}^T \ \<br>    \left. \begin{array}{l}<br>         \frac{\partial J}{\partial g_t} = \frac{\partial J}{\partial c_t}\odot i_t \<br>         \frac{\partial J}{\partial i_t} = \frac{\partial J}{\partial c_t} \odot g_t \<br>         \frac{\partial J}{\partial f_t} = \frac{\partial J}{\partial c_t} \odot c_{t-1} \<br>         \frac{\partial J}{\partial o_t} = \frac{\partial J}{\partial h_t} \odot m_t<br>    \end{array} \right } \Rightarrow \left{ \begin{array}{l}<br>        \frac{\partial J}{\partial \tilde{g}<em>t} = \frac{\partial J}{\partial g_t}(1-g_t^2) \<br>        \frac{\partial J}{\partial \tilde{i}_t} = \frac{\partial J}{\partial i_t}i_t(1-i_t) \<br>        \frac{\partial J}{\partial \tilde{f}_t} = \frac{\partial J}{\partial f_t}f_t(1-f_t) \<br>        \frac{\partial J}{\partial \tilde{o}_t} = \frac{\partial J}{\partial o_t}i_t(1-o_t) \<br>    \end{array}\right. \ \<br>    \frac{\partial J}{\partial x_t} = \frac{\partial J}{\partial \tilde{o}_t}W</em>{xo}^T+\frac{\partial J}{\partial \tilde{f}<em>t}W</em>{xf}^T+ \frac{\partial J}{\partial \tilde{i}<em>t}W</em>{xi}^T+\frac{\partial J}{\partial \tilde{g}<em>t}W</em>{xg}^T\<br>\end{array}\right.<br>$$</p>
+<p>对参数的梯度：<br>$$<br>\left {\begin{array}{l}<br>    \frac{\partial J}{\partial W_{ho}} = h_t^T\frac{\partial J}{\partial \tilde{o}<em>{t+1}} \<br>    \frac{\partial J}{\partial W</em>{hf}} = h_t^T\frac{\partial J}{\partial \tilde{f}<em>{t+1}} \<br>    \frac{\partial J}{\partial W</em>{hi}} = h_t^T\frac{\partial J}{\partial \tilde{i}<em>{t+1}} \<br>    \frac{\partial J}{\partial W</em>{hg}} = h_t^T\frac{\partial J}{\partial \tilde{g}_{t+1}}<br>\end{array} \right. </p>
+<p>\left {\begin{array}{l}<br>    \frac{\partial J}{\partial W_{yh}} = h_t^T\frac{\partial J}{\partial y_t} \<br>    \frac{\partial J}{\partial W_{cf}} = c_t^T\frac{\partial J}{\partial \tilde{f}<em>{t+1}} \<br>    \frac{\partial J}{\partial W</em>{ci}} = c_t^T\frac{\partial J}{\partial \tilde{i}<em>{t+1}} \<br>    \frac{\partial J}{\partial W</em>{co}} = c_t^T\frac{\partial J}{\partial \tilde{o}_{t}}<br>\end{array} \right. </p>
+<p>\left {\begin{array}{l}<br>    \frac{\partial J}{\partial W_{xo}} = x_t^T\frac{\partial J}{\partial \tilde{o}<em>{t}} \<br>    \frac{\partial J}{\partial W</em>{xf}} = x_t^T\frac{\partial J}{\partial \tilde{f}<em>{t}} \<br>    \frac{\partial J}{\partial W</em>{xi}} = x_t^T\frac{\partial J}{\partial \tilde{i}<em>{t}} \<br>    \frac{\partial J}{\partial W</em>{xg}} = x_t^T\frac{\partial J}{\partial \tilde{g}_{t}} \<br>\end{array} \right.<br>$$</p>
+<h4 id="2-2-GRU"><a href="#2-2-GRU" class="headerlink" title="2.2 GRU"></a>2.2 GRU</h4><p>一个更有意思的 LSTM 变种称为 Gated Recurrent Unit（GRU），由 Cho 等人提出。LSTM通过三个门函数输入门、遗忘门和输出门分别控制输入值、记忆值和输出值。而GRU中只有两个门：更新门$z_t$和重置门$r_t$，如下图所示。更新门用于控制前一时刻的状态信息被带入到当前状态中的程度，更新门的值越大说明前一时刻的状态信息带入越多；重置门控制前一时刻状态有多少信息被写入到当前的候选集$\tilde{h}<em>t$上，重置门越小，前一状态的信息被写入的越少。这样做使得 GRU 比标准的 LSTM 模型更简单，因此正在变得流行起来。<br><img src="./images/lstm-7.jpg" alt=""><br>为了更加直观的推导反向传播公式，将上图转化为如下形式：<br><img src="./images/lstm-gru.png" alt=""><br><strong>GRU的前向传播：</strong> 在t时刻的前向传播公式为：<br>$$<br>\left{<br>\begin{array}{l}<br>    {r_t=\sigma(\tilde{r}_t)=\sigma(W</em>{xr}x_t+W_{hr}h_{t-1}+b_r)} \<br>    {z_t=\sigma(\tilde{z}<em>t)=\sigma(W</em>{xz}x_t+W_{hz}h_{t-1}+b_z) }\<br>    {s_t=\tanh(\tilde{s}<em>t)}=\tanh[W</em>{xs}x_t+(h_{t-1}\odot r_t)W_{hs}+b_s]  \<br>    {h_t=z_t\odot s_t + h_{t-1}\odot (1-z_t)}\<br>    {y_t=W_{yh}h_t+b_y}<br>\end{array}\right.$$<br><strong>GRU的反向传播：</strong><br>t时刻其它节点的梯度:<br>$$<br>\left{ \begin{array}{l}<br>    \frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{hy}^T+\frac{\partial J}{\partial \tilde{r}<em>{t+1}}W</em>{hr}^T+ \frac{\partial J}{\partial \tilde{z}<em>{t+1}}W</em>{hz}^T+ \frac{\partial J}{\partial \tilde{s}<em>{t+1}}W</em>{hs}^T \odot  r_t + \frac{\partial J}{\partial \tilde{h}<em>{t+1}}\odot(1-z_t)\<br>\left.\begin{array}{l}<br>    \frac{\partial J}{\partial s_t}=\frac{\partial J}{\partial h_t}\odot z_t\<br>    \frac{\partial J}{\partial z_t}=\frac{\partial J}{\partial h_t}\odot s_t + \frac{\partial J}{\partial h_t}\odot (-h</em>{t-1})  \<br>    \frac{\partial J}{\partial r_t}=\frac{\partial J}{\partial \tilde{s}<em>t}W</em>{hs}^T\odot h_{t-1} \<br>\end{array}\right} \Rightarrow<br>\left{ \begin{array}{l}<br>    \frac{\partial J}{\partial \tilde{s}<em>t}=\frac{\partial J}{\partial s_t}(1-s_t^2)\<br>    \frac{\partial J}{\partial \tilde{z}_t}=\frac{\partial J}{\partial z_t}z_t(1-z_t)  \<br>    \frac{\partial J}{\partial \tilde{r}_t}=\frac{\partial J}{\partial r_t}r_t(1-r_t) \<br>\end{array}\right.<br>\<br>    \frac{\partial J}{\partial x_t} = \frac{\partial J}{\partial \tilde{r}_t}W</em>{xr}^T+\frac{\partial J}{\partial \tilde{z}<em>t}W</em>{xz}^T+ \frac{\partial J}{\partial \tilde{s}<em>t}W</em>{xs}^T\<br>\end{array}\right.<br>$$</p>
+<p>对参数的梯度：<br>$$<br>\left {\begin{array}{l}<br>    \frac{\partial J}{\partial W_{hy}} = h_t^T\frac{\partial J}{\partial y_t} \<br>    \frac{\partial J}{\partial W_{hs}} = (h_{t-1}\odot r_t)^T\frac{\partial J}{\partial \tilde{s}<em>{t}} \<br>    \frac{\partial J}{\partial W</em>{hz}} = h_{t-1}^T\frac{\partial J}{\partial \tilde{z}<em>{t}} \<br>    \frac{\partial J}{\partial W</em>{hr}} = h_{t-1}^T\frac{\partial J}{\partial \tilde{r}<em>{t}}<br>\end{array} \right.<br>\left {\begin{array}{l}<br>    \frac{\partial J}{\partial W</em>{xs}} = x_t^T\frac{\partial J}{\partial \tilde{s}<em>{t}} \<br>    \frac{\partial J}{\partial W</em>{xz}} = x_t^T\frac{\partial J}{\partial \tilde{f}<em>{z}} \<br>    \frac{\partial J}{\partial W</em>{xr}} = x_t^T\frac{\partial J}{\partial \tilde{r}_{t}}<br>\end{array} \right.<br>$$</p>
+<h4 id="2-3-结合遗忘门与输入门的LSTM"><a href="#2-3-结合遗忘门与输入门的LSTM" class="headerlink" title="2.3 结合遗忘门与输入门的LSTM"></a>2.3 结合遗忘门与输入门的LSTM</h4><p>另一个变种把遗忘和输入门结合起来。同时确定要遗忘的信息和要添加的新信息，而不再是分开确定。当输入的时候才会遗忘，当遗忘旧信息的时候才会输入新数据。<br><img src="./images/lstm-6.jpg" alt=""><br>前向与反向算法与上述变种相同，这里不再做过多推导。</p>
+<blockquote>
+<p>参考资料：<a href="https://www.cnblogs.com/xuruilong100/p/8506949.html" target="_blank" rel="noopener">https://www.cnblogs.com/xuruilong100/p/8506949.html</a></p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chenzhongyao.github.io/2020/06/18/LSTM/" data-id="ckbku3unw0002bsvagkri7udc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-LDA" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/18/LDA/" class="article-date">
+  <time datetime="2020-06-18T13:36:39.676Z" itemprop="datePublished">2020-06-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/06/18/LDA/">LDA</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="线性判别分析LDA原理"><a href="#线性判别分析LDA原理" class="headerlink" title="线性判别分析LDA原理"></a>线性判别分析LDA原理</h2><p>线性判别分析LDA(Linear Discriminant Analysis)又称为Fisher线性判别，是一种监督学习的降维技术，也就是说它的数据集的每个样本都是有类别输出的，这点与PCA（无监督学习）不同。LDA在模式识别领域（比如人脸识别，舰艇识别等图形图像识别领域）中有非常广泛的应用，因此我们有必要了解下它的算法原理。</p>
+<h3 id="1-LDA的思想"><a href="#1-LDA的思想" class="headerlink" title="1. LDA的思想"></a>1. LDA的思想</h3><p>LDA的思想是：<font color=#FF0000 > <strong>最大化类间均值，最小化类内方差</strong></font>。意思就是将数据投影在低维度上，并且投影后同种类别数据的投影点尽可能的接近，不同类别数据的投影点的中心点尽可能的远。</p>
+<p>我们先看看最简单的情况。假设我们有两类数据 分别为红色和蓝色，如下图所示，这些数据特征是二维的，我们希望将这些数据投影到一维的一条直线，让每一种类别数据的投影点尽可能的接近，而红色和蓝色数据中心之间的距离尽可能的大。<br><img src="./images/LDA.jpg" alt=""></p>
+<p>上图提供了两种投影方式，哪一种能更好的满足我们的标准呢？从直观上可以看出，右图要比左图的投影效果好，因为右图的黑色数据和蓝色数据各个较为集中，且类别之间的距离明显。左图则在边界处数据混杂。以上就是LDA的主要思想了，当然在实际应用中，我们的数据是多个类别的，我们的原始数据一般也是超过二维的，投影后的也一般不是直线，而是一个低维的超平面。</p>
+<h3 id="2-瑞利商-Rayleigh-quotient-与广义瑞利商-genralized-Rayleigh-quotient"><a href="#2-瑞利商-Rayleigh-quotient-与广义瑞利商-genralized-Rayleigh-quotient" class="headerlink" title="2. 瑞利商(Rayleigh quotient)与广义瑞利商(genralized Rayleigh quotient)"></a>2. 瑞利商(Rayleigh quotient)与广义瑞利商(genralized Rayleigh quotient)</h3><p>首先来看瑞利商的定义。瑞利商是指这样的函数$R(A,x)$:<br>$$<br>R(A, x)=\frac{x^{H} A x}{x^{H} x}<br>$$<br>其中，$x$是非零向量，而$A$为$n\times n$的Hermitan矩阵。所谓的Hermitan矩阵就是满足<strong>共轭转置矩阵</strong>和自己相等的矩阵，即$A^H=A$，例如，$A=\left(\begin{array}{cc}{1} &amp; {2+i} \ {2-i} &amp; {1}\end{array}\right)$的共轭转置等于其本身。当$A$为实矩阵时，如果满足$A^T=A$，则$A$为Hermitan矩阵。</p>
+<p>瑞利商$R(A,x)$有一个非常重要的性质，即<font color=#FF0000 ><strong>它的最大值等于矩阵$A$最大的特征值，而最小值等于矩阵$A$的最小的特征值</strong></font>，也就是满足<br><font color=#FF0000 ><br>$$<br>\lambda_{\min } \leq \frac{x^{H} A x}{x^{H} x} \leq \lambda_{\max }<br>$$<br></font></p>
+<p>当向量$x$是标准正交基，即满足$x^{H} x=1$时，瑞利商退化为$R(A, x)=x^{H} A x$。</p>
+<p>下面看一下广义瑞利商。广义瑞利商是指这样的函数$R(A,B,x)$:<br>$$<br>R(A,B, x)=\frac{x^{H} A x}{x^{H} B x}<br>$$<br>其中x为非零向量，而$A,B$为$n\times n$的Hermitan矩阵。$B$为正定矩阵。它的最大值和最小值是什么呢？其实我们只要通过将其通过标准化就可以转化为瑞利商的格式。令$x=B^{-1 / 2} x^{\prime}$，则分母转化为：<br>$$<br>x^{H} B x=x^{\prime H}\left(B^{-1 / 2}\right)^{H} B B^{-1 / 2} x^{\prime}=x^{\prime H} B^{-1 / 2} B B^{-1 / 2} x^{\prime}=x^{\prime H} x^{\prime}<br>$$<br>而分子转化为：<br>$$<br>x^{H} A x=x^{\prime H} B^{-1 / 2} A B^{-1 / 2} x^{\prime}<br>$$<br>此时我们的$R(A,B,x)$转化为$R(A,B,x’)$:<br>$$<br>R\left(A, B, x^{\prime}\right)=\frac{x^{\prime H} B^{-1 / 2} A B^{-1 / 2} x^{\prime}}{x^{\prime H} x^{\prime}}<br>$$<br>利用前面的瑞利商的性质，我们可以很快的知道，$R(A,B,x’)$的最大值为矩阵$B^{-1 / 2} A B^{-1 / 2}$的最大特征值，或者说矩阵$B^{−1}A$的最大特征值，而最小值为矩阵$B^{−1}A$的最小特征值。</p>
+<h3 id="2-LDA的原理及推导过程"><a href="#2-LDA的原理及推导过程" class="headerlink" title="2. LDA的原理及推导过程"></a>2. LDA的原理及推导过程</h3><p>假设样本共有K类，每一个类的样本的个数分别为$N_1,N_2,…,N_k$ <br>$x_1^1,x_1^2,…,x_1^{N_1}$对应第1类<br>$x_2^1,x_2^2,…,x_2^{N_2}$对应第2类<br>$x_k^1,x_k^2,…,x_k^{N_k}$对应第K类，其中每个样本$x_i^j$均为$n$维向量 <br>设$\tilde{x}<em>{i}^{j}$为$x_i^j$变化后的样本，则$\tilde{x}</em>{i}^{j}=&lt;x, u&gt;u=|x||u|cos\theta \cdot u =\left(x^{T} u\right) u$</p>
+<p>此处设$u$为单位向量，即$u^Tu=1$.</p>
+<p>假设第K类样本的数据集为$D_k$，变化后的样本的均值向量为：$\tilde{\mathrm{m}}=\frac{\sum_{\tilde{x}\in D_k}\tilde{x}}{N_k}$，那么，第K类样本的方差为$\frac{S_k}{N_k}$，其中：<br>$$<br>\begin{aligned} \mathrm{S}<em>{\mathrm{k}} &amp;=\sum</em>{\tilde{x} \in D_{k}}(\tilde{x}-\tilde{\mathrm{m}})^{T}(\tilde{x}-\tilde{\mathrm{m}})\<br>&amp;=\sum_{x \in D_{k}}\left[\left(x^{T} u\right) u-\left(m^{T} u\right) u\right]^T\left[\left(x^{T} u\right) u -\left(m^{T} u\right) u\right] \<br>&amp;=\sum_{x \in D_{k}}\left[\left(x^{T} u\right) u^{T}-\left(m^{T} u\right) u^{T}\right]\left[\left(x^{T} u\right) u -\left(m^{T} u\right) u\right]  \quad (x^Tu，m^Tu为实数,转置仍是本身)\<br>&amp;=\sum_{x \in D_{k}}\left[\left(x^{T} u\right)^{2} u^{T} u-2\left(x^{T} u\right)\left(m^{T} u\right) u^{T} u+\left(m^{T} u\right)^{2} u^{T} u\right] \<br>&amp;=\sum_{x \in D_{k}}\left[\left(x^{T} u\right)^{2}-2\left(x^{T} u\right)\left(m^{T} u\right)+\left(m^{T} u\right)^{2}\right] \end{aligned}<br>$$<br>第K类样本的方差：<br>$$<br>\begin{aligned} \frac{S_{k}}{N_{k}} &amp;=\frac{\sum_{x \in D_{k}}\left(x^{T} u\right)^{2}}{N_{k}}-2 \frac{\sum_{x \in D_{k}} x^{T}\left(u m^{T} u\right)}{N_{k}}+\frac{\sum_{x\in D_{k}}\left(m^{T} u\right)^{2}}{N_{k}} \<br>&amp;=\frac{\sum_{x\in D_k} u^{T} x x^{T} u}{N_{k}}-2 \frac{\sum_{x\in D_k} x^{T}}{N_{k}} u m^{T} u+\left(m^{T} u\right)^{2}\quad (注：\frac{\sum_{x\in D_{k}}\left(m^{T} u\right)^{2}}{N_{k}}=(m^Tu)^2。因为m^Tu与x无关)\<br>&amp;=u^{T} \frac{\sum_{x\in D_k} x x^{T}}{N_{k}} u-\left(m^{T} u\right)^{2} \quad (注：\frac{\sum_{x \in D_k}x^T}{N_k}=m^T)\<br>&amp;=u^{T} \frac{\sum_{x\in D_k} x x^{T}}{N_{k}} u-u^{T} m m^{T} u \<br>&amp;=u^{T}\left(\frac{\sum_{x\in D_k} x x^{T}}{N_{k}}-m m^{T}\right) u \end{aligned}<br>$$<br>各个类别的样本方差之和：<br>$$<br>\begin{aligned} \sum_{k}\frac{S_k}{N_k} &amp;=\sum_{k=1}^{K}u^{T}\left(\frac{\sum_{x \in D_k} x x^{T}}{N_{k}}-m_k m_k^{T}\right) u \ &amp;=u^T\sum_{k=1}^{K}(\frac{\sum_{x \in D_k}xx^T}{N_k}-m_km_k^T)u\&amp;=u^TS_wu<br>\end{aligned}<br>$$<br>其中，$S_w=\sum_{k=1}^{K}(\frac{\sum_{x \in D_k}xx^T}{N_k}-m_km_k^T)$，$S_w$一般被称为类内散度矩阵</p>
+<p>不同类别$i,j$之间的中心距离：<br>$$<br>\begin{aligned} S_{i j} &amp;=\left(\tilde{m}<em>{i}-\tilde{m}</em>{j}\right)^{T}\left(\tilde{m}<em>{i}-\tilde{m}</em>{j}\right) \<br>&amp;=[(u^Tm_i)u-(u^Tm_j)u]^T[(m_i^Tu)u-(m_j^Tu)u] \<br>&amp;=[(u^Tm_i)u^T-(u^Tm_j)u^T][u(m_i^Tu)-u(m_j^Tu)] \<br>&amp;=u^T(m_i-m_j)u^Tu(m_i^T-m_j^T)u \<br>&amp;=u^{T}\left(m_{i}-m_{j}\right)\left(m_{i}-m_{j}\right)^{T} u \end{aligned}<br>$$</p>
+<p>所有类别之间的距离之和为：<br>$$<br>\begin{aligned}<br>    \sum_{i, j \atop i \neq j} s_{i j} &amp;= u^T\sum_{i, j \atop i \neq j}[(m_i-m_j)(m_i-m_j)^T]u \<br>    &amp;=u^TS_bu<br>\end{aligned}<br>$$<br>其中，$S_b=\sum_{i, j \atop i \neq j}[(m_i-m_j)(m_i-m_j)^T]$，$S_b$一般被称为类间散度矩阵。</p>
+<p>在已知条件下，$S_w,S_b$均可求出，LDA算法的目标是“<strong>类间距离尽可能大，类内方差尽可能小</strong>”，即最大化$u^TS_bu$,最小化$u^TS_wu$.</p>
+<p>令$J(u)=\frac{u^{T} S_{b} u}{u^{T} S_{w} u}$,则目标函数为：<br>$$<br>\max J(u)<br>$$<br>为了使所求最大，可假设$u^TS_wu=1$，则问题转化为：<br>$$<br>\begin{array}{l}{\max u^{T} S_{b} u} \<br>s.t. \quad u^TS_wu=1<br>\end{array}<br>$$<br>$$<br>\begin{aligned}<br> L(u, \lambda)&amp;=u^{T} S_{b} u+\lambda\left(1-u^{T} S_{w} u\right) \<br> \frac{\partial L}{\partial u} &amp;= S_bu+S_b^Tu-\lambda S_wu-\lambda S_w^Tu \ &amp;=2(S_bu-\lambda S_wu)\quad (因为S_b，S_w为对称矩阵)\ &amp;=0 \Rightarrow S_{b} u=\lambda S_{w} u \end{aligned}<br>$$</p>
+<blockquote>
+<p>证明$S_b$为对称矩阵：<br>$$<br>\begin{aligned}<br>    S_b^T &amp;= (\sum_{i, j \atop i \neq j}[(m_i-m_j)(m_i-m_j)^T])^T\<br>    &amp;=\sum_{i, j \atop i \neq j}[(m_i-m_j)(m_i-m_j)^T]^T \<br>    &amp;=\sum_{i, j \atop i \neq j}[(m_i-m_j)(m_i-m_j)^T] \<br>    &amp;=S_b<br>\end{aligned}<br>$$<br>所以，$S_b$为对称矩阵，同理可证明$S_w$为对称矩阵。</p>
+</blockquote>
+<p>$$<br>\begin{array}{l}<br>S_{w}^{-1}{S_{b}  u=\lambda u}<br>\end{array}<br>$$</p>
+<p>计算矩阵$S_w^{-1}S_b$的最大的$d$个特征值和对应的$d$个特征向量$(w_1,w_2,…,w_d)$，得到投影矩阵$W=(w_1,w_2,…,w_d)$。</p>
+<blockquote>
+<p>注意: (1)选取特征值时，如果一些特征值明显大于其他的特征值，则取这些取值较大的特征值，因为它们包含更多的数据分布的信息。相反，如果一些特征值接近于0，我们将这些特征值舍去。<br>(2)由于$W$是一个利用了样本类别得到的投影矩阵，因此它能够降维到的维度d的最大值为$K-1$。为什么不是$K$呢？因为$S_b$中每个$m_i-m_j$的秩均为1(因为$m_i$为1维向量).</p>
+<p>由$R(AB)\leq \min(R(A), R(B))$知，<br>$$R((m_i-m_j)(m_i-m_j)^T)=1$$<br>又 $\because$<br>$$S_b=\sum_{i, j \atop i \neq j}[(m_i-m_j)(m_i-m_j)^T], \R(A+B)\leq R(A)+R(B)$$<br>$$\therefore R(S_b)\leq K-1 \Rightarrow R(S_w^{-1}S_b)\leq K-1$$<br>$\therefore \lambda =0$对应的特征向量至少有$(K-(K-1))=1$个，也就是说$d$最大为$K-1$. </p>
+</blockquote>
+<h3 id="3-LDA算法流程"><a href="#3-LDA算法流程" class="headerlink" title="3. LDA算法流程"></a>3. LDA算法流程</h3><p>输入：数据集$D={(x_1,y_1),(x_2,y_2),…,(x_m,y_m)}$,其中，任意样本$x_i$为$n$维向量，$y_i\in {C_1,C_2,…,C_k}$,降维到的维度为$d$.</p>
+<p>输出：降维后的数据集$D’$.</p>
+<ol>
+<li>计算类内散度矩阵$S_w$</li>
+<li>计算类间散度矩阵$S_b$</li>
+<li>计算矩阵$S_w^{-1}S_b$</li>
+<li>计算矩阵$S_w^{-1}S_b$的特征值与特征向量，按从小到大的顺序选取前$d$个特征值和对应的$d$个特征向量$(w_1,w_2,…,w_d)$，得到投影矩阵$W$.</li>
+<li>对样本集中的每一个样本特征$x_i$，转化为新的样本$z_i=W^Tx_i$</li>
+<li>得到输出样本集$D’={(z_1,y_1),(z_2,y_2),…,(z_m,y_m)}$<h3 id="4-LDA与PCA对比"><a href="#4-LDA与PCA对比" class="headerlink" title="4. LDA与PCA对比"></a>4. LDA与PCA对比</h3>LDA与PCA都可用于降维，因此有很多相同的地方，也有很多不同的地方</li>
+</ol>
+<ul>
+<li><p><strong>相同点：</strong></p>
+<ul>
+<li>两者均可用于数据降维</li>
+<li>两者在降维时均使用了矩阵特征分解的思想</li>
+<li>两者都假设数据符合高斯分布</li>
+</ul>
+</li>
+<li><p><strong>不同点：</strong></p>
+<ul>
+<li>LDA是有监督的降维方法，而PCA是无监督降维方法</li>
+<li>当总共有K个类别时，LDA最多降到K-1维，而PCA没有这个限制</li>
+<li>LDA除了用于降维，还可以用于分类</li>
+<li>LCA选择分类性能最好的投影方向，而PCA选择样本点投影具有最大方差的方向。这点可以从下图形象的看出，在某些数据分布下LDA比PCA降维较优（如下图的左图）。当然，某些数据分布下PCA比LDA降维较优（如下图的右图）。<table align=center>
+<tr>
+<td ><center><img height="200" src="./images/LDA-2.jpg" ></center>图2</td>
+<td ><center><img height="200" src="./images/LDA-3.jpg"></center>图3</td>
+</tr>
+</table>
+
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-LDA算法小结"><a href="#5-LDA算法小结" class="headerlink" title="5. LDA算法小结"></a>5. LDA算法小结</h3><p>LDA算法既可以用来降维，也可以用来分来，但是目前来说，LDA主要用于降维，在进行与图像识别相关的数据分析时，LDA是一个有力的工具。下面总结一下LDA算法的优缺点。</p>
+<ul>
+<li><strong>LDA算法的优点</strong><ul>
+<li>在降维过程中可以使用类别的先验知识经验，而像PCA这样的无监督学习无法使用先验知识；</li>
+<li>LDA在样本分类信息依赖均值而不是方差的时候，比PCA算法较优。</li>
+</ul>
+</li>
+<li><strong>LDA算法的缺点</strong><ul>
+<li>LDA与PCA均不适合对非高斯分布样本进行降维</li>
+<li>LDA降维算法最多降到类别数K-1的维度，当降维的维度大于K-1时，则不能使用LDA。当然目前有一些改进的LDA算法可以绕过这个问题</li>
+<li>LDA在样本分类信息依赖方差而非均值的时候，降维效果不好</li>
+<li>LDA可能过度拟合数据<blockquote>
+<p>参考：<a href="https://www.cnblogs.com/pinard/p/6244265.html" target="_blank" rel="noopener">https://www.cnblogs.com/pinard/p/6244265.html</a></p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chenzhongyao.github.io/2020/06/18/LDA/" data-id="ckbku3unt0001bsvadqj2hme7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/18/hello-world/" class="article-date">
+  <time datetime="2020-06-18T13:04:11.728Z" itemprop="datePublished">2020-06-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/06/18/hello-world/">Hello World</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chenzhongyao.github.io/2020/06/18/hello-world/" data-id="ckbku3uo10007bsvah8j68war" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">CNN的前向与反向传播</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/">深度学习中的正则化</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/">深度学习中的模型优化</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E9%82%A3%E4%BA%9B%E5%B9%B4%EF%BC%8C%E5%88%B7%E8%BF%87%E7%9A%84%E5%89%91%E6%8C%87offer/">那些年，刷过的剑指offer</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/">拉格朗日对偶性</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

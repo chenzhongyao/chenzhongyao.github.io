@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>拉格朗日对偶性 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="拉格朗日对偶性在约束最优化问题中，常常利用拉格朗日对偶性（Lagrange duaiity）将原始问题转化为对偶问题，通过解对偶问题而得到原始问题的解。该方法应用在许多统计学习方法中，如最大熵模型与支持向量机。 1.原始问题假设$f(x),c_i(x),h_j(x)$是定义在$\mathbf{R}^n$上的连续可微函数，考虑约束最优化问题：$$\min_{x\in\mathbf{R}^n}f(x)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="拉格朗日对偶性">
+<meta property="og:url" content="https://chenzhongyao.github.io/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="拉格朗日对偶性在约束最优化问题中，常常利用拉格朗日对偶性（Lagrange duaiity）将原始问题转化为对偶问题，通过解对偶问题而得到原始问题的解。该方法应用在许多统计学习方法中，如最大熵模型与支持向量机。 1.原始问题假设$f(x),c_i(x),h_j(x)$是定义在$\mathbf{R}^n$上的连续可微函数，考虑约束最优化问题：$$\min_{x\in\mathbf{R}^n}f(x)">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-18T13:41:36.877Z">
+<meta property="article:modified_time" content="2019-08-10T17:41:36.467Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chenzhongyao.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-拉格朗日对偶性" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/" class="article-date">
+  <time datetime="2020-06-18T13:41:36.877Z" itemprop="datePublished">2020-06-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      拉格朗日对偶性
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="拉格朗日对偶性"><a href="#拉格朗日对偶性" class="headerlink" title="拉格朗日对偶性"></a>拉格朗日对偶性</h2><p>在约束最优化问题中，常常利用拉格朗日对偶性（Lagrange duaiity）将原始问题转化为对偶问题，通过解对偶问题而得到原始问题的解。该方法应用在许多统计学习方法中，如最大熵模型与支持向量机。</p>
+<h3 id="1-原始问题"><a href="#1-原始问题" class="headerlink" title="1.原始问题"></a><strong>1.原始问题</strong></h3><p>假设$f(x),c_i(x),h_j(x)$是定义在$\mathbf{R}^n$上的连续可微函数，考虑约束最优化问题：<br>$$<br>\min_{x\in\mathbf{R}^n}f(x) \tag{1}<br>$$<br>$$<br>s.t. \quad c_i(x)\leq0, i=1,2,…,k \tag{2}<br>$$<br>$$<br>\qquad h_j(x)=0,j=1,2,…,l \tag{3}<br>$$<br>称此约束最优化问题为原始最优化问题或原始问题。</p>
+<p>引入朗格朗日函数：<br>$$<br>L(x,\alpha,\beta)=f(x)+\sum_{i=1}^{k}\alpha_ic_i(x)+\sum_{j=1}^{l}\beta_jh_j(x) \tag{4}<br>$$<br>这里，$x=(x^{(1)},x^{(2)},…,x^{(n)})^T\in\mathbf{R}^n,\alpha_i,\beta_j$是朗格朗日乘子，$\alpha_i\geq0$。考虑$x$的函数：<br>$$<br>\theta_P(x)=\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=\left{\begin{matrix}<br> &amp; f(x), &amp; x满足原始问题约束\<br> &amp; +\infty &amp;其他<br>\end{matrix}\right. \tag{5}<br>$$<br>这里下标$P$表示原始问题。</p>
+<blockquote>
+<p><strong>公式5说明：</strong> </p>
+<p>假如给定某个$x$，如果$x$违反原始问题的约束条件，即存在某个$i$使得$c_i(x)&gt;0$或者存在某个$j$使得$h_j(x)\neq0$。当$c_i(x)&gt;0$且$h_j(x)\neq0$时，令$\alpha_i\rightarrow+\infin,\beta_jh_j(x)\rightarrow+\infin$,而其余各$\alpha_i,\beta_j$均取0，此时<br>$$<br>\theta_P(x)=\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=+\infin<br>$$<br>相反地，如果$x$满足约束条件式2和式3，则：<br>$$<br>max(\sum_{i=1}^{k}\alpha_ic_i(x)+\sum_{j=1}^{l}\beta_jh_j(x))=0<br>$$<br>所以<br>$$<br>\theta_P(x)=\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=f(x)<br>$$<br>因此，原始问题(式1~3)可以转化为：<br>$$<br>\min_{x}\theta_P(x)=\min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta) \tag{6}<br>$$<br>它是与原始问题等价的，即它们有相同的解。问题<br>$$\min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)$$<br>称为广义拉格朗日函数的极小极大问题。这样一来，就把原始最优化问题表示为广义拉格朗日函数的极小极大问题。为了方便，定义原始问题的最优解值为:<br>$$<br>p^*=\min_x\theta_P(x) \tag{7}<br>$$</p>
+</blockquote>
+<h3 id="2-对偶问题"><a href="#2-对偶问题" class="headerlink" title="2.对偶问题"></a><strong>2.对偶问题</strong></h3><p>定义<br>$$<br>\theta_D(\alpha,\beta)=\min_xL(x,\alpha,\beta) \tag{8}<br>$$<br>再考虑极大化$\theta_D(\alpha,\beta)$，即<br>$$<br>\max_{\alpha,\beta:\alpha_i\geq0}\theta_D(\alpha,\beta)=\max_{\alpha,\beta:\alpha_i\geq0}\min_xL(x,\alpha,\beta) \tag{9}<br>$$<br>称为广义拉格朗日函数的极大极小问题，表示为约束最优化问题：<br>$$<br>\max_{\alpha,\beta}\theta_D(\alpha,\beta)=\max_{\alpha,\beta}\min_xL(x,\alpha,\beta) \tag{10}<br>$$<br>$$<br>s.t. \quad \alpha_i\geq0,i=1,2,…,k \tag{11}<br>$$<br>称为原始问题的对偶问题，定义对偶问题的最优值为：<br>$$<br>d^*=\max_{\alpha,\beta:\alpha_i\geq0}\theta_D(\alpha,\beta) \tag{12}<br>$$<br>可以看出原始问题与对偶问题的变量并不相同，对于原始问题，它的变量是$x$，而对于对偶问题，它的变量是$\alpha,\beta$。这两个问题并不等价，有时可能相差甚远。可以理解为慢班中学习最好的学生都没有快班中学习最差的学生学习好(当然，这不一定是事实，只是一个比喻)。</p>
+<h3 id="3-原始问题与对偶问题的关系"><a href="#3-原始问题与对偶问题的关系" class="headerlink" title="3.原始问题与对偶问题的关系"></a><strong>3.原始问题与对偶问题的关系</strong></h3><p>对偶函数可以理解为给原始函数找了一个下界，在原始函数计算困难的时候，可以通过解对偶函数来得到一个近似的值。并且在函数满足一定条件的时候，对偶函数的解与原始函数的解是等价的。</p>
+<p><strong>定理1</strong> 若原始问题与对偶问题都有最优值，则<br>$$<br>d^<em>=\max_{\alpha,\beta:\alpha_i\geq0}\min_xL(x,\alpha,\beta)\leq \min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=p^</em> \tag{13}<br>$$</p>
+<blockquote>
+<p>证明：对任意的$\alpha,\beta,x$,有<br>$$<br>\theta_D(\alpha,\beta)=\min_xL(x,\alpha,\beta)\leq L(x,\alpha,\beta)\leq \max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=\theta_P(x)<br>$$<br>即<br>$$<br>\theta_D(\alpha,\beta)\leq  \theta_P(x) \tag{14}<br>$$<br>由于原始问题与对偶问题都有最优值($\theta_D(\alpha,\beta)$可以理解为慢班中的学生，$\theta_P(x)$可以理解为快班中的学生，那么慢班中学习最好的学生都不一定有快班中学习最差的学生学习好），所以<br>$$<br>\max_{\alpha,\beta:\alpha_i\geq0}\theta_D(\alpha,\beta)\leq \min_x\theta_P(x)<br>$$<br>即<br>$$<br>d^<em>=\max_{\alpha,\beta:\alpha_i\geq0}\min_xL(x,\alpha,\beta)\leq \min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=p^</em><br>$$<br>这个性质便是弱对偶性（ weak duality ）。弱对偶性对任何优化问题都成立，这似乎是显然的，因为这个下界并不严格，有时候甚至取到非常小，对原始问题的解没多大帮助。既有弱对偶性，那么便有强对偶性，强对偶性是指<br>$$<br>d^* = p^*<br>$$<br><strong>定理2</strong> 考虑原始问题式1<del>3和对偶问题式10</del>11，假设<font color=#0000FF ><strong>函数$f(x)$和$c_i(x)$是凸函数，$h_j(x)$是仿射函数；并且假设不等式约束$c_i(x)$是严格可行的，即存在$x$，对所有$i$有$c_i(x)&lt;0$</strong></font><font color=#FF0000 > (slater条件)</font>,则存在$x^<em>,\alpha^</em>,\beta^<em>$,使$x^</em>$是原始问题的解，$\alpha^<em>,\beta^</em>$是对偶问题的解，并且<br>$$<br>p^<em>=d^</em>=L(x^<em>,\alpha^</em>,\beta^*) \tag{15}<br>$$</p>
+</blockquote>
+<p><strong>定理3</strong> 考虑原始问题式1<del>3和对偶问题式10</del>11，假设<strong>函数$f(x)$和$c_i(x)$是凸函数，$h_j(x)$是仿射函数；并且假设不等式约束$c_i(x)$是严格可行的，即存在$x$，对所有$i$有$c_i(x)&lt;0$</strong><font color=#FF0000 > (slater条件)</font>,则$x^<em>和\alpha^</em>,\beta^<em>$分别是原始问题和对偶问题的解的充分必要条件是$x^</em>,\alpha^<em>,\beta^</em>$满足下面的Karush-Kuhn-Tucker(KKT)条件：<br>$$\bigtriangledown_xL(x^<em>,\alpha^</em>,\beta^<em>)=0 \tag{16}$$<br>$$\bigtriangledown_{\alpha}L(x^</em>,\alpha^<em>,\beta^</em>)=0 \tag{17} $$<br>$$\bigtriangledown_{\beta}L(x^<em>,\alpha^</em>,\beta^<em>)=0 \tag{18}$$<br>$$\alpha_i^*c_i(x^</em>)=0,\quad i=1,2,…,k \tag{19}$$<br>$$c_i(x^<em>)\leq0,\quad i=1,2,…,k \tag{20}$$<br>$$\alpha_i^*\geq0, \quad i=1,2,…,k \tag{21}$$<br>$$h_j(x^</em>)=0, j=1,2,…,l \tag{22}$$<br>特别指出，式19称为KKT的对偶互补条件。由此条件可知:若$\alpha_i^<em>&gt;0$,则$c_i(x^</em>)=0$</p>
+<blockquote>
+<p>参考文献：</p>
+<p>拉格朗日对偶性：<a href="https://blog.csdn.net/qq_35144795/article/details/98495869" target="_blank" rel="noopener">https://blog.csdn.net/qq_35144795/article/details/98495869</a> <br>李航《统计学习方法》</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chenzhongyao.github.io/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/" data-id="ckbku3uo20008bsva43x0gi59" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/06/18/%E9%82%A3%E4%BA%9B%E5%B9%B4%EF%BC%8C%E5%88%B7%E8%BF%87%E7%9A%84%E5%89%91%E6%8C%87offer/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          那些年，刷过的剑指offer
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/06/18/%E6%96%B9%E5%B7%AE-%E5%8D%8F%E6%96%B9%E5%B7%AE-%E6%9C%9F%E6%9C%9B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">方差-协方差-期望</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">CNN的前向与反向传播</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/">深度学习中的正则化</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/">深度学习中的模型优化</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E9%82%A3%E4%BA%9B%E5%B9%B4%EF%BC%8C%E5%88%B7%E8%BF%87%E7%9A%84%E5%89%91%E6%8C%87offer/">那些年，刷过的剑指offer</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/">拉格朗日对偶性</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

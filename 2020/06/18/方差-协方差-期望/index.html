@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>方差-协方差-期望 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1.方差对随机变量$X$，若存在$\mathbb{E}\left[(X-\mathbb{E}[X])^{2}\right]$,则称它为$X$的方差，记作$Var[X]$. $X$的标准差为方差的开平方。即：$$\begin{aligned} \operatorname{Var}[X] &amp;&#x3D;\mathbb{E}\left[(X-\mathbb{E}[X])^{2}\right] \ \sig">
+<meta property="og:type" content="article">
+<meta property="og:title" content="方差-协方差-期望">
+<meta property="og:url" content="https://chenzhongyao.github.io/2020/06/18/%E6%96%B9%E5%B7%AE-%E5%8D%8F%E6%96%B9%E5%B7%AE-%E6%9C%9F%E6%9C%9B/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1.方差对随机变量$X$，若存在$\mathbb{E}\left[(X-\mathbb{E}[X])^{2}\right]$,则称它为$X$的方差，记作$Var[X]$. $X$的标准差为方差的开平方。即：$$\begin{aligned} \operatorname{Var}[X] &amp;&#x3D;\mathbb{E}\left[(X-\mathbb{E}[X])^{2}\right] \ \sig">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-18T13:41:36.875Z">
+<meta property="article:modified_time" content="2019-08-25T15:39:32.867Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chenzhongyao.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-方差-协方差-期望" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/18/%E6%96%B9%E5%B7%AE-%E5%8D%8F%E6%96%B9%E5%B7%AE-%E6%9C%9F%E6%9C%9B/" class="article-date">
+  <time datetime="2020-06-18T13:41:36.875Z" itemprop="datePublished">2020-06-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      方差-协方差-期望
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-方差"><a href="#1-方差" class="headerlink" title="1.方差"></a>1.方差</h2><p>对随机变量$X$，若存在$\mathbb{E}\left[(X-\mathbb{E}[X])^{2}\right]$,则称它为$X$的方差，记作$Var[X]$.</p>
+<p>$X$的标准差为方差的开平方。即：<br>$$<br>\begin{aligned} \operatorname{Var}[X] &amp;=\mathbb{E}\left[(X-\mathbb{E}[X])^{2}\right] \ \sigma &amp;=\sqrt{\operatorname{Var}[X]} \end{aligned}<br>$$</p>
+<p>根据定义可知：<br>$$<br>\begin{aligned}\operatorname{Var}[X]&amp;=\mathbb{E}\left[(X-\mathbb{E}[X])^{2}\right] \&amp;= \mathbb{E}(X^2-2X\mathbb{E}[X]+(\mathbb{E}[X])^2)\&amp;=\mathbb{E}[X^2]-2(\mathbb{E}[X])^2+(\mathbb{E}[X])^2\&amp;=<br>\mathbb{E}\left[X^{2}\right]-(\mathbb{E}[X])^{2} \quad (协方差推导中用到)<br>\end{aligned}<br>$$<br>$$<br>\begin{aligned}<br> {\operatorname{Var}[f(X)]=\mathbb{E}\left[(f(X)-\mathbb{E}[f(X)])^{2}\right]}\end{aligned}<br>$$</p>
+<p>方差的性质：</p>
+<ul>
+<li>常数的方差恒为0</li>
+<li>对常数C，有$Var[CX]=C^2Var[X]$</li>
+<li>对两个随机变量$X,Y$,有：$\operatorname{Var}[X+Y]=\operatorname{Var}[X]+\operatorname{Var}[Y]+2 \mathbb{E}[(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])]$，当$X,Y$相互独立时，有$\operatorname{Var}[X+Y]=\operatorname{Var}[X]+\operatorname{Var}[Y]$。</li>
+<li>$Var[X]=0$的充要条件是$X$以概率1取常数</li>
+</ul>
+<h2 id="2-协方差与相关系数"><a href="#2-协方差与相关系数" class="headerlink" title="2.协方差与相关系数"></a>2.协方差与相关系数</h2><p>协方差：<br>$$<br>\begin{aligned}<br>    \operatorname{Cov}[X, Y]&amp;=\mathbb{E}[(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])] \<br>    &amp;=\mathbb{E}[XY-X\mathbb{E}[Y]-Y\mathbb{E}[X]+\mathbb{E}[X]\mathbb{E}[Y]] \<br>    &amp;=\mathbb{E}[XY]-2\mathbb{E}[X]\mathbb{E}[Y]+\mathbb{E}[X]\mathbb{E}[Y]\<br>    &amp;=\mathbb{E}[XY]-\mathbb{E}[X]\mathbb{E}[Y]  \quad(协方差推导中用到)<br>\end{aligned}<br>$$<br>相关系数：<br>$$<br>\rho_{X Y}=\frac{\operatorname{Cov}[X, Y]}{\sqrt{\operatorname{Var}[X]} \sqrt{\operatorname{Var}[Y]}}<br>$$<br>是随机变量$X,Y$的相关系数，是协方差的归一化</p>
+<p>由定义可知：<br>$$<br>\begin{array}{c}{\operatorname{Cov}[X, Y]=\operatorname{Cov}[Y, X]} \ {\operatorname{Cov}[X, X]=\operatorname{Var}[X]} \ {\operatorname{Var}[X+Y]=\operatorname{Var}[X]+\operatorname{Var}[Y]+2 \operatorname{Cov}[X, Y]}\end{array}<br>$$<br>协方差的性质：<br>$$<br>\begin{array}{l}<br>\circ \operatorname{Cov}[a X, b Y]=a b \operatorname{Cov}[X, Y]<br>\end{array}a,b为常数<br>$$<br>$$<br>\begin{array}{l}{\circ \operatorname{Cov}\left[X_{1}+X_{2}, Y\right]=\operatorname{Cov}\left[X_{1}, Y\right]+\operatorname{Cov}\left[X_{2}, Y\right]} \ {\circ \operatorname{Cov}[f(X), g(Y)]=\mathbb{E}[(f(X)-\mathbb{E}[f(X)])(g(Y)-\mathbb{E}[g(Y)])]} \ {\circ[f(X), g(Y)]=\frac{\operatorname{Cov}[f(X), g(Y)]}{\sqrt{\operatorname{Var}[f(X)]} \sqrt{\operatorname{Var}[g(Y)]}}}\end{array}<br>$$</p>
+<p>相关系数的物理意义：考虑以随机变量$X$的线性函数$a+bX$来近似表示$Y$。以均方误差:<br>$$<br>e=\mathbb{E}\left[(Y-(a+b X))^{2}\right]=\mathbb{E}\left[Y^{2}\right]+b^{2} \mathbb{E}\left[X^{2}\right]+a^{2}-2 b \mathbb{E}[X Y]+2 a b \mathbb{E}[X]-2 a \mathbb{E}[Y]<br>$$<br>来衡量以$a+bX$近似表达$Y$的好坏程度。$e$越小表示近似程度越高。</p>
+<p>为求得最好的近似，则对$a,b$分别取偏导数，得到：<br>$$<br>\frac{\partial e}{\partial a}=a+b\mathbb{E}[X]-\mathbb{E}[Y]=0 \Rightarrow a=\mathbb{E}[Y]-b\mathbb{E}[X] \tag{1}<br>$$<br>$$<br>\frac{\partial e}{\partial b}=b\mathbb{E}[X^2]-\mathbb{E}[XY]+a\mathbb{E}[X]=0 \tag{2}<br>$$<br>将$a=\mathbb{E}[Y]-b\mathbb{E}[X]$代入(2)得：<br>$$<br>b\mathbb{E}[X^2]-\mathbb{E}[XY]+\mathbb{E}[X]\mathbb{E}[Y]-b(\mathbb{E}[X])^2=0<br>$$<br>$$<br>\Rightarrow b=\frac{\mathbb{E}[XY]-\mathbb{E}[X]\mathbb{E}[Y]}{\mathbb{E}[X^2]-(\mathbb{E}[X])^2} = \frac{\operatorname{Cov}[X, Y]}{\operatorname{Var}[X]}<br>$$<br>所以，<br>$$<br>\begin{array}{c}{a_{0}=\mathbb{E}[Y]-b_{0} \mathbb{E}[X]=\mathbb{E}[Y]-\mathbb{E}[X] \frac{\operatorname{Cov}[X, Y]}{\operatorname{Var}[X]}} \ {b_{0}=\frac{\operatorname{Cov}[X, Y]}{\operatorname{Var}[X]}} \end{array}<br>$$</p>
+<p>$$<br>\begin{aligned}<br>    min(e) &amp;=\mathbb{E}\left[\left(Y-\left(a_{0}+b_{0} X\right)\right)^{2}\right] \<br>    &amp;=\mathbb{E}\left[Y^{2}\right]+b_0^{2} \mathbb{E}\left[X^{2}\right]+a_0^{2}-2 b_0 \mathbb{E}[X Y]+2 a_0 b_0 \mathbb{E}[X]-2 a_0 \mathbb{E}[Y] \<br>    &amp;=\mathbb{E}[Y^2]+b_0^2\mathbb{E}[X^2]+(\mathbb{E}[Y])^2-2b_0\mathbb{E}[X]\mathbb{E}[Y]+b_0^2(\mathbb{E}[X])^2 - 2b_0\mathbb{E}[XY]+2b_0\mathbb{E}[X]\mathbb{E}[Y]-2b_0^2(\mathbb{E}[X])^2- 2(\mathbb{E}[Y])^2+2b_0\mathbb{E}[X]\mathbb{E}[Y] \<br>    &amp;=b_0^2[\mathbb{E}[X^2]-(\mathbb{E}[X])^2]+[\mathbb{E}[Y^2]-(\mathbb{E}[Y])^2]-2b_0(\mathbb{E}[XY]-\mathbb{E}[X]\mathbb{E}[Y])\<br>    &amp;=b_0^2Var[X]+Var[Y]-2b_0Cov(X,Y) \quad (将b_0=\frac{\operatorname{Cov}[X, Y]}{\operatorname{Var}[X]}) \<br>    &amp;=Var[Y] - \frac{\operatorname{Cov}^2[X, Y]}{\operatorname{Var}[X]}) \<br>    &amp;=Var[Y](1-\frac{\operatorname{Cov}^2[X, Y]}{\operatorname{Var}[X]\operatorname{Var}[Y]}) \<br>    &amp;=\left(1-\rho_{X Y}^{2}\right) \operatorname{Var}[Y]<br>\end{aligned}<br>$$<br>因此有以下定理：</p>
+<ul>
+<li>$|\rho_{XY}|\leq 1$</li>
+<li>$|\rho_{XY}|= 1$的充要条件是：存在常数$a,b$使得$P{Y=a+bX}=1$.</li>
+<li>当$\rho_{XY}$较大时， $e$较小，意味着随机变量$X$和$Y$联系较紧密。于是$\rho_{XY}$是一个表征 $X,Y$ 之间线性关系紧密程度的量.</li>
+<li>当$\rho_{XY}=0$ 时，称 $X$和 $Y$不相关.<ul>
+<li>不相关是就线性关系来讲的，而相互独立是一般关系而言的</li>
+<li>相互独立一定不相关；不相关则未必独立。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chenzhongyao.github.io/2020/06/18/%E6%96%B9%E5%B7%AE-%E5%8D%8F%E6%96%B9%E5%B7%AE-%E6%9C%9F%E6%9C%9B/" data-id="ckbku3uo30009bsvac7qwdsgn" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          拉格朗日对偶性
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/06/18/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E6%8E%A8%E5%AF%BC/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">反向传播算法推导</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">CNN的前向与反向传播</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/">深度学习中的正则化</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/">深度学习中的模型优化</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E9%82%A3%E4%BA%9B%E5%B9%B4%EF%BC%8C%E5%88%B7%E8%BF%87%E7%9A%84%E5%89%91%E6%8C%87offer/">那些年，刷过的剑指offer</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/">拉格朗日对偶性</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

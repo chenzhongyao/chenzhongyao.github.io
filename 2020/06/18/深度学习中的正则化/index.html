@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>深度学习中的正则化 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="深度学习中的正则化正则化的定义为”对学习算法的修改–旨在减少泛化误差而非训练误差”。正则化的策略包括参数范数惩罚、约束范数惩罚、提前终止以及Dropout等等。 一、参数范数惩罚参数惩罚是指在目标函数$J$中添加一个参数范数惩罚$\Omega(\theta)$,限制模型的学习能力：$$\tilde{J}(\theta;X, y)&#x3D;J(\theta; X, y)+\alpha\Omega(\thet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习中的正则化">
+<meta property="og:url" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="深度学习中的正则化正则化的定义为”对学习算法的修改–旨在减少泛化误差而非训练误差”。正则化的策略包括参数范数惩罚、约束范数惩罚、提前终止以及Dropout等等。 一、参数范数惩罚参数惩罚是指在目标函数$J$中添加一个参数范数惩罚$\Omega(\theta)$,限制模型的学习能力：$$\tilde{J}(\theta;X, y)&#x3D;J(\theta; X, y)+\alpha\Omega(\thet">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/images/%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.png">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/images/%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%AD%A6%E4%B9%A0.png">
+<meta property="article:published_time" content="2020-06-18T13:41:36.883Z">
+<meta property="article:modified_time" content="2019-08-29T15:12:26.161Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/images/%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chenzhongyao.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-深度学习中的正则化" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/" class="article-date">
+  <time datetime="2020-06-18T13:41:36.883Z" itemprop="datePublished">2020-06-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深度学习中的正则化
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="深度学习中的正则化"><a href="#深度学习中的正则化" class="headerlink" title="深度学习中的正则化"></a>深度学习中的正则化</h1><p>正则化的定义为”对学习算法的修改–旨在减少泛化误差而非训练误差”。正则化的策略包括参数范数惩罚、约束范数惩罚、提前终止以及Dropout等等。</p>
+<h3 id="一、参数范数惩罚"><a href="#一、参数范数惩罚" class="headerlink" title="一、参数范数惩罚"></a><strong>一、参数范数惩罚</strong></h3><p>参数惩罚是指在目标函数$J$中添加一个参数范数惩罚$\Omega(\theta)$,限制模型的学习能力：<br>$$\tilde{J}(\theta;X, y)=J(\theta; X, y)+\alpha\Omega(\theta)$$<br>当我们的算法最小化正则化后的目标函数$\tilde{J}$时，它会降低原始目标$J$关于训练数据的误差并同时减少在某些衡量标注下参数$\theta$的规模。选择不同的参数范数$\Omega$会偏好不同的解。<br>参数范数惩罚通常只惩罚权重$W$，不管b。因为(1)精确拟合偏置所需的数据比拟合权重少的多，每个权重会指定两个变量如何相互作用，我们需要在各种条件下观察这两个变量才能良好地拟合权重，而每个偏置只控制一个单变量。这意味着我们不对其进行正则化也不会导致太大的方差。(2)正则化偏置参数可能会导致明显的欠拟合。基于以上两点，我们通常指惩罚权重$W$，即$\theta =(W;b)\approx (W)$。</p>
+<h4 id="1-L2参数正则化-Omega-theta-frac-1-2-w-2"><a href="#1-L2参数正则化-Omega-theta-frac-1-2-w-2" class="headerlink" title="1. L2参数正则化: $\Omega(\theta)=\frac{1}{2}||w||^2$"></a>1. L2参数正则化: $\Omega(\theta)=\frac{1}{2}||w||^2$</h4><p>目标函数：<br>$$\tilde{J}(w;X,y)=J(w;X,y)+\frac{\alpha}{2}w^Tw$$<br>计算梯度：<br>$$\bigtriangledown _w\tilde{J}(w;X,y)=\bigtriangledown_wJ(w;X,y)+\alpha w$$<br>更新权重：<br>$$w\leftarrow w-\eta(\alpha w+\bigtriangledown_wJ(w;X,y))=(1-\eta \alpha)w-\eta \bigtriangledown_wJ(w;X,y)$$<br>从上式可以看出，加入权重衰减后会导致学习规则的修改，即在每步执行梯度更新前先收缩权重（乘以($1-\eta \alpha$)）</p>
+<h4 id="2-L1参数正则化：-Omega-theta-w-1-Sigma-i-w-i"><a href="#2-L1参数正则化：-Omega-theta-w-1-Sigma-i-w-i" class="headerlink" title="2. L1参数正则化：$\Omega(\theta)=||w||_1=\Sigma_i|w_i|$"></a>2. L1参数正则化：$\Omega(\theta)=||w||_1=\Sigma_i|w_i|$</h4><p>目标函数：<br>$$\tilde{J}(w;X,y)=J(w;X,y)+\alpha||w||_1$$<br>计算梯度：<br>$$\bigtriangledown _w\tilde{J}(w;X,y)=\bigtriangledown_wJ(w;X,y)+\alpha sign(w)$$<br>其中，$sign(w)=\left{\begin{matrix}<br>-1 ,&amp; w&lt; 0\<br> 1,&amp; w&gt;0<br>\end{matrix}\right.$</p>
+<p>更新权重：<br>$$w\leftarrow w-\eta(\alpha sign(w)+\bigtriangledown_wJ(w;X,y))$$</p>
+<h3 id="二、约束范数惩罚"><a href="#二、约束范数惩罚" class="headerlink" title="二、约束范数惩罚"></a><strong>二、约束范数惩罚</strong></h3><p>约束惩罚是指向目标函数中增加额外项来对参数值进行软约束：<br>$$\left { \begin{matrix}<br>    minJ(\theta) \ s.t. \quad \Omega(\theta)\leq k<br>\end{matrix}\right.$$<br>构造拉格朗日函数：<br>$$L(\theta, \alpha)=J(\theta)+\alpha(\Omega(\theta)-k) $$<br>原始问题等价于：<br>$$\theta^<em>=\argmin_\theta \max_{\alpha;\alpha\geq 0}L(\theta, \alpha)$$<br>为了洞察约束的影响，我们可以固定$\alpha^</em>$，把这个问题看成只跟$\theta$有关的函数：<br>$$\theta^<em>=\argmin_\theta L(\theta, \alpha^</em>)=\argmin_\theta J(\theta;X,y)+\alpha^*\Omega(\theta)$$<br>这和最小化$\tilde{J}$的正则化训练问题是完全一样的。因此，我们可以把参数范数惩罚看做对权重强加的约束。如果$\Omega$是$L^2$范数，那么权重就是被约束在一个$L^2$球中，如果$\Omega$是$L^1$范数，那么权重就是被约束在一个$L^1$范数限制的区域中。</p>
+<h3 id="三、提前终止"><a href="#三、提前终止" class="headerlink" title="三、提前终止"></a><strong>三、提前终止</strong></h3><p>当训练有足够的表示能力甚至会过拟合的大模型时，我们经常观察到，训练误差会随着时间的推移逐渐降低，蛋验证集的误差会再次上升。这意味着我们只要返回使验证集误差最低的参数设置，就可以获得验证集误差更低的模型（并且因此有希望获得更好的测试误差）。</p>
+<p>提前终止需要验证集，这意味着某些训练数据不能被馈送到模型。为了更好地利用这一额外的数据，我们可以在完成提前终止的首次训练之后，进行额外的训练。在第二轮，即额外的训练步骤中，所有的训练数据都被包括在内。有两个基本的策略都可以用于第二轮训练过程：</p>
+<ul>
+<li><strong>一是再次初始化模型，然后使用所有数据再次训练。</strong> 在这个第二轮训练过程中，我们使用第一轮提前终止训练确定的最佳步数。但是有一个问题是，我们没有办法知道重新训练时，对参数进行相同次数的更新和对数据集进行相同次数的遍历哪一个更好。由于训练集变大了，在第二次训练时，每一次遍历数据集将会更多次地更新参数。</li>
+<li><strong>二是保持从第一轮训练获得的参数，然后使用全部的数据继续训练。</strong> 在这个阶段，已经没有验证集指导我们需要再训练多少步后终止，取而代之，我们可以监控验证集的平均损失函数，并继续训练，直到它低于提前终止过程终止时的目标值。此策略避免了重新训练模型的高成本，但表现并没有那么好，例如，验证集的目标不一定能达到之前的目标值，所以这种策略甚至不能保证终止。<h3 id="四、-噪声鲁棒性"><a href="#四、-噪声鲁棒性" class="headerlink" title="四、 噪声鲁棒性"></a><strong>四、 噪声鲁棒性</strong></h3>大多数数据集的y标签都有一定的错误性。错误的y不利于最大化$\log p(y|x)$。为避免这种情况发生，一种方法是显示地对标签上的噪声进行建模。</li>
+</ul>
+<p>例如，我们可以假设，对于一些小常数$\epsilon$,训练集标记$y$是正确的概率为$1-\epsilon$，(以$\epsilon$的概率）任何其他可能的标签也可能是正确的。这个假设很容易就能解析地狱代价函数结合，而不用显式地抽取噪声样本。例如，标签平滑（label smoothing）通过把确切分类目标从0和1替换成$\frac{\epsilon}{K-1}$和$1-\epsilon$,正则化具有$K$个输出的softmax函数的模型。标准交叉熵可以用在这些非确切目标的输出上。使用<strong>softmax和明确目标的最大似然学习可能永远不会收敛–softmax函数永远无法真正预测0概率和1概率，因此他会继续学习越来越大的权重，使预测更极端</strong>。标签平滑的优势是能够防止模型追求确切概率而不影响模型学习正确分类。</p>
+<h3 id="五、半监督学习"><a href="#五、半监督学习" class="headerlink" title="五、半监督学习"></a><strong>五、半监督学习</strong></h3><p>假设有100张$10\times 10$的图片，其中50张有标签（共5类），50张无标签。如果利用普通的神经网络训练时只能够用到50张有标签的图片，而另外50张无标签图像无法使用。</p>
+<p>半监督学习的做法是：</p>
+<ul>
+<li>首先将100维的图像利用PCA降维到30维。</li>
+<li>利用共享权重的神经网络，有标签的50张图像将标签作为label，无标签的图像将PCA降维后的低维度作为label，如下图所示<br><img src="./images/%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.png" alt=""><h3 id="六、多任务学习"><a href="#六、多任务学习" class="headerlink" title="六、多任务学习"></a><strong>六、多任务学习</strong></h3>多任务学习是通过合并几个任务中的样例（可以视为对参数施加的软约束）来提高泛化的一种方式。当模型的一部分被多个额外的任务共享时，这部分将被约束为良好的值，通常会带来更好的泛化能力。下图表示了多任务学习的一种普遍形式。不同的监督任务共享相同的输入x和中间层，能学习共同的因素池。从深度学习的观点看，底层的先验知识如下：能解释数据变化（在与之相关联的不同任务中观察到）的因素中，某些因素是夸两个或多个任务共享的，如人脸识别任务与性别分类任务。<br><img src="./images/%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%AD%A6%E4%B9%A0.png" alt=""><h3 id="七、Bagging及其他集成方法"><a href="#七、Bagging及其他集成方法" class="headerlink" title="七、Bagging及其他集成方法"></a><strong>七、Bagging及其他集成方法</strong></h3>Bagging（bootstrap aggregating）是通过结合几个模型降低泛化误差的技术。主要想法是分别训练几个不同的模型，然后让所有模型表决测试样例的输出。这机器学习中常规策略的一个例子，被称为模型平均（model averaging）。采用这种策略的技术被称为集成方法。</li>
+</ul>
+<p>我们假设有k个回归模型，每个模型在每个例子上的误差是$\epsilon_i$，误差服从均值为0、方差为$\mathbb{E}[\epsilon_i^2]=v$、协方差为$\mathbb{E}[\epsilon_i\epsilon_j]=c$的多维正态分布。通过所有集成模型的平均预测误差为：$\frac{1}{k}\Sigma_i\epsilon_i$。集成预测器平方误差的期望是：<br>$$\mathbb{E}[(\frac{1}{k}\sum_i\epsilon_i)^2]=\frac{1}{k^2}\mathbb{E}[\sum_i(\epsilon_i^2+\sum_{j\neq i}\epsilon_i\epsilon_j)]=\frac{1}{k}v+\frac{k-1}{k}c$$<br>在误差完全相关即$c=v$的情况下，均方误差减少到$v$，所以模型平均没有任何帮助。在误差完全不相关即$c=0$的情况下，该集成的平方误差的期望仅为$\frac{1}{k}v$。这意味着集成平方误差的期望会随着集成规模增大而线性减少。换言之，平均上，集成至少与它的任何成员表现的一样好，并且如果成员的误差是独立的，集成将显著地比其成员表现得更好。</p>
+<p>不同的集成方法以不同的方式构建集成模型。例如，集成的每个成员可以使用不同的算法和目标函数训练成完全不同的模型。Bagging是一种允许重复多次使用同一种模型，训练算法和目标函数的方法。</p>
+<blockquote>
+<p>参考资料：深度学习</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/" data-id="ckbku3uo5000bbsvah6i1177a" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          CNN的前向与反向传播
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">深度学习中的模型优化</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">CNN的前向与反向传播</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/">深度学习中的正则化</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/">深度学习中的模型优化</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E9%82%A3%E4%BA%9B%E5%B9%B4%EF%BC%8C%E5%88%B7%E8%BF%87%E7%9A%84%E5%89%91%E6%8C%87offer/">那些年，刷过的剑指offer</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/">拉格朗日对偶性</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
