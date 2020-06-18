@@ -145,6 +145,104 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/RNN%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E4%B8%8E%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/18/RNN%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E4%B8%8E%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/" class="post-title-link" itemprop="url">RNN前向传播、反向传播与并行计算</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-18 21:41:36" itemprop="dateCreated datePublished" datetime="2020-06-18T21:41:36+08:00">2020-06-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-13 16:01:51" itemprop="dateModified" datetime="2019-09-13T16:01:51+08:00">2019-09-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="RNN前向传播、反向传播与并行计算-非常详细"><a href="#RNN前向传播、反向传播与并行计算-非常详细" class="headerlink" title="RNN前向传播、反向传播与并行计算(非常详细)"></a>RNN前向传播、反向传播与并行计算(非常详细)</h1><h2 id="1-RNN前向传播"><a href="#1-RNN前向传播" class="headerlink" title="1. RNN前向传播"></a>1. RNN前向传播</h2><p>在介绍RNN之前，首先比较一下RNN与CNN的区别：</p>
+<ul>
+<li>RNN是一类用于处理序列数据的神经网络，CNN是一类用于处理网格化数据(如一幅图像)的神经网络。</li>
+<li>RNN可以扩展到更长的序列，大多数RNN也能处理可变长度的序列。CNN可以很容易地扩展到具有很大宽度和高度的图像，并且可以处理可变大小的图像。</li>
+</ul>
+<p><img src="./images/RNN-前向.jpg" alt="RNN示意图"><br>RNN的前向传播如图所示，其中$f(x)$代表激活函数，输出的label可以使用one-hot形式。图中所有的$U、W、V、b_1、b_2$全部相同，类似于CNN中的权值共享。CNN通过权值共享可以处理任意大小的图片，RNN通过权值共享，可以处理任意序列长度的语音、句子。</p>
+<p>损失函数：</p>
+<script type="math/tex; mode=display">
+J=\sum_{i=1}^{t}||o_i-\hat{o}_i||^2=J_1+J_2+...+J_t（J_i为MSE损失或CE损失）</script><h2 id="2-RNN反向传播"><a href="#2-RNN反向传播" class="headerlink" title="2.RNN反向传播"></a>2.RNN反向传播</h2><p>在介绍RNN反向传播之前，先回顾一下基本神经元的反向传播算法：<br><img src="./images/base.png" alt></p>
+<script type="math/tex; mode=display">
+\begin{array}{l}\left\{ \begin{matrix}
+h=&WX+b\\
+S=&f(h)
+\end{matrix}\right.
+\end{array}</script><p>假设已知损失对$S$的梯度$\frac{\partial J}{\partial S}$:</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}\left\{ \begin{matrix}
+\frac{\partial J}{\partial h}=\frac{\partial J}{\partial S}\frac{d S}{d h}\\
+\\
+\frac{\partial J}{\partial X}=\frac{\partial J}{\partial h}W^T\\ \\
+\frac{\partial J}{\partial W}=X^T\frac{\partial J}{\partial h}\\ \\
+\frac{\partial J}{\partial b}=SumCol(\frac{\partial J}{\partial h})
+
+\end{matrix}\right.
+\end{array}</script><p>具体推导过程请参考：<a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a></p>
+<p>下面介绍RNN的反向传播，如图所示：<br><img src="./images/RNN_bp1.png" alt><br><img src="./images/RNN_bp2.png" alt><br><img src="./images/RNN_bp3.jpg" alt><br>因为共享权重，所以整个RNN网络对$V、W、U$的梯度为:</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial V}=\sum_{i=1}^{t} s_{i}^{T} \frac{\partial J}{\partial o_{i}}; \quad \frac{\partial J}{\partial W}=\sum_{i=1}^{t-1} s_{i}^{T} \frac{\partial J}{\partial h_{i+1}}; \quad \frac{\partial J}{\partial U}=\sum_{i=1}^{t} x_{i}^{T} \frac{\partial J}{\partial h_{i}}</script><h2 id="3-RNN并行加速计算"><a href="#3-RNN并行加速计算" class="headerlink" title="3. RNN并行加速计算"></a>3. RNN并行加速计算</h2><h3 id="3-1-前向并行运算"><a href="#3-1-前向并行运算" class="headerlink" title="3.1 前向并行运算"></a>3.1 <strong>前向并行运算</strong></h3><p>因为RNN为延时网络，网络的每个输入都与前一个时刻的输出有关系，因此，当输入只有一句话时，无法并行计算。当有输入为一个batch时，如何并行计算呢？<br><img src="./images/RNN-并行1.png" alt></p>
+<p><img src="./images/RNN-并行2.jpg" alt></p>
+<p>也就是说，可以将一个batch的样本在某一个时刻的输入输出并行，加速计算，而不是将一个样本的整个过程并行（因为依赖性无法并行）。</p>
+<h3 id="3-2-反向并行计算"><a href="#3-2-反向并行计算" class="headerlink" title="3.2 反向并行计算"></a>3.2 <strong>反向并行计算</strong></h3><p>反向并行运算方式如下图所示：<br><img src="./images/RNN-并行3.jpg" alt></p>
+<h2 id="4-双向RNN"><a href="#4-双向RNN" class="headerlink" title="4. 双向RNN"></a>4. 双向RNN</h2><p><img src="./images/RNN-双向.jpg" alt><br>注：图中的$W与\hat{W}$、$U与\hat{U}$、$V与\hat{V}$不同。</p>
+<h2 id="5-DeepRNN"><a href="#5-DeepRNN" class="headerlink" title="5. DeepRNN"></a>5. DeepRNN</h2><p><img src="./images/RNN-DeepRnn.png" alt></p>
+<p>参考资料：深度之眼</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -816,7 +914,7 @@ S_{w}^{-1}{S_{b}  u=\lambda u}
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
