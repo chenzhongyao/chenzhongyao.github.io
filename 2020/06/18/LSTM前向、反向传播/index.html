@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"chenzhongyao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="LSTM前向传播与反向传播算法推导（非常详细）1.长短期记忆网络LSTMLSTM(Long short-term memory)通过刻意的设计来避免长期依赖问题，是一种特殊的RNN。长时间记住信息实际上是 LSTM 的默认行为，而不是需要努力学习的东西！ 所有递归神经网络都具有神经网络的链式重复模块。在标准的RNN中，这个重复模块具有非常简单的结构，例如只有单个tanh层，如下图所示。LSTM具有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LSTM前向、反向传播">
+<meta property="og:url" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/index.html">
+<meta property="og:site_name" content="chenzhongyao&#39;s website">
+<meta property="og:description" content="LSTM前向传播与反向传播算法推导（非常详细）1.长短期记忆网络LSTMLSTM(Long short-term memory)通过刻意的设计来避免长期依赖问题，是一种特殊的RNN。长时间记住信息实际上是 LSTM 的默认行为，而不是需要努力学习的东西！ 所有递归神经网络都具有神经网络的链式重复模块。在标准的RNN中，这个重复模块具有非常简单的结构，例如只有单个tanh层，如下图所示。LSTM具有">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-rnn.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-1.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-2.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-3.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-4.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-5.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-6.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-7.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-8.png">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-bp.png">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-gru.png">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-gru.png">
+<meta property="article:published_time" content="2020-06-18T13:41:36.866Z">
+<meta property="article:modified_time" content="2019-09-22T17:17:36.361Z">
+<meta property="article:author" content="chennan">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/images/lstm-rnn.jpg">
+
+<link rel="canonical" href="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>LSTM前向、反向传播 | chenzhongyao's website</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">chenzhongyao's website</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/LSTM%E5%89%8D%E5%90%91%E3%80%81%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LSTM前向、反向传播
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-18 21:41:36" itemprop="dateCreated datePublished" datetime="2020-06-18T21:41:36+08:00">2020-06-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-23 01:17:36" itemprop="dateModified" datetime="2019-09-23T01:17:36+08:00">2019-09-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="LSTM前向传播与反向传播算法推导（非常详细）"><a href="#LSTM前向传播与反向传播算法推导（非常详细）" class="headerlink" title="LSTM前向传播与反向传播算法推导（非常详细）"></a>LSTM前向传播与反向传播算法推导（非常详细）</h2><h3 id="1-长短期记忆网络LSTM"><a href="#1-长短期记忆网络LSTM" class="headerlink" title="1.长短期记忆网络LSTM"></a>1.长短期记忆网络LSTM</h3><p>LSTM(Long short-term memory)通过刻意的设计来避免长期依赖问题，是一种特殊的RNN。长时间记住信息实际上是 LSTM 的默认行为，而不是需要努力学习的东西！</p>
+<p>所有递归神经网络都具有神经网络的链式重复模块。在标准的RNN中，这个重复模块具有非常简单的结构，例如只有单个tanh层，如下图所示。<br><img src="./images/lstm-rnn.jpg" alt><br>LSTM具有同样的结构，但是重复的模块拥有不同的结构，如下图所示。与RNN的单一神经网络层不同，这里有四个网络层，并且以一种非常特殊的方式进行交互。<br><img src="./images/lstm.jpg" alt></p>
+<h4 id="1-1-LSTM—遗忘门"><a href="#1-1-LSTM—遗忘门" class="headerlink" title="1.1 LSTM—遗忘门"></a>1.1 LSTM—遗忘门</h4><p><img src="./images/lstm-1.jpg" alt><br>LSTM 的第一步要决定从细胞状态中舍弃哪些信息。这一决定由所谓“遗忘门层”的 S 形网络层做出。它接收 $h<em>{t-1}$ 和 $x_t$，并且对细胞状态 $C</em>{t−1}$ 中的每一个数来说输出值都介于 0 和 1 之间。1 表示“完全接受这个”，0 表示“完全忽略这个”。</p>
+<h4 id="1-2-LSTM—输入门"><a href="#1-2-LSTM—输入门" class="headerlink" title="1.2 LSTM—输入门"></a>1.2 LSTM—输入门</h4><p><img src="./images/lstm-2.jpg" alt><br>下一步就是要确定需要在细胞状态中保存哪些新信息。这里分成两部分。第一部分，一个所谓“输入门层”的 S 形网络层确定哪些信息需要更新。第二部分，一个 tanh 形网络层创建一个新的备选值向量—— $\tilde{C}_t$，可以用来添加到细胞状态。在下一步中我们将上面的两部分结合起来，产生对状态的更新。</p>
+<h4 id="1-3-LSTM—细胞状态更新"><a href="#1-3-LSTM—细胞状态更新" class="headerlink" title="1.3 LSTM—细胞状态更新"></a>1.3 LSTM—细胞状态更新</h4><p><img src="./images/lstm-3.jpg" alt><br>现在更新旧的细胞状态 $C_{t−1}$ 更新到 $C_t$。先前的步骤已经决定要做什么，我们只需要照做就好。<br>我们对旧的状态乘以 $f_t$，用来忘记我们决定忘记的事。然后我们加上 $i_t\odot\tilde{C}_t$，这是新的候选值，根据我们对每个状态决定的更新值按比例进行缩放。</p>
+<h4 id="1-4-LSTM—输出门"><a href="#1-4-LSTM—输出门" class="headerlink" title="1.4 LSTM—输出门"></a>1.4 LSTM—输出门</h4><p><img src="./images/lstm-4.jpg" alt><br>最后，我们需要确定输出值。输出依赖于我们的细胞状态，但会是一个“过滤的”版本。首先我们运行 S 形网络层，用来确定细胞状态中的哪些部分可以输出。然后，我们把细胞状态输入 tanh（把数值调整到 −1 和 1 之间）再和 S 形网络层的输出值相乘，部这样我们就可以输出想要输出的分。</p>
+<h4 id="1-5-LSTM的变种"><a href="#1-5-LSTM的变种" class="headerlink" title="1.5 LSTM的变种"></a>1.5 LSTM的变种</h4><p>目前我所描述的还只是一个相当一般化的 LSTM 网络。但并非所有 LSTM 网络都和之前描述的一样。事实上，几乎所有文章都会改进 LSTM 网络得到一个特定版本。差别是次要的，但有必要认识一下这些变种。</p>
+<p>（1） 一个流行的 LSTM 变种由 Gers 和 Schmidhuber 提出，在 LSTM 的基础上添加了一个“窥视孔连接”，这意味着我们可以让门网络层输入细胞状态。<br><img src="./images/lstm-5.jpg" alt><br>上图中我们为所有门添加窥视孔，但许多论文只为部分门添加.</p>
+<p>（2）另一个变种把遗忘和输入门结合起来。同时确定要遗忘的信息和要添加的新信息，而不再是分开确定。当输入的时候才会遗忘，当遗忘旧信息的时候才会输入新数据。<br><img src="./images/lstm-6.jpg" alt><br>（3）一个更有意思的 LSTM 变种称为 Gated Recurrent Unit（GRU），由 Cho 等人提出。LSTM通过三个门函数输入门、遗忘门和输出门分别控制输入值、记忆值和输出值。而GRU中只有两个门：更新门$z_t$和重置门$r_t$，如下图所示。更新门用于控制前一时刻的状态信息被带入到当前状态中的程度，更新门的值越大说明前一时刻的状态信息带入越多；重置门控制前一时刻状态有多少信息被写入到当前的候选集$\tilde{h}_t$上，重置门越小，前一状态的信息被写入的越少。这样做使得 GRU 比标准的 LSTM 模型更简单，因此正在变得流行起来。<br><img src="./images/lstm-7.jpg" alt></p>
+<h3 id="2-LSTM前向传播与反向传播"><a href="#2-LSTM前向传播与反向传播" class="headerlink" title="2.LSTM前向传播与反向传播"></a>2.LSTM前向传播与反向传播</h3><p>本小节只推导添加“窥视孔连接”的变种LSTM，如下图所示，其它LSTM变种的推导方法与该方法类似，这里不做过多介绍。对反向传播算法了解不够透彻的，请参考<a href="https://zhuanlan.zhihu.com/p/79657669，这里有详细的推导过程，本文将直接使用https://zhuanlan.zhihu.com/p/79657669的结论。" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669，这里有详细的推导过程，本文将直接使用https://zhuanlan.zhihu.com/p/79657669的结论。</a></p>
+<p><img src="./images/lstm-8.png" alt><br>为了更直观的推导反向传播算法，将上图转化为下图：<br><img src="./images/lstm-bp.png" alt></p>
+<h4 id="2-1-LSTM前向传播"><a href="#2-1-LSTM前向传播" class="headerlink" title="2.1 LSTM前向传播"></a>2.1 LSTM前向传播</h4><p>LSTM在t时刻的前向传播公式为：</p>
+<script type="math/tex; mode=display">
+\left\{
+\begin{array}{l}
+    {i_t=\sigma(\tilde{i}_t)=\sigma(W_{xi}x_t+W_{hi}h_{t-1}+W_{ci}c_{t-1}+b_i)} \\
+    {f_t=\sigma(\tilde{f}_t)=\sigma(W_{xf}x_t+W_{hf}h_{t-1}+W_{cf}c_{t-1}+b_f) }\\
+    {g_t=\tanh(\tilde{g}_t)=\tanh(W_{xg}x_t+W_{hg}h_{t-1}+b_g)} \\
+    {o_t=\sigma(\tilde{o}_t)=\sigma(W_{xo}x_t+W_{ho}h_{t-1}+W_{co}c_{t}+b_o) }\\
+    {c_t=c_{t-1}\odot f_t+g_t\odot i_t}\\
+    {m_t=\tanh(c_t)}\\
+    {h_t=o_t\odot m_t}\\
+    {y_t=W_{yh}h_t+b_y}
+
+\end{array}\right.</script><h4 id="2-2-LSTM反向传播"><a href="#2-2-LSTM反向传播" class="headerlink" title="2.2 LSTM反向传播"></a>2.2 LSTM反向传播</h4><p>已知：$\frac{\partial J}{\partial y<em>t},\frac{\partial J}{\partial c</em>{t+1}},\frac{\partial J}{\partial \tilde{o}<em>{t+1}},\frac{\partial J}{\partial \tilde{f}</em>{t+1}},\frac{\partial J}{\partial \tilde{i}<em>{t+1}},\frac{\partial J}{\partial \tilde{g}</em>{t+1}}$,求某个节点梯度时，首先应该找到该节点的输出节点，然后分别计算所有输出节点的梯度乘以输出节点对该节点的梯度，最后相加即可得到该节点的梯度。如计算$\frac{\partial J}{\partial h<em>t}$时，找到$h_t$节点的所有输出节点$y_t、 \tilde{o}</em>{t+1}、\tilde{f}<em>{t+1}、\tilde{i}</em>{t+1}、\tilde{g}<em>{t+1}$，然后分别计算输出节点的梯度(如$\frac{\partial J}{\partial y_t}$)与输出节点对$h_t$的梯度的乘积（如$\frac{\partial J}{\partial y_t}W</em>{yh}^T$），最后相加即可得到节点$h_t$的梯度:</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{yh}^T+\frac{\partial J}{\partial \tilde{o}_{t+1}}W_{ho}^T+\frac{\partial J}{\partial \tilde{f}_{t+1}}W_{hf}^T+\frac{\partial J}{\partial \tilde{i}_{t+1}}W_{hi}^T+\frac{\partial J}{\partial \tilde{g}_{t+1}}W_{hg}^T</script><p>同理可得t时刻其它节点的梯度：</p>
+<script type="math/tex; mode=display">
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{yh}^T+\frac{\partial J}{\partial \tilde{o}_{t+1}}W_{ho}^T+\frac{\partial J}{\partial \tilde{f}_{t+1}}W_{hf}^T+\frac{\partial J}{\partial \tilde{i}_{t+1}}W_{hi}^T+\frac{\partial J}{\partial \tilde{g}_{t+1}}W_{hg}^T \\ \\
+    \frac{\partial J}{\partial m_t} = \frac{\partial J}{\partial h_t} \odot o_t \\ \\
+    \frac{\partial J}{\partial c_t} = \frac{\partial J}{\partial m_t}\frac{dm_t}{dc_t}+ \frac{\partial J}{\partial c_{t+1}}\odot f_{t+1} +\frac{\partial J}{\partial \tilde{f}_{t+1}}W_{cf}^T+\frac{\partial J}{\partial \tilde{i}_{t+1}}W_{ci}^T \\ \\
+    \left. \begin{array}{l}
+         \frac{\partial J}{\partial g_t} = \frac{\partial J}{\partial c_t}\odot i_t \\
+         \frac{\partial J}{\partial i_t} = \frac{\partial J}{\partial c_t} \odot g_t \\
+         \frac{\partial J}{\partial f_t} = \frac{\partial J}{\partial c_t} \odot c_{t-1} \\
+         \frac{\partial J}{\partial o_t} = \frac{\partial J}{\partial h_t} \odot m_t
+    \end{array} \right \} \Rightarrow \left\{ \begin{array}{l}
+        \frac{\partial J}{\partial \tilde{g}_t} = \frac{\partial J}{\partial g_t}(1-g_t^2) \\
+        \frac{\partial J}{\partial \tilde{i}_t} = \frac{\partial J}{\partial i_t}i_t(1-i_t) \\
+        \frac{\partial J}{\partial \tilde{f}_t} = \frac{\partial J}{\partial f_t}f_t(1-f_t) \\
+        \frac{\partial J}{\partial \tilde{o}_t} = \frac{\partial J}{\partial o_t}i_t(1-o_t) \\
+    \end{array}\right. \\ \\
+    \frac{\partial J}{\partial x_t} = \frac{\partial J}{\partial \tilde{o}_t}W_{xo}^T+\frac{\partial J}{\partial \tilde{f}_t}W_{xf}^T+ \frac{\partial J}{\partial \tilde{i}_t}W_{xi}^T+\frac{\partial J}{\partial \tilde{g}_t}W_{xg}^T\\
+\end{array}\right.</script><p>对参数的梯度：</p>
+<script type="math/tex; mode=display">
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial W_{ho}} = h_t^T\frac{\partial J}{\partial \tilde{o}_{t+1}} \\
+    \frac{\partial J}{\partial W_{hf}} = h_t^T\frac{\partial J}{\partial \tilde{f}_{t+1}} \\
+    \frac{\partial J}{\partial W_{hi}} = h_t^T\frac{\partial J}{\partial \tilde{i}_{t+1}} \\
+    \frac{\partial J}{\partial W_{hg}} = h_t^T\frac{\partial J}{\partial \tilde{g}_{t+1}}
+\end{array} \right. 
+
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial W_{yh}} = h_t^T\frac{\partial J}{\partial y_t} \\
+    \frac{\partial J}{\partial W_{cf}} = c_t^T\frac{\partial J}{\partial \tilde{f}_{t+1}} \\
+    \frac{\partial J}{\partial W_{ci}} = c_t^T\frac{\partial J}{\partial \tilde{i}_{t+1}} \\
+    \frac{\partial J}{\partial W_{co}} = c_t^T\frac{\partial J}{\partial \tilde{o}_{t}} 
+\end{array} \right. 
+
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial W_{xo}} = x_t^T\frac{\partial J}{\partial \tilde{o}_{t}} \\
+    \frac{\partial J}{\partial W_{xf}} = x_t^T\frac{\partial J}{\partial \tilde{f}_{t}} \\
+    \frac{\partial J}{\partial W_{xi}} = x_t^T\frac{\partial J}{\partial \tilde{i}_{t}} \\
+    \frac{\partial J}{\partial W_{xg}} = x_t^T\frac{\partial J}{\partial \tilde{g}_{t}} \\
+\end{array} \right.</script><p>同理，将图9转化为以下形式：<br><img src="./images/lstm-gru.png" alt></p>
+<h4 id="GRU前向传播"><a href="#GRU前向传播" class="headerlink" title="GRU前向传播"></a>GRU前向传播</h4><p>GRU的前向传播公式为：</p>
+<script type="math/tex; mode=display">
+\left\{
+\begin{array}{l}
+    {r_t=\sigma(\tilde{r}_t)=\sigma(W_{xr}x_t+W_{hr}h_{t-1}+b_r)} \\
+    {z_t=\sigma(\tilde{z}_t)=\sigma(W_{xz}x_t+W_{hz}h_{t-1}+b_z) }\\
+    {s_t=\tanh(\tilde{s}_t)}=\tanh[W_{xs}x_t+(h_{t-1}\odot r_t)W_{hs}+b_s]  \\
+    {h_t=z_t\odot s_t + h_{t-1}\odot (1-z_t)}\\
+    {y_t=W_{yh}h_t+b_y}
+\end{array}\right.</script><p>t时刻其它节点的梯度:</p>
+<script type="math/tex; mode=display">
+\left\{ \begin{array}{l}
+    \frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{hy}^T+\frac{\partial J}{\partial \tilde{r}_{t+1}}W_{hr}^T+ \frac{\partial J}{\partial \tilde{z}_{t+1}}W_{hz}^T+ \frac{\partial J}{\partial \tilde{s}_{t+1}}W_{hs}^T \odot  r_t + \frac{\partial J}{\partial \tilde{h}_{t+1}}\odot(1-z_t)\\
+\left.\begin{array}{l}
+    \frac{\partial J}{\partial s_t}=\frac{\partial J}{\partial h_t}\odot z_t\\
+    \frac{\partial J}{\partial z_t}=\frac{\partial J}{\partial h_t}\odot s_t + \frac{\partial J}{\partial h_t}\odot (-h_{t-1})  \\
+    \frac{\partial J}{\partial r_t}=\frac{\partial J}{\partial \tilde{s}_t}W_{hs}^T\odot h_{t-1} \\
+\end{array}\right\} \Rightarrow
+\left\{ \begin{array}{l}
+    \frac{\partial J}{\partial \tilde{s}_t}=\frac{\partial J}{\partial s_t}(1-s_t^2)\\
+    \frac{\partial J}{\partial \tilde{z}_t}=\frac{\partial J}{\partial z_t}z_t(1-z_t)  \\
+    \frac{\partial J}{\partial \tilde{r}_t}=\frac{\partial J}{\partial r_t}r_t(1-r_t) \\
+\end{array}\right. 
+\\
+    \frac{\partial J}{\partial x_t} = \frac{\partial J}{\partial \tilde{r}_t}W_{xr}^T+\frac{\partial J}{\partial \tilde{z}_t}W_{xz}^T+ \frac{\partial J}{\partial \tilde{s}_t}W_{xs}^T\\
+\end{array}\right.</script><p>对参数的梯度：</p>
+<script type="math/tex; mode=display">
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial W_{hy}} = h_t^T\frac{\partial J}{\partial y_t} \\
+    \frac{\partial J}{\partial W_{hs}} = (h_{t-1}\odot r_t)^T\frac{\partial J}{\partial \tilde{s}_{t}} \\
+    \frac{\partial J}{\partial W_{hz}} = h_{t-1}^T\frac{\partial J}{\partial \tilde{z}_{t}} \\
+    \frac{\partial J}{\partial W_{hr}} = h_{t-1}^T\frac{\partial J}{\partial \tilde{r}_{t}}
+\end{array} \right. 
+
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial W_{xs}} = x_t^T\frac{\partial J}{\partial \tilde{s}_{t}} \\
+    \frac{\partial J}{\partial W_{xz}} = x_t^T\frac{\partial J}{\partial \tilde{f}_{z}} \\
+    \frac{\partial J}{\partial W_{xr}} = x_t^T\frac{\partial J}{\partial \tilde{r}_{t}} 
+\end{array} \right.</script><p><img src="./images/lstm-gru.png" alt></p>
+<blockquote>
+<p>参考资料：<a href="https://www.cnblogs.com/xuruilong100/p/8506949.html" target="_blank" rel="noopener">https://www.cnblogs.com/xuruilong100/p/8506949.html</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/18/hello-world/" rel="prev" title="Hello World">
+      <i class="fa fa-chevron-left"></i> Hello World
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/18/%E9%82%A3%E4%BA%9B%E5%B9%B4%EF%BC%8C%E5%88%B7%E8%BF%87%E7%9A%84%E5%89%91%E6%8C%87offer/" rel="next" title="那些年，刷过的剑指offer">
+      那些年，刷过的剑指offer <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#LSTM前向传播与反向传播算法推导（非常详细）"><span class="nav-number">1.</span> <span class="nav-text">LSTM前向传播与反向传播算法推导（非常详细）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-长短期记忆网络LSTM"><span class="nav-number">1.1.</span> <span class="nav-text">1.长短期记忆网络LSTM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-LSTM—遗忘门"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 LSTM—遗忘门</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-LSTM—输入门"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 LSTM—输入门</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-LSTM—细胞状态更新"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 LSTM—细胞状态更新</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-LSTM—输出门"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 LSTM—输出门</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-LSTM的变种"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 LSTM的变种</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-LSTM前向传播与反向传播"><span class="nav-number">1.2.</span> <span class="nav-text">2.LSTM前向传播与反向传播</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-LSTM前向传播"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 LSTM前向传播</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-LSTM反向传播"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 LSTM反向传播</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GRU前向传播"><span class="nav-number">1.2.3.</span> <span class="nav-text">GRU前向传播</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chennan</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chennan</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
