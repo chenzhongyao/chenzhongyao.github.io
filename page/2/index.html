@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">深度学习中的模型优化</a>
+            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%AD%A3%E5%88%99%E5%8C%96/" class="post-title-link" itemprop="url">深度学习中的正则化</a>
         </h2>
 
         <div class="post-meta">
@@ -170,7 +170,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-06-18 23:02:52 / 修改时间：23:43:51" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
+              <time title="创建时间：2020-06-18 23:02:52 / 修改时间：23:44:14" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
             </span>
 
           
@@ -184,102 +184,42 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="深度学习中的模型优化"><a href="#深度学习中的模型优化" class="headerlink" title="深度学习中的模型优化"></a>深度学习中的模型优化</h1><h2 id="随机梯度下降"><a href="#随机梯度下降" class="headerlink" title="随机梯度下降"></a>随机梯度下降</h2><h3 id="Batch-Gradient-Descent-BGD"><a href="#Batch-Gradient-Descent-BGD" class="headerlink" title="Batch Gradient Descent(BGD)"></a>Batch Gradient Descent(BGD)</h3><p>BGD在训练中,每一步迭代都是用训练集中的所有数据,也就是说,利用现有参数对训练集中的每一个输入生成一个估计输出,然后跟实际输出比较,统计所有误差,求平均以后得到平均误差,并以此作为更新参数的依据.</p>
+          <h1 id="深度学习中的正则化"><a href="#深度学习中的正则化" class="headerlink" title="深度学习中的正则化"></a>深度学习中的正则化</h1><p>正则化的定义为”对学习算法的修改—旨在减少泛化误差而非训练误差”。正则化的策略包括参数范数惩罚、约束范数惩罚、提前终止以及Dropout等等。</p>
+<h3 id="一、参数范数惩罚"><a href="#一、参数范数惩罚" class="headerlink" title="一、参数范数惩罚"></a><strong>一、参数范数惩罚</strong></h3><p>参数惩罚是指在目标函数$J$中添加一个参数范数惩罚$\Omega(\theta)$,限制模型的学习能力：</p>
+<script type="math/tex; mode=display">\tilde{J}(\theta;X, y)=J(\theta; X, y)+\alpha\Omega(\theta)</script><p>当我们的算法最小化正则化后的目标函数$\tilde{J}$时，它会降低原始目标$J$关于训练数据的误差并同时减少在某些衡量标注下参数$\theta$的规模。选择不同的参数范数$\Omega$会偏好不同的解。<br>参数范数惩罚通常只惩罚权重$W$，不管b。因为(1)精确拟合偏置所需的数据比拟合权重少的多，每个权重会指定两个变量如何相互作用，我们需要在各种条件下观察这两个变量才能良好地拟合权重，而每个偏置只控制一个单变量。这意味着我们不对其进行正则化也不会导致太大的方差。(2)正则化偏置参数可能会导致明显的欠拟合。基于以上两点，我们通常指惩罚权重$W$，即$\theta =(W;b)\approx (W)$。</p>
+<h4 id="1-L2参数正则化-Omega-theta-frac-1-2-w-2"><a href="#1-L2参数正则化-Omega-theta-frac-1-2-w-2" class="headerlink" title="1. L2参数正则化: $\Omega(\theta)=\frac{1}{2}||w||^2$"></a>1. L2参数正则化: $\Omega(\theta)=\frac{1}{2}||w||^2$</h4><p>目标函数：</p>
+<script type="math/tex; mode=display">\tilde{J}(w;X,y)=J(w;X,y)+\frac{\alpha}{2}w^Tw</script><p>计算梯度：</p>
+<script type="math/tex; mode=display">\bigtriangledown _w\tilde{J}(w;X,y)=\bigtriangledown_wJ(w;X,y)+\alpha w</script><p>更新权重：</p>
+<script type="math/tex; mode=display">w\leftarrow w-\eta(\alpha w+\bigtriangledown_wJ(w;X,y))=(1-\eta \alpha)w-\eta \bigtriangledown_wJ(w;X,y)</script><p>从上式可以看出，加入权重衰减后会导致学习规则的修改，即在每步执行梯度更新前先收缩权重（乘以($1-\eta \alpha$)）</p>
+<h4 id="2-L1参数正则化：-Omega-theta-w-1-Sigma-i-w-i"><a href="#2-L1参数正则化：-Omega-theta-w-1-Sigma-i-w-i" class="headerlink" title="2. L1参数正则化：$\Omega(\theta)=||w||_1=\Sigma_i|w_i|$"></a>2. L1参数正则化：$\Omega(\theta)=||w||_1=\Sigma_i|w_i|$</h4><p>目标函数：</p>
+<script type="math/tex; mode=display">\tilde{J}(w;X,y)=J(w;X,y)+\alpha||w||_1</script><p>计算梯度：</p>
+<script type="math/tex; mode=display">\bigtriangledown _w\tilde{J}(w;X,y)=\bigtriangledown_wJ(w;X,y)+\alpha sign(w)</script><p>其中，$sign(w)=\left{\begin{matrix}<br>-1 ,&amp; w&lt; 0\<br> 1,&amp; w&gt;0<br>\end{matrix}\right.$</p>
+<p>更新权重：</p>
+<script type="math/tex; mode=display">w\leftarrow w-\eta(\alpha sign(w)+\bigtriangledown_wJ(w;X,y))</script><h3 id="二、约束范数惩罚"><a href="#二、约束范数惩罚" class="headerlink" title="二、约束范数惩罚"></a><strong>二、约束范数惩罚</strong></h3><p>约束惩罚是指向目标函数中增加额外项来对参数值进行软约束：</p>
+<script type="math/tex; mode=display">\left \{ \begin{matrix}
+    minJ(\theta) \\ s.t. \quad \Omega(\theta)\leq k
+\end{matrix}\right.</script><p>构造拉格朗日函数：</p>
+<script type="math/tex; mode=display">L(\theta, \alpha)=J(\theta)+\alpha(\Omega(\theta)-k)</script><p>原始问题等价于：</p>
+<script type="math/tex; mode=display">\theta^*=\argmin_\theta \max_{\alpha;\alpha\geq 0}L(\theta, \alpha)</script><p>为了洞察约束的影响，我们可以固定$\alpha^*$，把这个问题看成只跟$\theta$有关的函数：</p>
+<script type="math/tex; mode=display">\theta^*=\argmin_\theta L(\theta, \alpha^*)=\argmin_\theta J(\theta;X,y)+\alpha^*\Omega(\theta)</script><p>这和最小化$\tilde{J}$的正则化训练问题是完全一样的。因此，我们可以把参数范数惩罚看做对权重强加的约束。如果$\Omega$是$L^2$范数，那么权重就是被约束在一个$L^2$球中，如果$\Omega$是$L^1$范数，那么权重就是被约束在一个$L^1$范数限制的区域中。</p>
+<h3 id="三、提前终止"><a href="#三、提前终止" class="headerlink" title="三、提前终止"></a><strong>三、提前终止</strong></h3><p>当训练有足够的表示能力甚至会过拟合的大模型时，我们经常观察到，训练误差会随着时间的推移逐渐降低，蛋验证集的误差会再次上升。这意味着我们只要返回使验证集误差最低的参数设置，就可以获得验证集误差更低的模型（并且因此有希望获得更好的测试误差）。</p>
+<p>提前终止需要验证集，这意味着某些训练数据不能被馈送到模型。为了更好地利用这一额外的数据，我们可以在完成提前终止的首次训练之后，进行额外的训练。在第二轮，即额外的训练步骤中，所有的训练数据都被包括在内。有两个基本的策略都可以用于第二轮训练过程：</p>
 <ul>
-<li><strong>优点:</strong> 由于每一步都利用了训练集中的所有数据,因此当损失函数达到最小值以后,能够保证此时计算出的梯度为0,换句话说,就是能够收敛(曲线比较平滑),因此,使用BGD时不需要逐渐降低学习率.</li>
-<li><strong>缺点:</strong> 由于每一步都要用到所有训练数据,因此随着数据集的增大,运行速度会越来越慢.<h3 id="SGD与MBGD"><a href="#SGD与MBGD" class="headerlink" title="SGD与MBGD"></a>SGD与MBGD</h3>MBGD是指在训练中,每次使用小批量(一个小批量训练m个样本)的随机采样进行梯度下降.训练方法与BGD一样,只是BGD最后对训练集的所有样本取平均,而MBGD只对小批量的m个样本取平均.SGD是指在训练中每次仅使用一个样本.MBGD与SGD统称为SGD.因为小批量不能代表整个训练集,使得梯度估计引入噪声源,因此SGD并不是每次迭代都向着整体最优化方向.虽然SGD包含一定的随机性(表现为损失函数的震荡),但是从期望来看,它是等于正确的导数的(表现为损失函数有减小的趋势).</li>
-<li><strong>优点:</strong> 训练速度比较快</li>
-<li><strong>缺点:</strong> 在样本数量较大的情况下,可能只用到了其中一部分数据就完成了训练,得到的只是局部最优解.另外,小批量样本的噪声较大,所以每次执行梯度下降,并不一定总是朝着最优的方向前进.<br><img src="./images/SGD与BGD.png" alt><h3 id="参数更新"><a href="#参数更新" class="headerlink" title="参数更新"></a>参数更新</h3><script type="math/tex; mode=display">\left \{
-\begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}\right) } \\ {\boldsymbol{\theta}_{t} =\boldsymbol{\theta}_{t-1}+\boldsymbol{v}_{t}}\end{array} \right.</script>其中，$\eta$代表学习率，$\theta<em>t$表示$t$时刻的参数，$\triangledown </em>\theta J(\theta_t)$代表参数$\theta$在$t$时刻的导数，$v_t$代表参数的更新速度。<h2 id="Momentum"><a href="#Momentum" class="headerlink" title="Momentum"></a>Momentum</h2>在训练中，采取的策略与SGD一样，不同的是学习率的更新方式。动量的参数更新方式为：<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}\right)+\alpha \boldsymbol{v}_{t-1}} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script>$\alpha$一般取值0.9.</li>
+<li><strong>一是再次初始化模型，然后使用所有数据再次训练。</strong> 在这个第二轮训练过程中，我们使用第一轮提前终止训练确定的最佳步数。但是有一个问题是，我们没有办法知道重新训练时，对参数进行相同次数的更新和对数据集进行相同次数的遍历哪一个更好。由于训练集变大了，在第二次训练时，每一次遍历数据集将会更多次地更新参数。</li>
+<li><strong>二是保持从第一轮训练获得的参数，然后使用全部的数据继续训练。</strong> 在这个阶段，已经没有验证集指导我们需要再训练多少步后终止，取而代之，我们可以监控验证集的平均损失函数，并继续训练，直到它低于提前终止过程终止时的目标值。此策略避免了重新训练模型的高成本，但表现并没有那么好，例如，验证集的目标不一定能达到之前的目标值，所以这种策略甚至不能保证终止。<h3 id="四、-噪声鲁棒性"><a href="#四、-噪声鲁棒性" class="headerlink" title="四、 噪声鲁棒性"></a><strong>四、 噪声鲁棒性</strong></h3>大多数数据集的y标签都有一定的错误性。错误的y不利于最大化$\log p(y|x)$。为避免这种情况发生，一种方法是显示地对标签上的噪声进行建模。</li>
 </ul>
-<p>直观理解为：<br><img src="./images/momentum.jpg" alt><br>动量方法旨在加速学习（加快梯度的下降速度），特别是处理高曲率、小但一致的梯度，或是带噪声的梯度。动量算法累积了之前梯度指数级衰减的移动平均，并且继续沿该方向移动。</p>
-<table align="center">
-    <tr>
-        <td><center><img height="200" width="300" src="./images/momentum.gif"></center></td>
-    </tr>
-</table>
-
-<p>动量SGD算法引入$\alpha \boldsymbol{v}_{t-1}$使每一次的参数更新方向不仅仅取决于当前位置的梯度，还受到上一次参数更新方向的影响（如上图所示）。在某一维度上，当梯度方向不变时，更新速度变快，当梯度方向有所改变时，更新速度变慢，从而加快收敛速度，减少震荡。</p>
-<p>带有动量的SGD的优点：</p>
+<p>例如，我们可以假设，对于一些小常数$\epsilon$,训练集标记$y$是正确的概率为$1-\epsilon$，(以$\epsilon$的概率）任何其他可能的标签也可能是正确的。这个假设很容易就能解析地狱代价函数结合，而不用显式地抽取噪声样本。例如，标签平滑（label smoothing）通过把确切分类目标从0和1替换成$\frac{\epsilon}{K-1}$和$1-\epsilon$,正则化具有$K$个输出的softmax函数的模型。标准交叉熵可以用在这些非确切目标的输出上。使用<strong>softmax和明确目标的最大似然学习可能永远不会收敛—softmax函数永远无法真正预测0概率和1概率，因此他会继续学习越来越大的权重，使预测更极端</strong>。标签平滑的优势是能够防止模型追求确切概率而不影响模型学习正确分类。</p>
+<h3 id="五、半监督学习"><a href="#五、半监督学习" class="headerlink" title="五、半监督学习"></a><strong>五、半监督学习</strong></h3><p>假设有100张$10\times 10$的图片，其中50张有标签（共5类），50张无标签。如果利用普通的神经网络训练时只能够用到50张有标签的图片，而另外50张无标签图像无法使用。</p>
+<p>半监督学习的做法是：</p>
 <ul>
-<li>加快收敛速度</li>
-<li>抑制梯度下降时上下震荡的情况</li>
-<li>通过局部极小点</li>
+<li>首先将100维的图像利用PCA降维到30维。</li>
+<li>利用共享权重的神经网络，有标签的50张图像将标签作为label，无标签的图像将PCA降维后的低维度作为label，如下图所示<br><img src="./images/半监督学习.png" alt><h3 id="六、多任务学习"><a href="#六、多任务学习" class="headerlink" title="六、多任务学习"></a><strong>六、多任务学习</strong></h3>多任务学习是通过合并几个任务中的样例（可以视为对参数施加的软约束）来提高泛化的一种方式。当模型的一部分被多个额外的任务共享时，这部分将被约束为良好的值，通常会带来更好的泛化能力。下图表示了多任务学习的一种普遍形式。不同的监督任务共享相同的输入x和中间层，能学习共同的因素池。从深度学习的观点看，底层的先验知识如下：能解释数据变化（在与之相关联的不同任务中观察到）的因素中，某些因素是夸两个或多个任务共享的，如人脸识别任务与性别分类任务。<br><img src="./images/多任务学习.png" alt><h3 id="七、Bagging及其他集成方法"><a href="#七、Bagging及其他集成方法" class="headerlink" title="七、Bagging及其他集成方法"></a><strong>七、Bagging及其他集成方法</strong></h3>Bagging（bootstrap aggregating）是通过结合几个模型降低泛化误差的技术。主要想法是分别训练几个不同的模型，然后让所有模型表决测试样例的输出。这机器学习中常规策略的一个例子，被称为模型平均（model averaging）。采用这种策略的技术被称为集成方法。</li>
 </ul>
+<p>我们假设有k个回归模型，每个模型在每个例子上的误差是$\epsilon_i$，误差服从均值为0、方差为$\mathbb{E}[\epsilon_i^2]=v$、协方差为$\mathbb{E}[\epsilon_i\epsilon_j]=c$的多维正态分布。通过所有集成模型的平均预测误差为：$\frac{1}{k}\Sigma_i\epsilon_i$。集成预测器平方误差的期望是：</p>
+<script type="math/tex; mode=display">\mathbb{E}[(\frac{1}{k}\sum_i\epsilon_i)^2]=\frac{1}{k^2}\mathbb{E}[\sum_i(\epsilon_i^2+\sum_{j\neq i}\epsilon_i\epsilon_j)]=\frac{1}{k}v+\frac{k-1}{k}c</script><p>在误差完全相关即$c=v$的情况下，均方误差减少到$v$，所以模型平均没有任何帮助。在误差完全不相关即$c=0$的情况下，该集成的平方误差的期望仅为$\frac{1}{k}v$。这意味着集成平方误差的期望会随着集成规模增大而线性减少。换言之，平均上，集成至少与它的任何成员表现的一样好，并且如果成员的误差是独立的，集成将显著地比其成员表现得更好。</p>
+<p>不同的集成方法以不同的方式构建集成模型。例如，集成的每个成员可以使用不同的算法和目标函数训练成完全不同的模型。Bagging是一种允许重复多次使用同一种模型，训练算法和目标函数的方法。</p>
 <blockquote>
-<p>分析：假设任意时刻参数的梯度均为$g<em>t=\triangledown</em>\theta J\left(\boldsymbol{\theta}_{t}\right)=g_0$，则使用SGD时,$t$时刻的梯度$g^{SGD}_t=g_0$,Momentum算法的梯度$g^{mom}_t=(\alpha^{t-1}+\alpha^{t-2}+…+\alpha+1)g_0=\frac{1-\alpha^{t}}{1-\alpha}g_0$.当$t\rightarrow +\infty$，因$\alpha&lt;1$,所以$\alpha^t\rightarrow 0$,所以$g_t^{mom}\rightarrow \frac{1}{1-\alpha}g_0$,当$\alpha=0.9$时，Momentum更新速度是SGD的10倍</p>
-</blockquote>
-<h2 id="Nesterov-NAG"><a href="#Nesterov-NAG" class="headerlink" title="Nesterov(NAG)"></a>Nesterov(NAG)</h2><p>Nesterov动量是Momentum的变种，即在计算参数梯度之前，前瞻一步，超前一个动量单位处：$\theta<em>t + \gamma v</em>{t-1}$,Nesterov动量可以理解为往Momentum动量中加入了一个校正因子。参数更新公式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}+\gamma \boldsymbol{v}_{t-1}\right)+\alpha \boldsymbol{v}_{t-1}} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>Momentum动量与Nesterov动量的对比如下图所示，其中$\eta \triangledown<em>1$代表A节点 ($\theta_t$)的梯度，$\eta \triangledown_2$代表B节点($\theta</em>{t}+\gamma \boldsymbol{v}<em>{t-1}$的梯度)，灰色实线代表$t-1$时刻的速度$\alpha v</em>{t-1}$.</p>
-<table align="center">
-    <tr>
-        <td><center><img height="230" width="250" src="./images/nesterov.png"></center></td>
-        <td><center><img height="230" width="300" src="./images/nesterov.bmp"></center></td>
-    </tr>
-</table>
-
-<blockquote>
-<p>注意：图中的$\eta \triangledown_1以及\eta \triangledown_2$应该为$-\eta \triangledown_1$、$-\eta \triangledown_2$因为梯度方向是增长速度最快的方向，而图中所示为梯度的反方向，所以应该为$-\eta \triangledown_1$、$-\eta \triangledown_2$.</p>
-</blockquote>
-<p>Nesterov动量相对于Momentum多了一个本次梯度相对上次梯度的变化量，这个变化量本质上是对目标函数二阶导的近似，由于令了二阶导的信息，Nesterov动量算法才会比Momentum具有更快的收敛速度。</p>
-<h2 id="AdaGrad"><a href="#AdaGrad" class="headerlink" title="AdaGrad"></a>AdaGrad</h2><p>AdaGrad其实是对学习率进行了约束，AdaGrad独立地适应所有模型参数的学习率，缩放每个参数反比于其它所有梯度历史平方值总和的平方根。损失较大偏导的参数相应地拥有一个快速下降的学习率，而较小偏导的参数在学习率上有相对较小的下降。净效果是在参数空间中更为平缓的倾斜方向会取得更大的进步。参数更新公式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{
-    g_t=\triangledown_\theta J(\theta_t)}\\
-    {n_t=n_{t-1}+g_t^2} \\
-    {\boldsymbol{v}_{t}=-\frac{\eta}{\sqrt{n_t+\epsilon}}g_t } \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>其中，$\epsilon$是个很小的数，用来保证分母非0。对$𝑔_𝑡$从1到t进行一个递推形成一个约束项regularizer——-$\frac{1}{\sqrt{n_t+\epsilon}}$。</p>
-<p><strong>优点：</strong><br>前期$g_t$较小的时候， $\frac{1}{\sqrt{n_t+\epsilon}}$较大，梯度更新较大，可以解决SGD中学习率一直不变的问题;后期$g_t$较大的时候，$\frac{1}{\sqrt{n_t+\epsilon}}$较小，能够约束梯度.适合处理稀疏梯度.</p>
-<p><strong>缺点：</strong><br>由公式可以看出，AdaGrad依赖于人工设置一个全局学习率𝜂，当$\eta$设置过大时，使regularizer过于敏感，对梯度的调节太大。在中后期，分母上梯度平方的累加将会越来越大，gradient→0，网络的更新能力会越来越弱，学习率会变的极小，使得训练提前结束。为了解决这样的问题，又提出了Adadelta算法。</p>
-<h2 id="Adadelta"><a href="#Adadelta" class="headerlink" title="Adadelta"></a>Adadelta</h2><p>Adadelta是对AdaGrad的扩展，AgaGrad会累加所有历史梯度的平方，而Adadelta只累加固定大小的项，并且也不直接存储这些项，仅仅是近似计算对应的平均值。参数更新方式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{
-    g_t=\triangledown_\theta J(\theta_t)}\\
-    {n_t=\gamma n_{t-1}+(1-\gamma)g_t^2}\\
-    {\boldsymbol{v}_{t}=-\frac{\eta}{\sqrt{n_t+\epsilon}}g_t } \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>但是，此时Adadelta其实仍然依赖于全局学习率，因此，又做了一些处理，新的参数更新方式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{
-    g_t=\triangledown_\theta J(\theta_t)}\\
-    {E|g^2|_t=\rho \times E|g^2|_{t-1}+(1-\rho)\times g_t^2}\\
-    {v_t=-\frac{\sqrt{\sum_{r=1}^{t-1}}v_r}{\sqrt{E|t^2|_t+\epsilon}}g_t}\\
-    {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>新的参数更新方式，不依赖于全局学习率，并且，训练初中期，加速效果不错，很快；训练后期，反复在局部最小值附近抖动。</p>
-<h2 id="RMSprop"><a href="#RMSprop" class="headerlink" title="RMSprop"></a>RMSprop</h2><p>RMSprop可以算作Adadelta的一个特例：当$\rho=0.5$时，$E|g^2|<em>t=\rho \times E|g^2|</em>{t-1}+(1-\rho)\times g_t^2$就变为了求梯度平方和的平均数。</p>
-<p>如果再求根的话，就变成了RMS(均方根)：$RMS|g|_t=\sqrt{E|g^2|_t+\epsilon}$。RMSprop的参数更新方式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{
-    g_t=\triangledown_\theta J(\theta_t)}\\
-    {E|g^2|_t=\rho \times E|g^2|_{t-1}+(1-\rho)\times g_t^2} \\
-    {RMS|g|_t=\sqrt{E|g^2|_t+\epsilon}}\\
-    {\boldsymbol{v}_{t}=-\frac{\eta}{RMS|g|_t }g_t} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p><strong>特点：</strong> (1)RMSprop依然依赖于全局学习率;(2)RMSprop算是Adagrad的一种发展，和Adadelta的变体，效果趋于二者之间;(3)适合处理非平稳目标 - 对于RNN效果很好</p>
-<h2 id="Adam"><a href="#Adam" class="headerlink" title="Adam"></a>Adam</h2><p>Adam优化器结合了AdaGrad与RMSProp两种算法的优点。对梯度的一阶距估计$m_t$（即梯度的均值）和二阶距估计$n_t$（即梯度的未中心化的方差）进行综合考虑，计算出更新步长。更新方式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{
-    g_t=\triangledown_\theta J(\theta_t)}\\
-    {m_t=\beta_1m_{t-1}+(1-\beta_1)g_t}\\
-    {v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2}\\
-    {\hat{m_t}=\frac{m_t}{1-\beta_1^t}}\\
-    {\hat{v}_t=\frac{v_t}{1-\beta_2^t}}\\
-    {\boldsymbol{\theta}_{t+1}=\boldsymbol{\theta}_{t}-\frac{\eta}{\sqrt{\hat{v}_t+\epsilon}}\hat{m}_t}\\
-\end{array} \right.</script><blockquote>
-<p>注：所有的$t$均表示$t$时刻。$m_t$、$n_t$分别是梯度的一阶距估计和二阶距估计，可以看做是对期望$E|g_t|、E|g_t^2|$的估计；$\hat{m}_t、\hat{n}_t$是对$m_t$、$n_t$的校正，这样可以近似为对期望的无偏估计。</p>
-</blockquote>
-<p><strong>优点：</strong></p>
-<ol>
-<li>实现简单，计算高效，对内存需求少</li>
-<li>参数的更新不受梯度的伸缩变换影响</li>
-<li>超参数具有很好的解释性，且通常无需调整或仅需很少的微调</li>
-<li>更新的步长能够被限制在大致的范围内（初始学习率）</li>
-<li>能自然地实现步长退火过程（自动调整学习率）</li>
-<li>很适合应用于大规模的数据及参数的场景</li>
-<li>适用于不稳定目标函数</li>
-<li>适用于梯度稀疏或梯度存在很大噪声的问题</li>
-</ol>
-<blockquote>
-<p>参考资料：</p>
-<p><a href="https://zhuanlan.zhihu.com/p/73264637" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/73264637</a> </p>
-<p><a href="https://zhuanlan.zhihu.com/p/60088231" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/60088231</a></p>
-<p><a href="https://blog.csdn.net/u012759136/article/details/52302426" target="_blank" rel="noopener">https://blog.csdn.net/u012759136/article/details/52302426</a></p>
+<p>参考资料：深度学习</p>
 </blockquote>
 
       
