@@ -189,7 +189,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <div class="pdfobject-container" data-target="军队文职历年考试真题/2013年军队文职真题及答案解析.pdf" data-height="500px"></div>
+        <div class="pdfobject-container" data-target="军队文职历年考试真题/2013年军队文职真题及答案解析.pdf" data-height="600px"></div>
 <p>2223</p>
 <object data="军队文职历年考试真题/2013年军队文职真题及答案解析.pdf" type="application/pdf" width="100%" height="100%">
 </object>
@@ -372,6 +372,26 @@
 
 
 
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
 
 
 
