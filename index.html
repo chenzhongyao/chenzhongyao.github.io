@@ -300,69 +300,6 @@ S=&f(h)
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="chennan">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chenzhongyao's website">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" class="post-title-link" itemprop="url">四张图彻底搞懂CNN反向传播算法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-18 23:02:52 / 修改时间：23:44:46" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="四张图彻底搞懂CNN反向传播算法"><a href="#四张图彻底搞懂CNN反向传播算法" class="headerlink" title="四张图彻底搞懂CNN反向传播算法"></a>四张图彻底搞懂CNN反向传播算法</h1><p>阅读本文之前，请首先阅读之前讲述的全连接层的反向传播算法详细推导过程： <a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a><br>已经了解反向传播算法请自动忽略。</p>
-<h2 id="1-卷积层的反向传播"><a href="#1-卷积层的反向传播" class="headerlink" title="1. 卷积层的反向传播"></a>1. 卷积层的反向传播</h2><p>直接上图：<br><img src="./images/cnn.png" alt><br>假设输入为一张单通道图像$x$，卷积核大小为$2\times 2$，输出为$y$。为了加速计算，首先将$x$按卷积核滑动顺序依次展开，如上图所示。其中，$\hat{x}$中的红色框代表$x$中的红色框展开后的结果，将$x$依次按照此方式展开，可得$\hat{x}$。同理可得$\hat{w}$，然后通过矩阵相乘可得输出$\hat{y}$（$\hat{y}$与$y$等价）。此时，已经将CNN转化为FC，反向传播算法与<a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a> 完全一致，这里不再做详细介绍。当输入图像有N个样本时，应该怎么算呢？</p>
-<p>当有$N$个样本，即batch=N时，前向与反向传播方式如下图所示：<br><img src="./images/cnn-batch.png" alt><br>其中，输入图像batch=3,使用2个$2\times 2\times 3$的卷积核，输出两张图像，如图所示。红色框、黄色框代表的是卷积核以及使用该卷积核得到的输出图像$y$。当输入图像为一个batch时，$x、w$的转化方式如上图，首先将输入图像与卷积核分别按单通道图像展开，然后将展开后的矩阵在行方向级联。此时，已经将CNN转化为了FC，反向传播算法与<a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a> 完全一致，这里不再做过多介绍。</p>
-<h2 id="2-Average-pooling的反向传播"><a href="#2-Average-pooling的反向传播" class="headerlink" title="2. Average pooling的反向传播"></a>2. Average pooling的反向传播</h2><p><img src="./images/average-pooling.png" alt><br>$\frac{\partial J}{\partial w}$不用求，因为$w$为常数。$\frac{\partial J}{\partial x<em>{ij}}=\Sigma \frac{\partial J}{\partial \hat{x}</em>{ij}}$</p>
-<h2 id="3-Max-pooling的反向传播"><a href="#3-Max-pooling的反向传播" class="headerlink" title="3. Max-pooling的反向传播"></a>3. Max-pooling的反向传播</h2><p><img src="./images/max-pooling.png" alt><br>遍历$\hat{x}$的每一行，找出此行最大值的索引$(i,j)$，然后将$\frac{\partial J}{\partial \hat{x}}$中索引为$(i,j)$的值设为$\frac{\partial J}{\partial \hat{y}}$对应行的值，将此行其余列的值设为0，如上图所示红框所示。假设$\hat{x}$中(1,1)处的值是第一行中最大的值，则将$\frac{\partial J}{\partial y<em>{11}}$赋值给$\frac{\partial J}{\partial \hat{x}}$中索引为$(1,1)$的位置。最后计算:$\frac{\partial J}{\partial x</em>{ij}}=\Sigma \frac{\partial J}{\partial \hat{x}_{ij}}$</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/LDA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -538,6 +475,231 @@ S_{w}^{-1}{S_{b}  u=\lambda u}
 </ul>
 </li>
 </ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/LSTM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/18/LSTM/" class="post-title-link" itemprop="url">LSTM前向传播与反向传播算法推导（非常详细）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-18 23:02:52 / 修改时间：23:45:31" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="LSTM前向传播与反向传播算法推导（非常详细）"><a href="#LSTM前向传播与反向传播算法推导（非常详细）" class="headerlink" title="LSTM前向传播与反向传播算法推导（非常详细）"></a>LSTM前向传播与反向传播算法推导（非常详细）</h2><h3 id="1-长短期记忆网络LSTM"><a href="#1-长短期记忆网络LSTM" class="headerlink" title="1.长短期记忆网络LSTM"></a>1.长短期记忆网络LSTM</h3><p>LSTM(Long short-term memory)通过刻意的设计来避免长期依赖问题，是一种特殊的RNN。长时间记住信息实际上是 LSTM 的默认行为，而不是需要努力学习的东西！</p>
+<p>所有递归神经网络都具有神经网络的链式重复模块。在标准的RNN中，这个重复模块具有非常简单的结构，例如只有单个tanh层，如下图所示。<br><img src="./images/lstm-rnn.jpg" alt><br>LSTM具有同样的结构，但是重复的模块拥有不同的结构，如下图所示。与RNN的单一神经网络层不同，这里有四个网络层，并且以一种非常特殊的方式进行交互。<br><img src="./images/lstm.jpg" alt></p>
+<h4 id="1-1-LSTM—遗忘门"><a href="#1-1-LSTM—遗忘门" class="headerlink" title="1.1 LSTM—遗忘门"></a>1.1 LSTM—遗忘门</h4><p><img src="./images/lstm-1.jpg" alt><br>LSTM 的第一步要决定从细胞状态中舍弃哪些信息。这一决定由所谓“遗忘门层”的 S 形网络层做出。它接收 $h<em>{t-1}$ 和 $x_t$，并且对细胞状态 $C</em>{t−1}$ 中的每一个数来说输出值都介于 0 和 1 之间。1 表示“完全接受这个”，0 表示“完全忽略这个”。</p>
+<h4 id="1-2-LSTM—输入门"><a href="#1-2-LSTM—输入门" class="headerlink" title="1.2 LSTM—输入门"></a>1.2 LSTM—输入门</h4><p><img src="./images/lstm-2.jpg" alt><br>下一步就是要确定需要在细胞状态中保存哪些新信息。这里分成两部分。第一部分，一个所谓“输入门层”的 S 形网络层确定哪些信息需要更新。第二部分，一个 tanh 形网络层创建一个新的备选值向量—— $\tilde{C}_t$，可以用来添加到细胞状态。在下一步中我们将上面的两部分结合起来，产生对状态的更新。</p>
+<h4 id="1-3-LSTM—细胞状态更新"><a href="#1-3-LSTM—细胞状态更新" class="headerlink" title="1.3 LSTM—细胞状态更新"></a>1.3 LSTM—细胞状态更新</h4><p><img src="./images/lstm-3.jpg" alt><br>现在更新旧的细胞状态 $C_{t−1}$ 更新到 $C_t$。先前的步骤已经决定要做什么，我们只需要照做就好。<br>我们对旧的状态乘以 $f_t$，用来忘记我们决定忘记的事。然后我们加上 $i_t\odot\tilde{C}_t$，这是新的候选值，根据我们对每个状态决定的更新值按比例进行缩放。</p>
+<h4 id="1-4-LSTM—输出门"><a href="#1-4-LSTM—输出门" class="headerlink" title="1.4 LSTM—输出门"></a>1.4 LSTM—输出门</h4><p><img src="./images/lstm-4.jpg" alt><br>最后，我们需要确定输出值。输出依赖于我们的细胞状态，但会是一个“过滤的”版本。首先我们运行 S 形网络层，用来确定细胞状态中的哪些部分可以输出。然后，我们把细胞状态输入 tanh（把数值调整到 −1 和 1 之间）再和 S 形网络层的输出值相乘，部这样我们就可以输出想要输出的分。</p>
+<h3 id="2-LSTM的变种以及前向、反向传播"><a href="#2-LSTM的变种以及前向、反向传播" class="headerlink" title="2. LSTM的变种以及前向、反向传播"></a>2. LSTM的变种以及前向、反向传播</h3><p>目前所描述的还只是一个相当一般化的 LSTM 网络。但并非所有 LSTM 网络都和之前描述的一样。事实上，几乎所有文章都会改进 LSTM 网络得到一个特定版本。差别是次要的，但有必要认识一下这些变种。</p>
+<h4 id="2-1-带有”窥视孔连接”的LSTM"><a href="#2-1-带有”窥视孔连接”的LSTM" class="headerlink" title="2.1 带有”窥视孔连接”的LSTM"></a>2.1 带有”窥视孔连接”的LSTM</h4><p>一个流行的 LSTM 变种由 Gers 和 Schmidhuber 提出，在 LSTM 的基础上添加了一个“窥视孔连接”，这意味着我们可以让门网络层输入细胞状态。<br><img src="./images/lstm-5.jpg" alt><br>上图中我们为所有门添加窥视孔，但许多论文只为部分门添加。</p>
+<p><strong>前向传播：</strong><br>在t时刻的前向传播公式为：</p>
+<script type="math/tex; mode=display">
+\left\{
+\begin{array}{l}
+    {i_t=\sigma(\tilde{i}_t)=\sigma(W_{xi}x_t+W_{hi}h_{t-1}+W_{ci}c_{t-1}+b_i)} \\
+    {f_t=\sigma(\tilde{f}_t)=\sigma(W_{xf}x_t+W_{hf}h_{t-1}+W_{cf}c_{t-1}+b_f) }\\
+    {g_t=\tanh(\tilde{g}_t)=\tanh(W_{xg}x_t+W_{hg}h_{t-1}+b_g)} \\
+    {o_t=\sigma(\tilde{o}_t)=\sigma(W_{xo}x_t+W_{ho}h_{t-1}+W_{co}c_{t}+b_o) }\\
+    {c_t=c_{t-1}\odot f_t+g_t\odot i_t}\\
+    {m_t=\tanh(c_t)}\\
+    {h_t=o_t\odot m_t}\\
+    {y_t=W_{yh}h_t+b_y}
+
+\end{array}\right.</script><p><strong>反向传播：</strong><br>为了更直观的推导反向传播算法，将上图转化为下图：<br><img src="./images/lstm-bp.png" alt><br>对反向传播算法了解不够透彻的，请参考<a href="https://zhuanlan.zhihu.com/p/79657669，这里有详细的推导过程，本文将直接使用https://zhuanlan.zhihu.com/p/79657669的结论。" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669，这里有详细的推导过程，本文将直接使用https://zhuanlan.zhihu.com/p/79657669的结论。</a></p>
+<p>已知：$\frac{\partial J}{\partial y<em>t},\frac{\partial J}{\partial c</em>{t+1}},\frac{\partial J}{\partial \tilde{o}<em>{t+1}},\frac{\partial J}{\partial \tilde{f}</em>{t+1}},\frac{\partial J}{\partial \tilde{i}<em>{t+1}},\frac{\partial J}{\partial \tilde{g}</em>{t+1}}$,求某个节点梯度时，首先应该找到该节点的输出节点，然后分别计算所有输出节点的梯度乘以输出节点对该节点的梯度，最后相加即可得到该节点的梯度。如计算$\frac{\partial J}{\partial h<em>t}$时，找到$h_t$节点的所有输出节点$y_t、 \tilde{o}</em>{t+1}、\tilde{f}<em>{t+1}、\tilde{i}</em>{t+1}、\tilde{g}<em>{t+1}$，然后分别计算输出节点的梯度(如$\frac{\partial J}{\partial y_t}$)与输出节点对$h_t$的梯度的乘积（如$\frac{\partial J}{\partial y_t}W</em>{yh}^T$），最后相加即可得到节点$h_t$的梯度:</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{yh}^T+\frac{\partial J}{\partial \tilde{o}_{t+1}}W_{ho}^T+\frac{\partial J}{\partial \tilde{f}_{t+1}}W_{hf}^T+\frac{\partial J}{\partial \tilde{i}_{t+1}}W_{hi}^T+\frac{\partial J}{\partial \tilde{g}_{t+1}}W_{hg}^T</script><p>同理可得t时刻其它节点的梯度：</p>
+<script type="math/tex; mode=display">
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{yh}^T+\frac{\partial J}{\partial \tilde{o}_{t+1}}W_{ho}^T+\frac{\partial J}{\partial \tilde{f}_{t+1}}W_{hf}^T+\frac{\partial J}{\partial \tilde{i}_{t+1}}W_{hi}^T+\frac{\partial J}{\partial \tilde{g}_{t+1}}W_{hg}^T \\ \\
+    \frac{\partial J}{\partial m_t} = \frac{\partial J}{\partial h_t} \odot o_t \\ \\
+    \frac{\partial J}{\partial c_t} = \frac{\partial J}{\partial m_t}\frac{dm_t}{dc_t}+ \frac{\partial J}{\partial c_{t+1}}\odot f_{t+1} +\frac{\partial J}{\partial \tilde{f}_{t+1}}W_{cf}^T+\frac{\partial J}{\partial \tilde{i}_{t+1}}W_{ci}^T \\ \\
+    \left. \begin{array}{l}
+         \frac{\partial J}{\partial g_t} = \frac{\partial J}{\partial c_t}\odot i_t \\
+         \frac{\partial J}{\partial i_t} = \frac{\partial J}{\partial c_t} \odot g_t \\
+         \frac{\partial J}{\partial f_t} = \frac{\partial J}{\partial c_t} \odot c_{t-1} \\
+         \frac{\partial J}{\partial o_t} = \frac{\partial J}{\partial h_t} \odot m_t
+    \end{array} \right \} \Rightarrow \left\{ \begin{array}{l}
+        \frac{\partial J}{\partial \tilde{g}_t} = \frac{\partial J}{\partial g_t}(1-g_t^2) \\
+        \frac{\partial J}{\partial \tilde{i}_t} = \frac{\partial J}{\partial i_t}i_t(1-i_t) \\
+        \frac{\partial J}{\partial \tilde{f}_t} = \frac{\partial J}{\partial f_t}f_t(1-f_t) \\
+        \frac{\partial J}{\partial \tilde{o}_t} = \frac{\partial J}{\partial o_t}i_t(1-o_t) \\
+    \end{array}\right. \\ \\
+    \frac{\partial J}{\partial x_t} = \frac{\partial J}{\partial \tilde{o}_t}W_{xo}^T+\frac{\partial J}{\partial \tilde{f}_t}W_{xf}^T+ \frac{\partial J}{\partial \tilde{i}_t}W_{xi}^T+\frac{\partial J}{\partial \tilde{g}_t}W_{xg}^T\\
+\end{array}\right.</script><p>对参数的梯度：</p>
+<script type="math/tex; mode=display">
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial W_{ho}} = h_t^T\frac{\partial J}{\partial \tilde{o}_{t+1}} \\
+    \frac{\partial J}{\partial W_{hf}} = h_t^T\frac{\partial J}{\partial \tilde{f}_{t+1}} \\
+    \frac{\partial J}{\partial W_{hi}} = h_t^T\frac{\partial J}{\partial \tilde{i}_{t+1}} \\
+    \frac{\partial J}{\partial W_{hg}} = h_t^T\frac{\partial J}{\partial \tilde{g}_{t+1}}
+\end{array} \right. 
+
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial W_{yh}} = h_t^T\frac{\partial J}{\partial y_t} \\
+    \frac{\partial J}{\partial W_{cf}} = c_t^T\frac{\partial J}{\partial \tilde{f}_{t+1}} \\
+    \frac{\partial J}{\partial W_{ci}} = c_t^T\frac{\partial J}{\partial \tilde{i}_{t+1}} \\
+    \frac{\partial J}{\partial W_{co}} = c_t^T\frac{\partial J}{\partial \tilde{o}_{t}} 
+\end{array} \right. 
+
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial W_{xo}} = x_t^T\frac{\partial J}{\partial \tilde{o}_{t}} \\
+    \frac{\partial J}{\partial W_{xf}} = x_t^T\frac{\partial J}{\partial \tilde{f}_{t}} \\
+    \frac{\partial J}{\partial W_{xi}} = x_t^T\frac{\partial J}{\partial \tilde{i}_{t}} \\
+    \frac{\partial J}{\partial W_{xg}} = x_t^T\frac{\partial J}{\partial \tilde{g}_{t}} \\
+\end{array} \right.</script><h4 id="2-2-GRU"><a href="#2-2-GRU" class="headerlink" title="2.2 GRU"></a>2.2 GRU</h4><p>一个更有意思的 LSTM 变种称为 Gated Recurrent Unit（GRU），由 Cho 等人提出。LSTM通过三个门函数输入门、遗忘门和输出门分别控制输入值、记忆值和输出值。而GRU中只有两个门：更新门$z_t$和重置门$r_t$，如下图所示。更新门用于控制前一时刻的状态信息被带入到当前状态中的程度，更新门的值越大说明前一时刻的状态信息带入越多；重置门控制前一时刻状态有多少信息被写入到当前的候选集$\tilde{h}_t$上，重置门越小，前一状态的信息被写入的越少。这样做使得 GRU 比标准的 LSTM 模型更简单，因此正在变得流行起来。<br><img src="./images/lstm-7.jpg" alt><br>为了更加直观的推导反向传播公式，将上图转化为如下形式：<br><img src="./images/lstm-gru.png" alt><br><strong>GRU的前向传播：</strong> 在t时刻的前向传播公式为：</p>
+<script type="math/tex; mode=display">
+\left\{
+\begin{array}{l}
+    {r_t=\sigma(\tilde{r}_t)=\sigma(W_{xr}x_t+W_{hr}h_{t-1}+b_r)} \\
+    {z_t=\sigma(\tilde{z}_t)=\sigma(W_{xz}x_t+W_{hz}h_{t-1}+b_z) }\\
+    {s_t=\tanh(\tilde{s}_t)}=\tanh[W_{xs}x_t+(h_{t-1}\odot r_t)W_{hs}+b_s]  \\
+    {h_t=z_t\odot s_t + h_{t-1}\odot (1-z_t)}\\
+    {y_t=W_{yh}h_t+b_y}
+\end{array}\right.</script><p><strong>GRU的反向传播：</strong><br>t时刻其它节点的梯度:</p>
+<script type="math/tex; mode=display">
+\left\{ \begin{array}{l}
+    \frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{hy}^T+\frac{\partial J}{\partial \tilde{r}_{t+1}}W_{hr}^T+ \frac{\partial J}{\partial \tilde{z}_{t+1}}W_{hz}^T+ \frac{\partial J}{\partial \tilde{s}_{t+1}}W_{hs}^T \odot  r_t + \frac{\partial J}{\partial \tilde{h}_{t+1}}\odot(1-z_t)\\
+\left.\begin{array}{l}
+    \frac{\partial J}{\partial s_t}=\frac{\partial J}{\partial h_t}\odot z_t\\
+    \frac{\partial J}{\partial z_t}=\frac{\partial J}{\partial h_t}\odot s_t + \frac{\partial J}{\partial h_t}\odot (-h_{t-1})  \\
+    \frac{\partial J}{\partial r_t}=\frac{\partial J}{\partial \tilde{s}_t}W_{hs}^T\odot h_{t-1} \\
+\end{array}\right\} \Rightarrow
+\left\{ \begin{array}{l}
+    \frac{\partial J}{\partial \tilde{s}_t}=\frac{\partial J}{\partial s_t}(1-s_t^2)\\
+    \frac{\partial J}{\partial \tilde{z}_t}=\frac{\partial J}{\partial z_t}z_t(1-z_t)  \\
+    \frac{\partial J}{\partial \tilde{r}_t}=\frac{\partial J}{\partial r_t}r_t(1-r_t) \\
+\end{array}\right. 
+\\
+    \frac{\partial J}{\partial x_t} = \frac{\partial J}{\partial \tilde{r}_t}W_{xr}^T+\frac{\partial J}{\partial \tilde{z}_t}W_{xz}^T+ \frac{\partial J}{\partial \tilde{s}_t}W_{xs}^T\\
+\end{array}\right.</script><p>对参数的梯度：</p>
+<script type="math/tex; mode=display">
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial W_{hy}} = h_t^T\frac{\partial J}{\partial y_t} \\
+    \frac{\partial J}{\partial W_{hs}} = (h_{t-1}\odot r_t)^T\frac{\partial J}{\partial \tilde{s}_{t}} \\
+    \frac{\partial J}{\partial W_{hz}} = h_{t-1}^T\frac{\partial J}{\partial \tilde{z}_{t}} \\
+    \frac{\partial J}{\partial W_{hr}} = h_{t-1}^T\frac{\partial J}{\partial \tilde{r}_{t}}
+\end{array} \right. 
+\left \{\begin{array}{l}
+    \frac{\partial J}{\partial W_{xs}} = x_t^T\frac{\partial J}{\partial \tilde{s}_{t}} \\
+    \frac{\partial J}{\partial W_{xz}} = x_t^T\frac{\partial J}{\partial \tilde{f}_{z}} \\
+    \frac{\partial J}{\partial W_{xr}} = x_t^T\frac{\partial J}{\partial \tilde{r}_{t}} 
+\end{array} \right.</script><h4 id="2-3-结合遗忘门与输入门的LSTM"><a href="#2-3-结合遗忘门与输入门的LSTM" class="headerlink" title="2.3 结合遗忘门与输入门的LSTM"></a>2.3 结合遗忘门与输入门的LSTM</h4><p>另一个变种把遗忘和输入门结合起来。同时确定要遗忘的信息和要添加的新信息，而不再是分开确定。当输入的时候才会遗忘，当遗忘旧信息的时候才会输入新数据。<br><img src="./images/lstm-6.jpg" alt><br>前向与反向算法与上述变种相同，这里不再做过多推导。</p>
+<blockquote>
+<p>参考资料：<a href="https://www.cnblogs.com/xuruilong100/p/8506949.html" target="_blank" rel="noopener">https://www.cnblogs.com/xuruilong100/p/8506949.html</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" class="post-title-link" itemprop="url">四张图彻底搞懂CNN反向传播算法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-18 23:02:52 / 修改时间：23:44:46" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="四张图彻底搞懂CNN反向传播算法"><a href="#四张图彻底搞懂CNN反向传播算法" class="headerlink" title="四张图彻底搞懂CNN反向传播算法"></a>四张图彻底搞懂CNN反向传播算法</h1><p>阅读本文之前，请首先阅读之前讲述的全连接层的反向传播算法详细推导过程： <a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a><br>已经了解反向传播算法请自动忽略。</p>
+<h2 id="1-卷积层的反向传播"><a href="#1-卷积层的反向传播" class="headerlink" title="1. 卷积层的反向传播"></a>1. 卷积层的反向传播</h2><p>直接上图：<br><img src="./images/cnn.png" alt><br>假设输入为一张单通道图像$x$，卷积核大小为$2\times 2$，输出为$y$。为了加速计算，首先将$x$按卷积核滑动顺序依次展开，如上图所示。其中，$\hat{x}$中的红色框代表$x$中的红色框展开后的结果，将$x$依次按照此方式展开，可得$\hat{x}$。同理可得$\hat{w}$，然后通过矩阵相乘可得输出$\hat{y}$（$\hat{y}$与$y$等价）。此时，已经将CNN转化为FC，反向传播算法与<a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a> 完全一致，这里不再做详细介绍。当输入图像有N个样本时，应该怎么算呢？</p>
+<p>当有$N$个样本，即batch=N时，前向与反向传播方式如下图所示：<br><img src="./images/cnn-batch.png" alt><br>其中，输入图像batch=3,使用2个$2\times 2\times 3$的卷积核，输出两张图像，如图所示。红色框、黄色框代表的是卷积核以及使用该卷积核得到的输出图像$y$。当输入图像为一个batch时，$x、w$的转化方式如上图，首先将输入图像与卷积核分别按单通道图像展开，然后将展开后的矩阵在行方向级联。此时，已经将CNN转化为了FC，反向传播算法与<a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a> 完全一致，这里不再做过多介绍。</p>
+<h2 id="2-Average-pooling的反向传播"><a href="#2-Average-pooling的反向传播" class="headerlink" title="2. Average pooling的反向传播"></a>2. Average pooling的反向传播</h2><p><img src="./images/average-pooling.png" alt><br>$\frac{\partial J}{\partial w}$不用求，因为$w$为常数。$\frac{\partial J}{\partial x<em>{ij}}=\Sigma \frac{\partial J}{\partial \hat{x}</em>{ij}}$</p>
+<h2 id="3-Max-pooling的反向传播"><a href="#3-Max-pooling的反向传播" class="headerlink" title="3. Max-pooling的反向传播"></a>3. Max-pooling的反向传播</h2><p><img src="./images/max-pooling.png" alt><br>遍历$\hat{x}$的每一行，找出此行最大值的索引$(i,j)$，然后将$\frac{\partial J}{\partial \hat{x}}$中索引为$(i,j)$的值设为$\frac{\partial J}{\partial \hat{y}}$对应行的值，将此行其余列的值设为0，如上图所示红框所示。假设$\hat{x}$中(1,1)处的值是第一行中最大的值，则将$\frac{\partial J}{\partial y<em>{11}}$赋值给$\frac{\partial J}{\partial \hat{x}}$中索引为$(1,1)$的位置。最后计算:$\frac{\partial J}{\partial x</em>{ij}}=\Sigma \frac{\partial J}{\partial \hat{x}_{ij}}$</p>
 
       
     </div>
@@ -767,287 +929,6 @@ A=U\Sigma V^T=\begin{pmatrix}
 <blockquote>
 <p>参考：<a href="https://zhuanlan.zhihu.com/p/29846048" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/29846048</a> </p>
 <p>参考：<a href="https://www.csuldw.com/2017/03/09/2017-03-09-svd/" target="_blank" rel="noopener">https://www.csuldw.com/2017/03/09/2017-03-09-svd/</a></p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/LSTM/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="chennan">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chenzhongyao's website">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/18/LSTM/" class="post-title-link" itemprop="url">LSTM前向传播与反向传播算法推导（非常详细）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-18 23:02:52 / 修改时间：23:45:31" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="LSTM前向传播与反向传播算法推导（非常详细）"><a href="#LSTM前向传播与反向传播算法推导（非常详细）" class="headerlink" title="LSTM前向传播与反向传播算法推导（非常详细）"></a>LSTM前向传播与反向传播算法推导（非常详细）</h2><h3 id="1-长短期记忆网络LSTM"><a href="#1-长短期记忆网络LSTM" class="headerlink" title="1.长短期记忆网络LSTM"></a>1.长短期记忆网络LSTM</h3><p>LSTM(Long short-term memory)通过刻意的设计来避免长期依赖问题，是一种特殊的RNN。长时间记住信息实际上是 LSTM 的默认行为，而不是需要努力学习的东西！</p>
-<p>所有递归神经网络都具有神经网络的链式重复模块。在标准的RNN中，这个重复模块具有非常简单的结构，例如只有单个tanh层，如下图所示。<br><img src="./images/lstm-rnn.jpg" alt><br>LSTM具有同样的结构，但是重复的模块拥有不同的结构，如下图所示。与RNN的单一神经网络层不同，这里有四个网络层，并且以一种非常特殊的方式进行交互。<br><img src="./images/lstm.jpg" alt></p>
-<h4 id="1-1-LSTM—遗忘门"><a href="#1-1-LSTM—遗忘门" class="headerlink" title="1.1 LSTM—遗忘门"></a>1.1 LSTM—遗忘门</h4><p><img src="./images/lstm-1.jpg" alt><br>LSTM 的第一步要决定从细胞状态中舍弃哪些信息。这一决定由所谓“遗忘门层”的 S 形网络层做出。它接收 $h<em>{t-1}$ 和 $x_t$，并且对细胞状态 $C</em>{t−1}$ 中的每一个数来说输出值都介于 0 和 1 之间。1 表示“完全接受这个”，0 表示“完全忽略这个”。</p>
-<h4 id="1-2-LSTM—输入门"><a href="#1-2-LSTM—输入门" class="headerlink" title="1.2 LSTM—输入门"></a>1.2 LSTM—输入门</h4><p><img src="./images/lstm-2.jpg" alt><br>下一步就是要确定需要在细胞状态中保存哪些新信息。这里分成两部分。第一部分，一个所谓“输入门层”的 S 形网络层确定哪些信息需要更新。第二部分，一个 tanh 形网络层创建一个新的备选值向量—— $\tilde{C}_t$，可以用来添加到细胞状态。在下一步中我们将上面的两部分结合起来，产生对状态的更新。</p>
-<h4 id="1-3-LSTM—细胞状态更新"><a href="#1-3-LSTM—细胞状态更新" class="headerlink" title="1.3 LSTM—细胞状态更新"></a>1.3 LSTM—细胞状态更新</h4><p><img src="./images/lstm-3.jpg" alt><br>现在更新旧的细胞状态 $C_{t−1}$ 更新到 $C_t$。先前的步骤已经决定要做什么，我们只需要照做就好。<br>我们对旧的状态乘以 $f_t$，用来忘记我们决定忘记的事。然后我们加上 $i_t\odot\tilde{C}_t$，这是新的候选值，根据我们对每个状态决定的更新值按比例进行缩放。</p>
-<h4 id="1-4-LSTM—输出门"><a href="#1-4-LSTM—输出门" class="headerlink" title="1.4 LSTM—输出门"></a>1.4 LSTM—输出门</h4><p><img src="./images/lstm-4.jpg" alt><br>最后，我们需要确定输出值。输出依赖于我们的细胞状态，但会是一个“过滤的”版本。首先我们运行 S 形网络层，用来确定细胞状态中的哪些部分可以输出。然后，我们把细胞状态输入 tanh（把数值调整到 −1 和 1 之间）再和 S 形网络层的输出值相乘，部这样我们就可以输出想要输出的分。</p>
-<h3 id="2-LSTM的变种以及前向、反向传播"><a href="#2-LSTM的变种以及前向、反向传播" class="headerlink" title="2. LSTM的变种以及前向、反向传播"></a>2. LSTM的变种以及前向、反向传播</h3><p>目前所描述的还只是一个相当一般化的 LSTM 网络。但并非所有 LSTM 网络都和之前描述的一样。事实上，几乎所有文章都会改进 LSTM 网络得到一个特定版本。差别是次要的，但有必要认识一下这些变种。</p>
-<h4 id="2-1-带有”窥视孔连接”的LSTM"><a href="#2-1-带有”窥视孔连接”的LSTM" class="headerlink" title="2.1 带有”窥视孔连接”的LSTM"></a>2.1 带有”窥视孔连接”的LSTM</h4><p>一个流行的 LSTM 变种由 Gers 和 Schmidhuber 提出，在 LSTM 的基础上添加了一个“窥视孔连接”，这意味着我们可以让门网络层输入细胞状态。<br><img src="./images/lstm-5.jpg" alt><br>上图中我们为所有门添加窥视孔，但许多论文只为部分门添加。</p>
-<p><strong>前向传播：</strong><br>在t时刻的前向传播公式为：</p>
-<script type="math/tex; mode=display">
-\left\{
-\begin{array}{l}
-    {i_t=\sigma(\tilde{i}_t)=\sigma(W_{xi}x_t+W_{hi}h_{t-1}+W_{ci}c_{t-1}+b_i)} \\
-    {f_t=\sigma(\tilde{f}_t)=\sigma(W_{xf}x_t+W_{hf}h_{t-1}+W_{cf}c_{t-1}+b_f) }\\
-    {g_t=\tanh(\tilde{g}_t)=\tanh(W_{xg}x_t+W_{hg}h_{t-1}+b_g)} \\
-    {o_t=\sigma(\tilde{o}_t)=\sigma(W_{xo}x_t+W_{ho}h_{t-1}+W_{co}c_{t}+b_o) }\\
-    {c_t=c_{t-1}\odot f_t+g_t\odot i_t}\\
-    {m_t=\tanh(c_t)}\\
-    {h_t=o_t\odot m_t}\\
-    {y_t=W_{yh}h_t+b_y}
-
-\end{array}\right.</script><p><strong>反向传播：</strong><br>为了更直观的推导反向传播算法，将上图转化为下图：<br><img src="./images/lstm-bp.png" alt><br>对反向传播算法了解不够透彻的，请参考<a href="https://zhuanlan.zhihu.com/p/79657669，这里有详细的推导过程，本文将直接使用https://zhuanlan.zhihu.com/p/79657669的结论。" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669，这里有详细的推导过程，本文将直接使用https://zhuanlan.zhihu.com/p/79657669的结论。</a></p>
-<p>已知：$\frac{\partial J}{\partial y<em>t},\frac{\partial J}{\partial c</em>{t+1}},\frac{\partial J}{\partial \tilde{o}<em>{t+1}},\frac{\partial J}{\partial \tilde{f}</em>{t+1}},\frac{\partial J}{\partial \tilde{i}<em>{t+1}},\frac{\partial J}{\partial \tilde{g}</em>{t+1}}$,求某个节点梯度时，首先应该找到该节点的输出节点，然后分别计算所有输出节点的梯度乘以输出节点对该节点的梯度，最后相加即可得到该节点的梯度。如计算$\frac{\partial J}{\partial h<em>t}$时，找到$h_t$节点的所有输出节点$y_t、 \tilde{o}</em>{t+1}、\tilde{f}<em>{t+1}、\tilde{i}</em>{t+1}、\tilde{g}<em>{t+1}$，然后分别计算输出节点的梯度(如$\frac{\partial J}{\partial y_t}$)与输出节点对$h_t$的梯度的乘积（如$\frac{\partial J}{\partial y_t}W</em>{yh}^T$），最后相加即可得到节点$h_t$的梯度:</p>
-<script type="math/tex; mode=display">
-\frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{yh}^T+\frac{\partial J}{\partial \tilde{o}_{t+1}}W_{ho}^T+\frac{\partial J}{\partial \tilde{f}_{t+1}}W_{hf}^T+\frac{\partial J}{\partial \tilde{i}_{t+1}}W_{hi}^T+\frac{\partial J}{\partial \tilde{g}_{t+1}}W_{hg}^T</script><p>同理可得t时刻其它节点的梯度：</p>
-<script type="math/tex; mode=display">
-\left \{\begin{array}{l}
-    \frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{yh}^T+\frac{\partial J}{\partial \tilde{o}_{t+1}}W_{ho}^T+\frac{\partial J}{\partial \tilde{f}_{t+1}}W_{hf}^T+\frac{\partial J}{\partial \tilde{i}_{t+1}}W_{hi}^T+\frac{\partial J}{\partial \tilde{g}_{t+1}}W_{hg}^T \\ \\
-    \frac{\partial J}{\partial m_t} = \frac{\partial J}{\partial h_t} \odot o_t \\ \\
-    \frac{\partial J}{\partial c_t} = \frac{\partial J}{\partial m_t}\frac{dm_t}{dc_t}+ \frac{\partial J}{\partial c_{t+1}}\odot f_{t+1} +\frac{\partial J}{\partial \tilde{f}_{t+1}}W_{cf}^T+\frac{\partial J}{\partial \tilde{i}_{t+1}}W_{ci}^T \\ \\
-    \left. \begin{array}{l}
-         \frac{\partial J}{\partial g_t} = \frac{\partial J}{\partial c_t}\odot i_t \\
-         \frac{\partial J}{\partial i_t} = \frac{\partial J}{\partial c_t} \odot g_t \\
-         \frac{\partial J}{\partial f_t} = \frac{\partial J}{\partial c_t} \odot c_{t-1} \\
-         \frac{\partial J}{\partial o_t} = \frac{\partial J}{\partial h_t} \odot m_t
-    \end{array} \right \} \Rightarrow \left\{ \begin{array}{l}
-        \frac{\partial J}{\partial \tilde{g}_t} = \frac{\partial J}{\partial g_t}(1-g_t^2) \\
-        \frac{\partial J}{\partial \tilde{i}_t} = \frac{\partial J}{\partial i_t}i_t(1-i_t) \\
-        \frac{\partial J}{\partial \tilde{f}_t} = \frac{\partial J}{\partial f_t}f_t(1-f_t) \\
-        \frac{\partial J}{\partial \tilde{o}_t} = \frac{\partial J}{\partial o_t}i_t(1-o_t) \\
-    \end{array}\right. \\ \\
-    \frac{\partial J}{\partial x_t} = \frac{\partial J}{\partial \tilde{o}_t}W_{xo}^T+\frac{\partial J}{\partial \tilde{f}_t}W_{xf}^T+ \frac{\partial J}{\partial \tilde{i}_t}W_{xi}^T+\frac{\partial J}{\partial \tilde{g}_t}W_{xg}^T\\
-\end{array}\right.</script><p>对参数的梯度：</p>
-<script type="math/tex; mode=display">
-\left \{\begin{array}{l}
-    \frac{\partial J}{\partial W_{ho}} = h_t^T\frac{\partial J}{\partial \tilde{o}_{t+1}} \\
-    \frac{\partial J}{\partial W_{hf}} = h_t^T\frac{\partial J}{\partial \tilde{f}_{t+1}} \\
-    \frac{\partial J}{\partial W_{hi}} = h_t^T\frac{\partial J}{\partial \tilde{i}_{t+1}} \\
-    \frac{\partial J}{\partial W_{hg}} = h_t^T\frac{\partial J}{\partial \tilde{g}_{t+1}}
-\end{array} \right. 
-
-\left \{\begin{array}{l}
-    \frac{\partial J}{\partial W_{yh}} = h_t^T\frac{\partial J}{\partial y_t} \\
-    \frac{\partial J}{\partial W_{cf}} = c_t^T\frac{\partial J}{\partial \tilde{f}_{t+1}} \\
-    \frac{\partial J}{\partial W_{ci}} = c_t^T\frac{\partial J}{\partial \tilde{i}_{t+1}} \\
-    \frac{\partial J}{\partial W_{co}} = c_t^T\frac{\partial J}{\partial \tilde{o}_{t}} 
-\end{array} \right. 
-
-\left \{\begin{array}{l}
-    \frac{\partial J}{\partial W_{xo}} = x_t^T\frac{\partial J}{\partial \tilde{o}_{t}} \\
-    \frac{\partial J}{\partial W_{xf}} = x_t^T\frac{\partial J}{\partial \tilde{f}_{t}} \\
-    \frac{\partial J}{\partial W_{xi}} = x_t^T\frac{\partial J}{\partial \tilde{i}_{t}} \\
-    \frac{\partial J}{\partial W_{xg}} = x_t^T\frac{\partial J}{\partial \tilde{g}_{t}} \\
-\end{array} \right.</script><h4 id="2-2-GRU"><a href="#2-2-GRU" class="headerlink" title="2.2 GRU"></a>2.2 GRU</h4><p>一个更有意思的 LSTM 变种称为 Gated Recurrent Unit（GRU），由 Cho 等人提出。LSTM通过三个门函数输入门、遗忘门和输出门分别控制输入值、记忆值和输出值。而GRU中只有两个门：更新门$z_t$和重置门$r_t$，如下图所示。更新门用于控制前一时刻的状态信息被带入到当前状态中的程度，更新门的值越大说明前一时刻的状态信息带入越多；重置门控制前一时刻状态有多少信息被写入到当前的候选集$\tilde{h}_t$上，重置门越小，前一状态的信息被写入的越少。这样做使得 GRU 比标准的 LSTM 模型更简单，因此正在变得流行起来。<br><img src="./images/lstm-7.jpg" alt><br>为了更加直观的推导反向传播公式，将上图转化为如下形式：<br><img src="./images/lstm-gru.png" alt><br><strong>GRU的前向传播：</strong> 在t时刻的前向传播公式为：</p>
-<script type="math/tex; mode=display">
-\left\{
-\begin{array}{l}
-    {r_t=\sigma(\tilde{r}_t)=\sigma(W_{xr}x_t+W_{hr}h_{t-1}+b_r)} \\
-    {z_t=\sigma(\tilde{z}_t)=\sigma(W_{xz}x_t+W_{hz}h_{t-1}+b_z) }\\
-    {s_t=\tanh(\tilde{s}_t)}=\tanh[W_{xs}x_t+(h_{t-1}\odot r_t)W_{hs}+b_s]  \\
-    {h_t=z_t\odot s_t + h_{t-1}\odot (1-z_t)}\\
-    {y_t=W_{yh}h_t+b_y}
-\end{array}\right.</script><p><strong>GRU的反向传播：</strong><br>t时刻其它节点的梯度:</p>
-<script type="math/tex; mode=display">
-\left\{ \begin{array}{l}
-    \frac{\partial J}{\partial h_t}=\frac{\partial J}{\partial y_t}W_{hy}^T+\frac{\partial J}{\partial \tilde{r}_{t+1}}W_{hr}^T+ \frac{\partial J}{\partial \tilde{z}_{t+1}}W_{hz}^T+ \frac{\partial J}{\partial \tilde{s}_{t+1}}W_{hs}^T \odot  r_t + \frac{\partial J}{\partial \tilde{h}_{t+1}}\odot(1-z_t)\\
-\left.\begin{array}{l}
-    \frac{\partial J}{\partial s_t}=\frac{\partial J}{\partial h_t}\odot z_t\\
-    \frac{\partial J}{\partial z_t}=\frac{\partial J}{\partial h_t}\odot s_t + \frac{\partial J}{\partial h_t}\odot (-h_{t-1})  \\
-    \frac{\partial J}{\partial r_t}=\frac{\partial J}{\partial \tilde{s}_t}W_{hs}^T\odot h_{t-1} \\
-\end{array}\right\} \Rightarrow
-\left\{ \begin{array}{l}
-    \frac{\partial J}{\partial \tilde{s}_t}=\frac{\partial J}{\partial s_t}(1-s_t^2)\\
-    \frac{\partial J}{\partial \tilde{z}_t}=\frac{\partial J}{\partial z_t}z_t(1-z_t)  \\
-    \frac{\partial J}{\partial \tilde{r}_t}=\frac{\partial J}{\partial r_t}r_t(1-r_t) \\
-\end{array}\right. 
-\\
-    \frac{\partial J}{\partial x_t} = \frac{\partial J}{\partial \tilde{r}_t}W_{xr}^T+\frac{\partial J}{\partial \tilde{z}_t}W_{xz}^T+ \frac{\partial J}{\partial \tilde{s}_t}W_{xs}^T\\
-\end{array}\right.</script><p>对参数的梯度：</p>
-<script type="math/tex; mode=display">
-\left \{\begin{array}{l}
-    \frac{\partial J}{\partial W_{hy}} = h_t^T\frac{\partial J}{\partial y_t} \\
-    \frac{\partial J}{\partial W_{hs}} = (h_{t-1}\odot r_t)^T\frac{\partial J}{\partial \tilde{s}_{t}} \\
-    \frac{\partial J}{\partial W_{hz}} = h_{t-1}^T\frac{\partial J}{\partial \tilde{z}_{t}} \\
-    \frac{\partial J}{\partial W_{hr}} = h_{t-1}^T\frac{\partial J}{\partial \tilde{r}_{t}}
-\end{array} \right. 
-\left \{\begin{array}{l}
-    \frac{\partial J}{\partial W_{xs}} = x_t^T\frac{\partial J}{\partial \tilde{s}_{t}} \\
-    \frac{\partial J}{\partial W_{xz}} = x_t^T\frac{\partial J}{\partial \tilde{f}_{z}} \\
-    \frac{\partial J}{\partial W_{xr}} = x_t^T\frac{\partial J}{\partial \tilde{r}_{t}} 
-\end{array} \right.</script><h4 id="2-3-结合遗忘门与输入门的LSTM"><a href="#2-3-结合遗忘门与输入门的LSTM" class="headerlink" title="2.3 结合遗忘门与输入门的LSTM"></a>2.3 结合遗忘门与输入门的LSTM</h4><p>另一个变种把遗忘和输入门结合起来。同时确定要遗忘的信息和要添加的新信息，而不再是分开确定。当输入的时候才会遗忘，当遗忘旧信息的时候才会输入新数据。<br><img src="./images/lstm-6.jpg" alt><br>前向与反向算法与上述变种相同，这里不再做过多推导。</p>
-<blockquote>
-<p>参考资料：<a href="https://www.cnblogs.com/xuruilong100/p/8506949.html" target="_blank" rel="noopener">https://www.cnblogs.com/xuruilong100/p/8506949.html</a></p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="chennan">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chenzhongyao's website">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/" class="post-title-link" itemprop="url">拉格朗日对偶性</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-18 23:02:52 / 修改时间：23:42:39" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="拉格朗日对偶性"><a href="#拉格朗日对偶性" class="headerlink" title="拉格朗日对偶性"></a>拉格朗日对偶性</h2><p>在约束最优化问题中，常常利用拉格朗日对偶性（Lagrange duaiity）将原始问题转化为对偶问题，通过解对偶问题而得到原始问题的解。该方法应用在许多统计学习方法中，如最大熵模型与支持向量机。</p>
-<h3 id="1-原始问题"><a href="#1-原始问题" class="headerlink" title="1.原始问题"></a><strong>1.原始问题</strong></h3><p>假设$f(x),c_i(x),h_j(x)$是定义在$\mathbf{R}^n$上的连续可微函数，考虑约束最优化问题：</p>
-<script type="math/tex; mode=display">
-\min_{x\in\mathbf{R}^n}f(x) \tag{1}</script><script type="math/tex; mode=display">
-s.t. \quad c_i(x)\leq0, i=1,2,...,k \tag{2}</script><script type="math/tex; mode=display">
-\qquad h_j(x)=0,j=1,2,...,l \tag{3}</script><p>称此约束最优化问题为原始最优化问题或原始问题。</p>
-<p>引入朗格朗日函数：</p>
-<script type="math/tex; mode=display">
-L(x,\alpha,\beta)=f(x)+\sum_{i=1}^{k}\alpha_ic_i(x)+\sum_{j=1}^{l}\beta_jh_j(x) \tag{4}</script><p>这里，$x=(x^{(1)},x^{(2)},…,x^{(n)})^T\in\mathbf{R}^n,\alpha_i,\beta_j$是朗格朗日乘子，$\alpha_i\geq0$。考虑$x$的函数：</p>
-<script type="math/tex; mode=display">
-\theta_P(x)=\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=\left\{\begin{matrix}
- & f(x), & x满足原始问题约束\\ 
- & +\infty &其他 
-\end{matrix}\right. \tag{5}</script><p>这里下标$P$表示原始问题。</p>
-<blockquote>
-<p><strong>公式5说明：</strong> </p>
-<p>假如给定某个$x$，如果$x$违反原始问题的约束条件，即存在某个$i$使得$c_i(x)&gt;0$或者存在某个$j$使得$h_j(x)\neq0$。当$c_i(x)&gt;0$且$h_j(x)\neq0$时，令$\alpha_i\rightarrow+\infin,\beta_jh_j(x)\rightarrow+\infin$,而其余各$\alpha_i,\beta_j$均取0，此时</p>
-<script type="math/tex; mode=display">
-\theta_P(x)=\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=+\infin</script><p>相反地，如果$x$满足约束条件式2和式3，则：</p>
-<script type="math/tex; mode=display">
-max(\sum_{i=1}^{k}\alpha_ic_i(x)+\sum_{j=1}^{l}\beta_jh_j(x))=0</script><p>所以</p>
-<script type="math/tex; mode=display">
-\theta_P(x)=\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=f(x)</script><p>因此，原始问题(式1~3)可以转化为：</p>
-<script type="math/tex; mode=display">
-\min_{x}\theta_P(x)=\min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta) \tag{6}</script><p>它是与原始问题等价的，即它们有相同的解。问题</p>
-<script type="math/tex; mode=display">\min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)</script><p>称为广义拉格朗日函数的极小极大问题。这样一来，就把原始最优化问题表示为广义拉格朗日函数的极小极大问题。为了方便，定义原始问题的最优解值为:</p>
-<script type="math/tex; mode=display">
-p^*=\min_x\theta_P(x) \tag{7}</script><h3 id="2-对偶问题"><a href="#2-对偶问题" class="headerlink" title="2.对偶问题"></a><strong>2.对偶问题</strong></h3><p>定义</p>
-<script type="math/tex; mode=display">
-\theta_D(\alpha,\beta)=\min_xL(x,\alpha,\beta) \tag{8}</script><p>再考虑极大化$\theta_D(\alpha,\beta)$，即</p>
-<script type="math/tex; mode=display">
-\max_{\alpha,\beta:\alpha_i\geq0}\theta_D(\alpha,\beta)=\max_{\alpha,\beta:\alpha_i\geq0}\min_xL(x,\alpha,\beta) \tag{9}</script><p>称为广义拉格朗日函数的极大极小问题，表示为约束最优化问题：</p>
-<script type="math/tex; mode=display">
-\max_{\alpha,\beta}\theta_D(\alpha,\beta)=\max_{\alpha,\beta}\min_xL(x,\alpha,\beta) \tag{10}</script><script type="math/tex; mode=display">
-s.t. \quad \alpha_i\geq0,i=1,2,...,k \tag{11}</script><p>称为原始问题的对偶问题，定义对偶问题的最优值为：</p>
-<script type="math/tex; mode=display">
-d^*=\max_{\alpha,\beta:\alpha_i\geq0}\theta_D(\alpha,\beta) \tag{12}</script><p>可以看出原始问题与对偶问题的变量并不相同，对于原始问题，它的变量是$x$，而对于对偶问题，它的变量是$\alpha,\beta$。这两个问题并不等价，有时可能相差甚远。可以理解为慢班中学习最好的学生都没有快班中学习最差的学生学习好(当然，这不一定是事实，只是一个比喻)。</p>
-<h3 id="3-原始问题与对偶问题的关系"><a href="#3-原始问题与对偶问题的关系" class="headerlink" title="3.原始问题与对偶问题的关系"></a><strong>3.原始问题与对偶问题的关系</strong></h3><p>对偶函数可以理解为给原始函数找了一个下界，在原始函数计算困难的时候，可以通过解对偶函数来得到一个近似的值。并且在函数满足一定条件的时候，对偶函数的解与原始函数的解是等价的。</p>
-</blockquote>
-<p><strong>定理1</strong> 若原始问题与对偶问题都有最优值，则</p>
-<script type="math/tex; mode=display">
-d^*=\max_{\alpha,\beta:\alpha_i\geq0}\min_xL(x,\alpha,\beta)\leq \min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=p^* \tag{13}</script><blockquote>
-<p>证明：对任意的$\alpha,\beta,x$,有</p>
-<script type="math/tex; mode=display">
-\theta_D(\alpha,\beta)=\min_xL(x,\alpha,\beta)\leq L(x,\alpha,\beta)\leq \max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=\theta_P(x)</script><p>即</p>
-<script type="math/tex; mode=display">
-\theta_D(\alpha,\beta)\leq  \theta_P(x) \tag{14}</script><p>由于原始问题与对偶问题都有最优值($\theta_D(\alpha,\beta)$可以理解为慢班中的学生，$\theta_P(x)$可以理解为快班中的学生，那么慢班中学习最好的学生都不一定有快班中学习最差的学生学习好），所以</p>
-<script type="math/tex; mode=display">
-\max_{\alpha,\beta:\alpha_i\geq0}\theta_D(\alpha,\beta)\leq \min_x\theta_P(x)</script><p>即</p>
-<script type="math/tex; mode=display">
-d^*=\max_{\alpha,\beta:\alpha_i\geq0}\min_xL(x,\alpha,\beta)\leq \min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=p^*</script><p>这个性质便是弱对偶性（ weak duality ）。弱对偶性对任何优化问题都成立，这似乎是显然的，因为这个下界并不严格，有时候甚至取到非常小，对原始问题的解没多大帮助。既有弱对偶性，那么便有强对偶性，强对偶性是指</p>
-<script type="math/tex; mode=display">
-d^* = p^*</script><p><strong>定理2</strong> 考虑原始问题式1~3和对偶问题式10~11，假设<font color="#0000FF"><strong>函数$f(x)$和$c_i(x)$是凸函数，$h_j(x)$是仿射函数；并且假设不等式约束$c_i(x)$是严格可行的，即存在$x$，对所有$i$有$c_i(x)&lt;0$</strong></font><font color="#FF0000"> (slater条件)</font>,则存在$x^<em>,\alpha^</em>,\beta^<em>$,使$x^</em>$是原始问题的解，$\alpha^<em>,\beta^</em>$是对偶问题的解，并且</p>
-<script type="math/tex; mode=display">
-p^*=d^*=L(x^*,\alpha^*,\beta^*) \tag{15}</script></blockquote>
-<p><strong>定理3</strong> 考虑原始问题式1~3和对偶问题式10~11，假设<strong>函数$f(x)$和$c_i(x)$是凸函数，$h_j(x)$是仿射函数；并且假设不等式约束$c_i(x)$是严格可行的，即存在$x$，对所有$i$有$c_i(x)&lt;0$</strong><font color="#FF0000"> (slater条件)</font>,则$x^<em>和\alpha^</em>,\beta^<em>$分别是原始问题和对偶问题的解的充分必要条件是$x^</em>,\alpha^<em>,\beta^</em>$满足下面的Karush-Kuhn-Tucker(KKT)条件：</p>
-<script type="math/tex; mode=display">\bigtriangledown_xL(x^*,\alpha^*,\beta^*)=0 \tag{16}</script><script type="math/tex; mode=display">\bigtriangledown_{\alpha}L(x^*,\alpha^*,\beta^*)=0 \tag{17}</script><script type="math/tex; mode=display">\bigtriangledown_{\beta}L(x^*,\alpha^*,\beta^*)=0 \tag{18}</script><script type="math/tex; mode=display">\alpha_i^*c_i(x^*)=0,\quad i=1,2,...,k \tag{19}</script><script type="math/tex; mode=display">c_i(x^*)\leq0,\quad i=1,2,...,k \tag{20}</script><script type="math/tex; mode=display">\alpha_i^*\geq0, \quad i=1,2,...,k \tag{21}</script><script type="math/tex; mode=display">h_j(x^*)=0, j=1,2,...,l \tag{22}</script><p>特别指出，式19称为KKT的对偶互补条件。由此条件可知:若$\alpha_i^<em>&gt;0$,则$c_i(x^</em>)=0$</p>
-<blockquote>
-<p>参考文献：</p>
-<p>拉格朗日对偶性：<a href="https://blog.csdn.net/qq_35144795/article/details/98495869" target="_blank" rel="noopener">https://blog.csdn.net/qq_35144795/article/details/98495869</a> \<br>李航《统计学习方法》</p>
 </blockquote>
 
       
@@ -1305,6 +1186,125 @@ b\mathbb{E}[X^2]-\mathbb{E}[XY]+\mathbb{E}[X]\mathbb{E}[Y]-b(\mathbb{E}[X])^2=0<
 </ul>
 </li>
 </ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/18/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6%E6%80%A7/" class="post-title-link" itemprop="url">拉格朗日对偶性</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-18 23:02:52 / 修改时间：23:42:39" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="拉格朗日对偶性"><a href="#拉格朗日对偶性" class="headerlink" title="拉格朗日对偶性"></a>拉格朗日对偶性</h2><p>在约束最优化问题中，常常利用拉格朗日对偶性（Lagrange duaiity）将原始问题转化为对偶问题，通过解对偶问题而得到原始问题的解。该方法应用在许多统计学习方法中，如最大熵模型与支持向量机。</p>
+<h3 id="1-原始问题"><a href="#1-原始问题" class="headerlink" title="1.原始问题"></a><strong>1.原始问题</strong></h3><p>假设$f(x),c_i(x),h_j(x)$是定义在$\mathbf{R}^n$上的连续可微函数，考虑约束最优化问题：</p>
+<script type="math/tex; mode=display">
+\min_{x\in\mathbf{R}^n}f(x) \tag{1}</script><script type="math/tex; mode=display">
+s.t. \quad c_i(x)\leq0, i=1,2,...,k \tag{2}</script><script type="math/tex; mode=display">
+\qquad h_j(x)=0,j=1,2,...,l \tag{3}</script><p>称此约束最优化问题为原始最优化问题或原始问题。</p>
+<p>引入朗格朗日函数：</p>
+<script type="math/tex; mode=display">
+L(x,\alpha,\beta)=f(x)+\sum_{i=1}^{k}\alpha_ic_i(x)+\sum_{j=1}^{l}\beta_jh_j(x) \tag{4}</script><p>这里，$x=(x^{(1)},x^{(2)},…,x^{(n)})^T\in\mathbf{R}^n,\alpha_i,\beta_j$是朗格朗日乘子，$\alpha_i\geq0$。考虑$x$的函数：</p>
+<script type="math/tex; mode=display">
+\theta_P(x)=\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=\left\{\begin{matrix}
+ & f(x), & x满足原始问题约束\\ 
+ & +\infty &其他 
+\end{matrix}\right. \tag{5}</script><p>这里下标$P$表示原始问题。</p>
+<blockquote>
+<p><strong>公式5说明：</strong> </p>
+<p>假如给定某个$x$，如果$x$违反原始问题的约束条件，即存在某个$i$使得$c_i(x)&gt;0$或者存在某个$j$使得$h_j(x)\neq0$。当$c_i(x)&gt;0$且$h_j(x)\neq0$时，令$\alpha_i\rightarrow+\infin,\beta_jh_j(x)\rightarrow+\infin$,而其余各$\alpha_i,\beta_j$均取0，此时</p>
+<script type="math/tex; mode=display">
+\theta_P(x)=\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=+\infin</script><p>相反地，如果$x$满足约束条件式2和式3，则：</p>
+<script type="math/tex; mode=display">
+max(\sum_{i=1}^{k}\alpha_ic_i(x)+\sum_{j=1}^{l}\beta_jh_j(x))=0</script><p>所以</p>
+<script type="math/tex; mode=display">
+\theta_P(x)=\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=f(x)</script><p>因此，原始问题(式1~3)可以转化为：</p>
+<script type="math/tex; mode=display">
+\min_{x}\theta_P(x)=\min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta) \tag{6}</script><p>它是与原始问题等价的，即它们有相同的解。问题</p>
+<script type="math/tex; mode=display">\min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)</script><p>称为广义拉格朗日函数的极小极大问题。这样一来，就把原始最优化问题表示为广义拉格朗日函数的极小极大问题。为了方便，定义原始问题的最优解值为:</p>
+<script type="math/tex; mode=display">
+p^*=\min_x\theta_P(x) \tag{7}</script><h3 id="2-对偶问题"><a href="#2-对偶问题" class="headerlink" title="2.对偶问题"></a><strong>2.对偶问题</strong></h3><p>定义</p>
+<script type="math/tex; mode=display">
+\theta_D(\alpha,\beta)=\min_xL(x,\alpha,\beta) \tag{8}</script><p>再考虑极大化$\theta_D(\alpha,\beta)$，即</p>
+<script type="math/tex; mode=display">
+\max_{\alpha,\beta:\alpha_i\geq0}\theta_D(\alpha,\beta)=\max_{\alpha,\beta:\alpha_i\geq0}\min_xL(x,\alpha,\beta) \tag{9}</script><p>称为广义拉格朗日函数的极大极小问题，表示为约束最优化问题：</p>
+<script type="math/tex; mode=display">
+\max_{\alpha,\beta}\theta_D(\alpha,\beta)=\max_{\alpha,\beta}\min_xL(x,\alpha,\beta) \tag{10}</script><script type="math/tex; mode=display">
+s.t. \quad \alpha_i\geq0,i=1,2,...,k \tag{11}</script><p>称为原始问题的对偶问题，定义对偶问题的最优值为：</p>
+<script type="math/tex; mode=display">
+d^*=\max_{\alpha,\beta:\alpha_i\geq0}\theta_D(\alpha,\beta) \tag{12}</script><p>可以看出原始问题与对偶问题的变量并不相同，对于原始问题，它的变量是$x$，而对于对偶问题，它的变量是$\alpha,\beta$。这两个问题并不等价，有时可能相差甚远。可以理解为慢班中学习最好的学生都没有快班中学习最差的学生学习好(当然，这不一定是事实，只是一个比喻)。</p>
+<h3 id="3-原始问题与对偶问题的关系"><a href="#3-原始问题与对偶问题的关系" class="headerlink" title="3.原始问题与对偶问题的关系"></a><strong>3.原始问题与对偶问题的关系</strong></h3><p>对偶函数可以理解为给原始函数找了一个下界，在原始函数计算困难的时候，可以通过解对偶函数来得到一个近似的值。并且在函数满足一定条件的时候，对偶函数的解与原始函数的解是等价的。</p>
+</blockquote>
+<p><strong>定理1</strong> 若原始问题与对偶问题都有最优值，则</p>
+<script type="math/tex; mode=display">
+d^*=\max_{\alpha,\beta:\alpha_i\geq0}\min_xL(x,\alpha,\beta)\leq \min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=p^* \tag{13}</script><blockquote>
+<p>证明：对任意的$\alpha,\beta,x$,有</p>
+<script type="math/tex; mode=display">
+\theta_D(\alpha,\beta)=\min_xL(x,\alpha,\beta)\leq L(x,\alpha,\beta)\leq \max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=\theta_P(x)</script><p>即</p>
+<script type="math/tex; mode=display">
+\theta_D(\alpha,\beta)\leq  \theta_P(x) \tag{14}</script><p>由于原始问题与对偶问题都有最优值($\theta_D(\alpha,\beta)$可以理解为慢班中的学生，$\theta_P(x)$可以理解为快班中的学生，那么慢班中学习最好的学生都不一定有快班中学习最差的学生学习好），所以</p>
+<script type="math/tex; mode=display">
+\max_{\alpha,\beta:\alpha_i\geq0}\theta_D(\alpha,\beta)\leq \min_x\theta_P(x)</script><p>即</p>
+<script type="math/tex; mode=display">
+d^*=\max_{\alpha,\beta:\alpha_i\geq0}\min_xL(x,\alpha,\beta)\leq \min_{x}\max_{\alpha,\beta:\alpha_i\geq0}L(x,\alpha,\beta)=p^*</script><p>这个性质便是弱对偶性（ weak duality ）。弱对偶性对任何优化问题都成立，这似乎是显然的，因为这个下界并不严格，有时候甚至取到非常小，对原始问题的解没多大帮助。既有弱对偶性，那么便有强对偶性，强对偶性是指</p>
+<script type="math/tex; mode=display">
+d^* = p^*</script><p><strong>定理2</strong> 考虑原始问题式1~3和对偶问题式10~11，假设<font color="#0000FF"><strong>函数$f(x)$和$c_i(x)$是凸函数，$h_j(x)$是仿射函数；并且假设不等式约束$c_i(x)$是严格可行的，即存在$x$，对所有$i$有$c_i(x)&lt;0$</strong></font><font color="#FF0000"> (slater条件)</font>,则存在$x^<em>,\alpha^</em>,\beta^<em>$,使$x^</em>$是原始问题的解，$\alpha^<em>,\beta^</em>$是对偶问题的解，并且</p>
+<script type="math/tex; mode=display">
+p^*=d^*=L(x^*,\alpha^*,\beta^*) \tag{15}</script></blockquote>
+<p><strong>定理3</strong> 考虑原始问题式1~3和对偶问题式10~11，假设<strong>函数$f(x)$和$c_i(x)$是凸函数，$h_j(x)$是仿射函数；并且假设不等式约束$c_i(x)$是严格可行的，即存在$x$，对所有$i$有$c_i(x)&lt;0$</strong><font color="#FF0000"> (slater条件)</font>,则$x^<em>和\alpha^</em>,\beta^<em>$分别是原始问题和对偶问题的解的充分必要条件是$x^</em>,\alpha^<em>,\beta^</em>$满足下面的Karush-Kuhn-Tucker(KKT)条件：</p>
+<script type="math/tex; mode=display">\bigtriangledown_xL(x^*,\alpha^*,\beta^*)=0 \tag{16}</script><script type="math/tex; mode=display">\bigtriangledown_{\alpha}L(x^*,\alpha^*,\beta^*)=0 \tag{17}</script><script type="math/tex; mode=display">\bigtriangledown_{\beta}L(x^*,\alpha^*,\beta^*)=0 \tag{18}</script><script type="math/tex; mode=display">\alpha_i^*c_i(x^*)=0,\quad i=1,2,...,k \tag{19}</script><script type="math/tex; mode=display">c_i(x^*)\leq0,\quad i=1,2,...,k \tag{20}</script><script type="math/tex; mode=display">\alpha_i^*\geq0, \quad i=1,2,...,k \tag{21}</script><script type="math/tex; mode=display">h_j(x^*)=0, j=1,2,...,l \tag{22}</script><p>特别指出，式19称为KKT的对偶互补条件。由此条件可知:若$\alpha_i^<em>&gt;0$,则$c_i(x^</em>)=0$</p>
+<blockquote>
+<p>参考文献：</p>
+<p>拉格朗日对偶性：<a href="https://blog.csdn.net/qq_35144795/article/details/98495869" target="_blank" rel="noopener">https://blog.csdn.net/qq_35144795/article/details/98495869</a> \<br>李航《统计学习方法》</p>
+</blockquote>
 
       
     </div>
