@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"chenzhongyao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="深度学习中的模型优化随机梯度下降Batch Gradient Descent(BGD)BGD在训练中,每一步迭代都是用训练集中的所有数据,也就是说,利用现有参数对训练集中的每一个输入生成一个估计输出,然后跟实际输出比较,统计所有误差,求平均以后得到平均误差,并以此作为更新参数的依据.  优点: 由于每一步都利用了训练集中的所有数据,因此当损失函数达到最小值以后,能够保证此时计算出的梯度为0,换句话">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习中的模型优化">
+<meta property="og:url" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="chenzhongyao&#39;s website">
+<meta property="og:description" content="深度学习中的模型优化随机梯度下降Batch Gradient Descent(BGD)BGD在训练中,每一步迭代都是用训练集中的所有数据,也就是说,利用现有参数对训练集中的每一个输入生成一个估计输出,然后跟实际输出比较,统计所有误差,求平均以后得到平均误差,并以此作为更新参数的依据.  优点: 由于每一步都利用了训练集中的所有数据,因此当损失函数达到最小值以后,能够保证此时计算出的梯度为0,换句话">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/images/SGD%E4%B8%8EBGD.png">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/images/momentum.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/images/momentum.gif">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/images/nesterov.png">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/images/nesterov.bmp">
+<meta property="article:published_time" content="2020-06-18T15:02:52.000Z">
+<meta property="article:modified_time" content="2020-06-20T12:12:21.557Z">
+<meta property="article:author" content="chennan">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/images/SGD%E4%B8%8EBGD.png">
+
+<link rel="canonical" href="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深度学习中的模型优化 | chenzhongyao's website</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">chenzhongyao's website</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度学习中的模型优化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-18 23:02:52" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-20 20:12:21" itemprop="dateModified" datetime="2020-06-20T20:12:21+08:00">2020-06-20</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="深度学习中的模型优化"><a href="#深度学习中的模型优化" class="headerlink" title="深度学习中的模型优化"></a>深度学习中的模型优化</h1><h2 id="随机梯度下降"><a href="#随机梯度下降" class="headerlink" title="随机梯度下降"></a>随机梯度下降</h2><h3 id="Batch-Gradient-Descent-BGD"><a href="#Batch-Gradient-Descent-BGD" class="headerlink" title="Batch Gradient Descent(BGD)"></a>Batch Gradient Descent(BGD)</h3><p>BGD在训练中,每一步迭代都是用训练集中的所有数据,也就是说,利用现有参数对训练集中的每一个输入生成一个估计输出,然后跟实际输出比较,统计所有误差,求平均以后得到平均误差,并以此作为更新参数的依据.</p>
+<ul>
+<li><strong>优点:</strong> 由于每一步都利用了训练集中的所有数据,因此当损失函数达到最小值以后,能够保证此时计算出的梯度为0,换句话说,就是能够收敛(曲线比较平滑),因此,使用BGD时不需要逐渐降低学习率.</li>
+<li><strong>缺点:</strong> 由于每一步都要用到所有训练数据,因此随着数据集的增大,运行速度会越来越慢.<h3 id="SGD与MBGD"><a href="#SGD与MBGD" class="headerlink" title="SGD与MBGD"></a>SGD与MBGD</h3>MBGD是指在训练中,每次使用小批量(一个小批量训练m个样本)的随机采样进行梯度下降.训练方法与BGD一样,只是BGD最后对训练集的所有样本取平均,而MBGD只对小批量的m个样本取平均.SGD是指在训练中每次仅使用一个样本.MBGD与SGD统称为SGD.因为小批量不能代表整个训练集,使得梯度估计引入噪声源,因此SGD并不是每次迭代都向着整体最优化方向.虽然SGD包含一定的随机性(表现为损失函数的震荡),但是从期望来看,它是等于正确的导数的(表现为损失函数有减小的趋势).</li>
+<li><strong>优点:</strong> 训练速度比较快</li>
+<li><strong>缺点:</strong> 在样本数量较大的情况下,可能只用到了其中一部分数据就完成了训练,得到的只是局部最优解.另外,小批量样本的噪声较大,所以每次执行梯度下降,并不一定总是朝着最优的方向前进.<br><img src="./images/SGD与BGD.png" alt><h3 id="参数更新"><a href="#参数更新" class="headerlink" title="参数更新"></a>参数更新</h3><script type="math/tex; mode=display">\left \{
+\begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}\right) } \\ {\boldsymbol{\theta}_{t} =\boldsymbol{\theta}_{t-1}+\boldsymbol{v}_{t}}\end{array} \right.</script>其中，$\eta$代表学习率，$\theta<em>t$表示$t$时刻的参数，$\triangledown </em>\theta J(\theta_t)$代表参数$\theta$在$t$时刻的导数，$v_t$代表参数的更新速度。<h2 id="Momentum"><a href="#Momentum" class="headerlink" title="Momentum"></a>Momentum</h2>在训练中，采取的策略与SGD一样，不同的是学习率的更新方式。动量的参数更新方式为：<script type="math/tex; mode=display">\left \{
+\begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}\right)+\alpha \boldsymbol{v}_{t-1}} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script>$\alpha$一般取值0.9.</li>
+</ul>
+<p>直观理解为：<br><img src="./images/momentum.jpg" alt><br>动量方法旨在加速学习（加快梯度的下降速度），特别是处理高曲率、小但一致的梯度，或是带噪声的梯度。动量算法累积了之前梯度指数级衰减的移动平均，并且继续沿该方向移动。</p>
+<table align="center">
+    <tr>
+        <td><center><img height="200" width="300" src="./images/momentum.gif"></center></td>
+    </tr>
+</table>
+
+<p>动量SGD算法引入$\alpha \boldsymbol{v}_{t-1}$使每一次的参数更新方向不仅仅取决于当前位置的梯度，还受到上一次参数更新方向的影响（如上图所示）。在某一维度上，当梯度方向不变时，更新速度变快，当梯度方向有所改变时，更新速度变慢，从而加快收敛速度，减少震荡。</p>
+<p>带有动量的SGD的优点：</p>
+<ul>
+<li>加快收敛速度</li>
+<li>抑制梯度下降时上下震荡的情况</li>
+<li>通过局部极小点</li>
+</ul>
+<blockquote>
+<p>分析：假设任意时刻参数的梯度均为$g<em>t=\triangledown</em>\theta J\left(\boldsymbol{\theta}_{t}\right)=g_0$，则使用SGD时,$t$时刻的梯度$g^{SGD}_t=g_0$,Momentum算法的梯度$g^{mom}_t=(\alpha^{t-1}+\alpha^{t-2}+…+\alpha+1)g_0=\frac{1-\alpha^{t}}{1-\alpha}g_0$.当$t\rightarrow +\infty$，因$\alpha&lt;1$,所以$\alpha^t\rightarrow 0$,所以$g_t^{mom}\rightarrow \frac{1}{1-\alpha}g_0$,当$\alpha=0.9$时，Momentum更新速度是SGD的10倍</p>
+</blockquote>
+<h2 id="Nesterov-NAG"><a href="#Nesterov-NAG" class="headerlink" title="Nesterov(NAG)"></a>Nesterov(NAG)</h2><p>Nesterov动量是Momentum的变种，即在计算参数梯度之前，前瞻一步，超前一个动量单位处：$\theta<em>t + \gamma v</em>{t-1}$,Nesterov动量可以理解为往Momentum动量中加入了一个校正因子。参数更新公式为：</p>
+<script type="math/tex; mode=display">\left \{
+\begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}+\gamma \boldsymbol{v}_{t-1}\right)+\alpha \boldsymbol{v}_{t-1}} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>Momentum动量与Nesterov动量的对比如下图所示，其中$\eta \triangledown<em>1$代表A节点 ($\theta_t$)的梯度，$\eta \triangledown_2$代表B节点($\theta</em>{t}+\gamma \boldsymbol{v}<em>{t-1}$的梯度)，灰色实线代表$t-1$时刻的速度$\alpha v</em>{t-1}$.</p>
+<table align="center">
+    <tr>
+        <td><center><img height="230" width="250" src="./images/nesterov.png"></center></td>
+        <td><center><img height="230" width="300" src="./images/nesterov.bmp"></center></td>
+    </tr>
+</table>
+
+<blockquote>
+<p>注意：图中的$\eta \triangledown_1以及\eta \triangledown_2$应该为$-\eta \triangledown_1$、$-\eta \triangledown_2$因为梯度方向是增长速度最快的方向，而图中所示为梯度的反方向，所以应该为$-\eta \triangledown_1$、$-\eta \triangledown_2$.</p>
+</blockquote>
+<p>Nesterov动量相对于Momentum多了一个本次梯度相对上次梯度的变化量，这个变化量本质上是对目标函数二阶导的近似，由于令了二阶导的信息，Nesterov动量算法才会比Momentum具有更快的收敛速度。</p>
+<h2 id="AdaGrad"><a href="#AdaGrad" class="headerlink" title="AdaGrad"></a>AdaGrad</h2><p>AdaGrad其实是对学习率进行了约束，AdaGrad独立地适应所有模型参数的学习率，缩放每个参数反比于其它所有梯度历史平方值总和的平方根。损失较大偏导的参数相应地拥有一个快速下降的学习率，而较小偏导的参数在学习率上有相对较小的下降。净效果是在参数空间中更为平缓的倾斜方向会取得更大的进步。参数更新公式为：</p>
+<script type="math/tex; mode=display">\left \{
+\begin{array}{l}{
+    g_t=\triangledown_\theta J(\theta_t)}\\
+    {n_t=n_{t-1}+g_t^2} \\
+    {\boldsymbol{v}_{t}=-\frac{\eta}{\sqrt{n_t+\epsilon}}g_t } \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>其中，$\epsilon$是个很小的数，用来保证分母非0。对$𝑔_𝑡$从1到t进行一个递推形成一个约束项regularizer——-$\frac{1}{\sqrt{n_t+\epsilon}}$。</p>
+<p><strong>优点：</strong><br>前期$g_t$较小的时候， $\frac{1}{\sqrt{n_t+\epsilon}}$较大，梯度更新较大，可以解决SGD中学习率一直不变的问题;后期$g_t$较大的时候，$\frac{1}{\sqrt{n_t+\epsilon}}$较小，能够约束梯度.适合处理稀疏梯度.</p>
+<p><strong>缺点：</strong><br>由公式可以看出，AdaGrad依赖于人工设置一个全局学习率𝜂，当$\eta$设置过大时，使regularizer过于敏感，对梯度的调节太大。在中后期，分母上梯度平方的累加将会越来越大，gradient→0，网络的更新能力会越来越弱，学习率会变的极小，使得训练提前结束。为了解决这样的问题，又提出了Adadelta算法。</p>
+<h2 id="Adadelta"><a href="#Adadelta" class="headerlink" title="Adadelta"></a>Adadelta</h2><p>Adadelta是对AdaGrad的扩展，AgaGrad会累加所有历史梯度的平方，而Adadelta只累加固定大小的项，并且也不直接存储这些项，仅仅是近似计算对应的平均值。参数更新方式为：</p>
+<script type="math/tex; mode=display">\left \{
+\begin{array}{l}{
+    g_t=\triangledown_\theta J(\theta_t)}\\
+    {n_t=\gamma n_{t-1}+(1-\gamma)g_t^2}\\
+    {\boldsymbol{v}_{t}=-\frac{\eta}{\sqrt{n_t+\epsilon}}g_t } \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>但是，此时Adadelta其实仍然依赖于全局学习率，因此，又做了一些处理，新的参数更新方式为：</p>
+<script type="math/tex; mode=display">\left \{
+\begin{array}{l}{
+    g_t=\triangledown_\theta J(\theta_t)}\\
+    {E|g^2|_t=\rho \times E|g^2|_{t-1}+(1-\rho)\times g_t^2}\\
+    {v_t=-\frac{\sqrt{\sum_{r=1}^{t-1}}v_r}{\sqrt{E|t^2|_t+\epsilon}}g_t}\\
+    {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>新的参数更新方式，不依赖于全局学习率，并且，训练初中期，加速效果不错，很快；训练后期，反复在局部最小值附近抖动。</p>
+<h2 id="RMSprop"><a href="#RMSprop" class="headerlink" title="RMSprop"></a>RMSprop</h2><p>RMSprop可以算作Adadelta的一个特例：当$\rho=0.5$时，$E|g^2|<em>t=\rho \times E|g^2|</em>{t-1}+(1-\rho)\times g_t^2$就变为了求梯度平方和的平均数。</p>
+<p>如果再求根的话，就变成了RMS(均方根)：$RMS|g|_t=\sqrt{E|g^2|_t+\epsilon}$。RMSprop的参数更新方式为：</p>
+<script type="math/tex; mode=display">\left \{
+\begin{array}{l}{
+    g_t=\triangledown_\theta J(\theta_t)}\\
+    {E|g^2|_t=\rho \times E|g^2|_{t-1}+(1-\rho)\times g_t^2} \\
+    {RMS|g|_t=\sqrt{E|g^2|_t+\epsilon}}\\
+    {\boldsymbol{v}_{t}=-\frac{\eta}{RMS|g|_t }g_t} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p><strong>特点：</strong> (1)RMSprop依然依赖于全局学习率;(2)RMSprop算是Adagrad的一种发展，和Adadelta的变体，效果趋于二者之间;(3)适合处理非平稳目标 - 对于RNN效果很好</p>
+<h2 id="Adam"><a href="#Adam" class="headerlink" title="Adam"></a>Adam</h2><p>Adam优化器结合了AdaGrad与RMSProp两种算法的优点。对梯度的一阶距估计$m_t$（即梯度的均值）和二阶距估计$n_t$（即梯度的未中心化的方差）进行综合考虑，计算出更新步长。更新方式为：</p>
+<script type="math/tex; mode=display">\left \{
+\begin{array}{l}{
+    g_t=\triangledown_\theta J(\theta_t)}\\
+    {m_t=\beta_1m_{t-1}+(1-\beta_1)g_t}\\
+    {v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2}\\
+    {\hat{m_t}=\frac{m_t}{1-\beta_1^t}}\\
+    {\hat{v}_t=\frac{v_t}{1-\beta_2^t}}\\
+    {\boldsymbol{\theta}_{t+1}=\boldsymbol{\theta}_{t}-\frac{\eta}{\sqrt{\hat{v}_t+\epsilon}}\hat{m}_t}\\
+\end{array} \right.</script><blockquote>
+<p>注：所有的$t$均表示$t$时刻。$m_t$、$n_t$分别是梯度的一阶距估计和二阶距估计，可以看做是对期望$E|g_t|、E|g_t^2|$的估计；$\hat{m}_t、\hat{n}_t$是对$m_t$、$n_t$的校正，这样可以近似为对期望的无偏估计。</p>
+</blockquote>
+<p><strong>优点：</strong></p>
+<ol>
+<li>实现简单，计算高效，对内存需求少</li>
+<li>参数的更新不受梯度的伸缩变换影响</li>
+<li>超参数具有很好的解释性，且通常无需调整或仅需很少的微调</li>
+<li>更新的步长能够被限制在大致的范围内（初始学习率）</li>
+<li>能自然地实现步长退火过程（自动调整学习率）</li>
+<li>很适合应用于大规模的数据及参数的场景</li>
+<li>适用于不稳定目标函数</li>
+<li>适用于梯度稀疏或梯度存在很大噪声的问题</li>
+</ol>
+<blockquote>
+<p>参考资料：</p>
+<p><a href="https://zhuanlan.zhihu.com/p/73264637" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/73264637</a> </p>
+<p><a href="https://zhuanlan.zhihu.com/p/60088231" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/60088231</a></p>
+<p><a href="https://blog.csdn.net/u012759136/article/details/52302426" target="_blank" rel="noopener">https://blog.csdn.net/u012759136/article/details/52302426</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/18/%E9%82%A3%E4%BA%9B%E5%B9%B4%EF%BC%8C%E5%88%B7%E8%BF%87%E7%9A%84%E5%89%91%E6%8C%87offer/" rel="prev" title="那些年，刷过的剑指offer">
+      <i class="fa fa-chevron-left"></i> 那些年，刷过的剑指offer
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/18/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E6%8E%A8%E5%AF%BC/" rel="next" title="反向传播算法推导">
+      反向传播算法推导 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#深度学习中的模型优化"><span class="nav-number">1.</span> <span class="nav-text">深度学习中的模型优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#随机梯度下降"><span class="nav-number">1.1.</span> <span class="nav-text">随机梯度下降</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Batch-Gradient-Descent-BGD"><span class="nav-number">1.1.1.</span> <span class="nav-text">Batch Gradient Descent(BGD)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SGD与MBGD"><span class="nav-number">1.1.2.</span> <span class="nav-text">SGD与MBGD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数更新"><span class="nav-number">1.1.3.</span> <span class="nav-text">参数更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Momentum"><span class="nav-number">1.2.</span> <span class="nav-text">Momentum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nesterov-NAG"><span class="nav-number">1.3.</span> <span class="nav-text">Nesterov(NAG)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AdaGrad"><span class="nav-number">1.4.</span> <span class="nav-text">AdaGrad</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adadelta"><span class="nav-number">1.5.</span> <span class="nav-text">Adadelta</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RMSprop"><span class="nav-number">1.6.</span> <span class="nav-text">RMSprop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adam"><span class="nav-number">1.7.</span> <span class="nav-text">Adam</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chennan</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chennan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">72k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:05</span>
+</div>
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+		Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+		year - 作为date对象的年份，为4位年份值
+		month - 0-11之间的整数，做为date对象的月份
+		day - 1-31之间的整数，做为date对象的天数
+		hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+		minutes - 0-59之间的整数，做为date对象的分钟数
+		seconds - 0-59之间的整数，做为date对象的秒数
+		microseconds - 0-999之间的整数，做为date对象的毫秒数
+        */
+		var t1 = Date.UTC(2020,06,25,08,00,00); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+<!--添加运行时间END-->
+
+
+<!-- 新增访客统计代码 -->
+<div class="busuanzi-count">
+    <script async="" src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      访问量 <span class="busuanzi-value" id="busuanzi_value_site_uv"></span> 次
+      <span class="post-meta-divider">|</span>
+    </span>
+    <div class="powered-by"></div>
+    <span class="site-uv">
+      <i class="fa fa-eye"></i>
+      总访客 <span class="busuanzi-value" id="busuanzi_value_site_pv"></span> 人
+    </span>
+    <!--
+    <span class="site-pv">
+      <i class="fa fa-pencil"></i>
+      本站博客共 <span class="post-count">26k</span> 字
+    </span>
+    -->
+</div>
+<!-- 新增访客统计代码 END-->
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
