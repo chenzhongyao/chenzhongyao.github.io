@@ -524,89 +524,6 @@ S=&f(h)
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="chennan">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chenzhongyao's website">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" class="post-title-link" itemprop="url">四张图彻底搞懂CNN反向传播算法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-18 23:02:52" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-20 20:11:59" itemprop="dateModified" datetime="2020-06-20T20:11:59+08:00">2020-06-20</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="四张图彻底搞懂CNN反向传播算法"><a href="#四张图彻底搞懂CNN反向传播算法" class="headerlink" title="四张图彻底搞懂CNN反向传播算法"></a>四张图彻底搞懂CNN反向传播算法</h1><p>阅读本文之前，请首先阅读之前讲述的全连接层的反向传播算法详细推导过程： <a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a><br>已经了解反向传播算法请自动忽略。</p>
-<h2 id="1-卷积层的反向传播"><a href="#1-卷积层的反向传播" class="headerlink" title="1. 卷积层的反向传播"></a>1. 卷积层的反向传播</h2><p>直接上图：<br><img src="./images/cnn.png" alt><br>假设输入为一张单通道图像$x$，卷积核大小为$2\times 2$，输出为$y$。为了加速计算，首先将$x$按卷积核滑动顺序依次展开，如上图所示。其中，$\hat{x}$中的红色框代表$x$中的红色框展开后的结果，将$x$依次按照此方式展开，可得$\hat{x}$。同理可得$\hat{w}$，然后通过矩阵相乘可得输出$\hat{y}$（$\hat{y}$与$y$等价）。此时，已经将CNN转化为FC，反向传播算法与<a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a> 完全一致，这里不再做详细介绍。当输入图像有N个样本时，应该怎么算呢？</p>
-<p>当有$N$个样本，即batch=N时，前向与反向传播方式如下图所示：<br><img src="./images/cnn-batch.png" alt><br>其中，输入图像batch=3,使用2个$2\times 2\times 3$的卷积核，输出两张图像，如图所示。红色框、黄色框代表的是卷积核以及使用该卷积核得到的输出图像$y$。当输入图像为一个batch时，$x、w$的转化方式如上图，首先将输入图像与卷积核分别按单通道图像展开，然后将展开后的矩阵在行方向级联。此时，已经将CNN转化为了FC，反向传播算法与<a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a> 完全一致，这里不再做过多介绍。</p>
-<h2 id="2-Average-pooling的反向传播"><a href="#2-Average-pooling的反向传播" class="headerlink" title="2. Average pooling的反向传播"></a>2. Average pooling的反向传播</h2><p><img src="./images/average-pooling.png" alt><br>$\frac{\partial J}{\partial w}$不用求，因为$w$为常数。$\frac{\partial J}{\partial x<em>{ij}}=\Sigma \frac{\partial J}{\partial \hat{x}</em>{ij}}$</p>
-<h2 id="3-Max-pooling的反向传播"><a href="#3-Max-pooling的反向传播" class="headerlink" title="3. Max-pooling的反向传播"></a>3. Max-pooling的反向传播</h2><p><img src="./images/max-pooling.png" alt><br>遍历$\hat{x}$的每一行，找出此行最大值的索引$(i,j)$，然后将$\frac{\partial J}{\partial \hat{x}}$中索引为$(i,j)$的值设为$\frac{\partial J}{\partial \hat{y}}$对应行的值，将此行其余列的值设为0，如上图所示红框所示。假设$\hat{x}$中(1,1)处的值是第一行中最大的值，则将$\frac{\partial J}{\partial y<em>{11}}$赋值给$\frac{\partial J}{\partial \hat{x}}$中索引为$(1,1)$的位置。最后计算:$\frac{\partial J}{\partial x</em>{ij}}=\Sigma \frac{\partial J}{\partial \hat{x}_{ij}}$</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/LDA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -984,6 +901,89 @@ S_{w}^{-1}{S_{b}  u=\lambda u}
 <blockquote>
 <p>参考资料：<a href="https://www.cnblogs.com/xuruilong100/p/8506949.html" target="_blank" rel="noopener">https://www.cnblogs.com/xuruilong100/p/8506949.html</a></p>
 </blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" class="post-title-link" itemprop="url">四张图彻底搞懂CNN反向传播算法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-18 23:02:52" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-20 20:11:59" itemprop="dateModified" datetime="2020-06-20T20:11:59+08:00">2020-06-20</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="四张图彻底搞懂CNN反向传播算法"><a href="#四张图彻底搞懂CNN反向传播算法" class="headerlink" title="四张图彻底搞懂CNN反向传播算法"></a>四张图彻底搞懂CNN反向传播算法</h1><p>阅读本文之前，请首先阅读之前讲述的全连接层的反向传播算法详细推导过程： <a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a><br>已经了解反向传播算法请自动忽略。</p>
+<h2 id="1-卷积层的反向传播"><a href="#1-卷积层的反向传播" class="headerlink" title="1. 卷积层的反向传播"></a>1. 卷积层的反向传播</h2><p>直接上图：<br><img src="./images/cnn.png" alt><br>假设输入为一张单通道图像$x$，卷积核大小为$2\times 2$，输出为$y$。为了加速计算，首先将$x$按卷积核滑动顺序依次展开，如上图所示。其中，$\hat{x}$中的红色框代表$x$中的红色框展开后的结果，将$x$依次按照此方式展开，可得$\hat{x}$。同理可得$\hat{w}$，然后通过矩阵相乘可得输出$\hat{y}$（$\hat{y}$与$y$等价）。此时，已经将CNN转化为FC，反向传播算法与<a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a> 完全一致，这里不再做详细介绍。当输入图像有N个样本时，应该怎么算呢？</p>
+<p>当有$N$个样本，即batch=N时，前向与反向传播方式如下图所示：<br><img src="./images/cnn-batch.png" alt><br>其中，输入图像batch=3,使用2个$2\times 2\times 3$的卷积核，输出两张图像，如图所示。红色框、黄色框代表的是卷积核以及使用该卷积核得到的输出图像$y$。当输入图像为一个batch时，$x、w$的转化方式如上图，首先将输入图像与卷积核分别按单通道图像展开，然后将展开后的矩阵在行方向级联。此时，已经将CNN转化为了FC，反向传播算法与<a href="https://zhuanlan.zhihu.com/p/79657669" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/79657669</a> 完全一致，这里不再做过多介绍。</p>
+<h2 id="2-Average-pooling的反向传播"><a href="#2-Average-pooling的反向传播" class="headerlink" title="2. Average pooling的反向传播"></a>2. Average pooling的反向传播</h2><p><img src="./images/average-pooling.png" alt><br>$\frac{\partial J}{\partial w}$不用求，因为$w$为常数。$\frac{\partial J}{\partial x<em>{ij}}=\Sigma \frac{\partial J}{\partial \hat{x}</em>{ij}}$</p>
+<h2 id="3-Max-pooling的反向传播"><a href="#3-Max-pooling的反向传播" class="headerlink" title="3. Max-pooling的反向传播"></a>3. Max-pooling的反向传播</h2><p><img src="./images/max-pooling.png" alt><br>遍历$\hat{x}$的每一行，找出此行最大值的索引$(i,j)$，然后将$\frac{\partial J}{\partial \hat{x}}$中索引为$(i,j)$的值设为$\frac{\partial J}{\partial \hat{y}}$对应行的值，将此行其余列的值设为0，如上图所示红框所示。假设$\hat{x}$中(1,1)处的值是第一行中最大的值，则将$\frac{\partial J}{\partial y<em>{11}}$赋值给$\frac{\partial J}{\partial \hat{x}}$中索引为$(1,1)$的位置。最后计算:$\frac{\partial J}{\partial x</em>{ij}}=\Sigma \frac{\partial J}{\partial \hat{x}_{ij}}$</p>
 
       
     </div>
@@ -1922,8 +1922,7 @@ document.querySelectorAll('.pdfobject-container').forEach(element => {
 
 
   
-  <script type="text/javascript"
-   color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script}
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
   
 </body>
 </html>
