@@ -27,14 +27,14 @@
 <meta property="og:site_name" content="chenzhongyao&#39;s website">
 <meta property="og:description" content="线性判别分析LDA原理线性判别分析LDA(Linear Discriminant Analysis)又称为Fisher线性判别，是一种监督学习的降维技术，也就是说它的数据集的每个样本都是有类别输出的，这点与PCA（无监督学习）不同。LDA在模式识别领域（比如人脸识别，舰艇识别等图形图像识别领域）中有非常广泛的应用，因此我们有必要了解下它的算法原理。 1. LDA的思想LDA的思想是： 最大化类间均">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LDA/images/LDA.jpg">
-<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LDA/images/LDA-2.jpg">
-<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LDA/images/LDA-3.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LDA/LDA.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LDA/LDA-2.jpg">
+<meta property="og:image" content="https://chenzhongyao.github.io/2020/06/18/LDA/LDA-3.jpg">
 <meta property="article:published_time" content="2020-06-18T15:02:52.000Z">
-<meta property="article:modified_time" content="2020-06-20T12:12:09.137Z">
+<meta property="article:modified_time" content="2020-06-28T07:48:49.146Z">
 <meta property="article:author" content="chennan">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://chenzhongyao.github.io/2020/06/18/LDA/images/LDA.jpg">
+<meta name="twitter:image" content="https://chenzhongyao.github.io/2020/06/18/LDA/LDA.jpg">
 
 <link rel="canonical" href="https://chenzhongyao.github.io/2020/06/18/LDA/">
 
@@ -184,7 +184,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-20 20:12:09" itemprop="dateModified" datetime="2020-06-20T20:12:09+08:00">2020-06-20</time>
+                <time title="修改时间：2020-06-28 15:48:49" itemprop="dateModified" datetime="2020-06-28T15:48:49+08:00">2020-06-28</time>
               </span>
 
           
@@ -221,7 +221,7 @@
       
         <h2 id="线性判别分析LDA原理"><a href="#线性判别分析LDA原理" class="headerlink" title="线性判别分析LDA原理"></a>线性判别分析LDA原理</h2><p>线性判别分析LDA(Linear Discriminant Analysis)又称为Fisher线性判别，是一种监督学习的降维技术，也就是说它的数据集的每个样本都是有类别输出的，这点与PCA（无监督学习）不同。LDA在模式识别领域（比如人脸识别，舰艇识别等图形图像识别领域）中有非常广泛的应用，因此我们有必要了解下它的算法原理。</p>
 <h3 id="1-LDA的思想"><a href="#1-LDA的思想" class="headerlink" title="1. LDA的思想"></a>1. LDA的思想</h3><p>LDA的思想是：<font color="#FF0000"> <strong>最大化类间均值，最小化类内方差</strong></font>。意思就是将数据投影在低维度上，并且投影后同种类别数据的投影点尽可能的接近，不同类别数据的投影点的中心点尽可能的远。</p>
-<p>我们先看看最简单的情况。假设我们有两类数据 分别为红色和蓝色，如下图所示，这些数据特征是二维的，我们希望将这些数据投影到一维的一条直线，让每一种类别数据的投影点尽可能的接近，而红色和蓝色数据中心之间的距离尽可能的大。<br><img src="./images/LDA.jpg" alt></p>
+<p>我们先看看最简单的情况。假设我们有两类数据 分别为红色和蓝色，如下图所示，这些数据特征是二维的，我们希望将这些数据投影到一维的一条直线，让每一种类别数据的投影点尽可能的接近，而红色和蓝色数据中心之间的距离尽可能的大。<br><img src="/2020/06/18/LDA/LDA.jpg" alt></p>
 <p>上图提供了两种投影方式，哪一种能更好的满足我们的标准呢？从直观上可以看出，右图要比左图的投影效果好，因为右图的黑色数据和蓝色数据各个较为集中，且类别之间的距离明显。左图则在边界处数据混杂。以上就是LDA的主要思想了，当然在实际应用中，我们的数据是多个类别的，我们的原始数据一般也是超过二维的，投影后的也一般不是直线，而是一个低维的超平面。</p>
 <h3 id="2-瑞利商-Rayleigh-quotient-与广义瑞利商-genralized-Rayleigh-quotient"><a href="#2-瑞利商-Rayleigh-quotient-与广义瑞利商-genralized-Rayleigh-quotient" class="headerlink" title="2. 瑞利商(Rayleigh quotient)与广义瑞利商(genralized Rayleigh quotient)"></a>2. 瑞利商(Rayleigh quotient)与广义瑞利商(genralized Rayleigh quotient)</h3><p>首先来看瑞利商的定义。瑞利商是指这样的函数$R(A,x)$:</p>
 <script type="math/tex; mode=display">
@@ -328,8 +328,8 @@ S_{w}^{-1}{S_{b}  u=\lambda u}
 <li>LDA除了用于降维，还可以用于分类</li>
 <li>LCA选择分类性能最好的投影方向，而PCA选择样本点投影具有最大方差的方向。这点可以从下图形象的看出，在某些数据分布下LDA比PCA降维较优（如下图的左图）。当然，某些数据分布下PCA比LDA降维较优（如下图的右图）。<table align="center">
 <tr>
-<td><center><img height="200" src="./images/LDA-2.jpg"></center>图2</td>
-<td><center><img height="200" src="./images/LDA-3.jpg"></center>图3</td>
+<td><center><img height="200" src="/2020/06/18/LDA/LDA-2.jpg"></center>图2</td>
+<td><center><img height="200" src="/2020/06/18/LDA/LDA-3.jpg"></center>图3</td>
 </tr>
 </table>
 
@@ -370,12 +370,12 @@ S_{w}^{-1}{S_{b}  u=\lambda u}
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/06/18/LSTM/" rel="prev" title="LSTM前向传播与反向传播算法推导（非常详细）">
-      <i class="fa fa-chevron-left"></i> LSTM前向传播与反向传播算法推导（非常详细）
+    <a href="/2020/06/18/svd%E5%88%86%E8%A7%A3%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B/" rel="prev" title="SVD奇异值分解逐步推导">
+      <i class="fa fa-chevron-left"></i> SVD奇异值分解逐步推导
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/06/18/CNN%E7%9A%84%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="next" title="四张图彻底搞懂CNN反向传播算法">
-      四张图彻底搞懂CNN反向传播算法 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/06/18/LSTM/" rel="next" title="LSTM前向传播与反向传播算法推导（非常详细）">
+      LSTM前向传播与反向传播算法推导（非常详细） <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
