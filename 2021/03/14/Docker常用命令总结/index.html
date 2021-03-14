@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"chenzhongyao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="1. docker镜像下载在 https:&#x2F;&#x2F;hub.docker.com&#x2F;_&#x2F;ubuntu 寻找想要的镜像，用docker pull 拉下来 例如下载带opencv4-python3的镜像：pull ajeetraina&#x2F;opencv4-python3&#96;&#96;&#96;123### 2. docker镜像、容器的删除查看本地镜像: &#96;&#96;&#96;docker images 删除镜像： docker rmi imag">
+  <meta name="description" content="1. docker镜像下载在 https:&#x2F;&#x2F;hub.docker.com&#x2F;_&#x2F;ubuntu 寻找想要的镜像，用docker pull 拉下来 例如下载opencv4-python3的镜像：docker pull ajeetraina&#x2F;opencv4-python3 2. docker镜像、容器的删除查看本地镜像: docker images 删除镜像： docker rmi image_ID (">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker常用命令总结">
 <meta property="og:url" content="https://chenzhongyao.github.io/2021/03/14/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="chenzhongyao&#39;s website">
-<meta property="og:description" content="1. docker镜像下载在 https:&#x2F;&#x2F;hub.docker.com&#x2F;_&#x2F;ubuntu 寻找想要的镜像，用docker pull 拉下来 例如下载带opencv4-python3的镜像：pull ajeetraina&#x2F;opencv4-python3&#96;&#96;&#96;123### 2. docker镜像、容器的删除查看本地镜像: &#96;&#96;&#96;docker images 删除镜像： docker rmi imag">
+<meta property="og:description" content="1. docker镜像下载在 https:&#x2F;&#x2F;hub.docker.com&#x2F;_&#x2F;ubuntu 寻找想要的镜像，用docker pull 拉下来 例如下载opencv4-python3的镜像：docker pull ajeetraina&#x2F;opencv4-python3 2. docker镜像、容器的删除查看本地镜像: docker images 删除镜像： docker rmi image_ID (">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-14T11:23:20.000Z">
-<meta property="article:modified_time" content="2021-03-14T11:24:12.185Z">
+<meta property="article:modified_time" content="2021-03-14T11:47:23.840Z">
 <meta property="article:author" content="chennan">
 <meta property="article:tag" content="docker">
 <meta name="twitter:card" content="summary">
@@ -175,7 +175,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-03-14 19:23:20 / 修改时间：19:24:12" itemprop="dateCreated datePublished" datetime="2021-03-14T19:23:20+08:00">2021-03-14</time>
+              <time title="创建时间：2021-03-14 19:23:20 / 修改时间：19:47:23" itemprop="dateCreated datePublished" datetime="2021-03-14T19:23:20+08:00">2021-03-14</time>
             </span>
 
           
@@ -211,7 +211,8 @@
 
       
         <h3 id="1-docker镜像下载"><a href="#1-docker镜像下载" class="headerlink" title="1. docker镜像下载"></a>1. docker镜像下载</h3><p>在 <a href="https://hub.docker.com/_/ubuntu" target="_blank" rel="noopener">https://hub.docker.com/_/ubuntu</a> 寻找想要的镜像，用<code>docker pull</code> 拉下来</p>
-<p>例如下载带opencv4-python3的镜像：<br><figure class="highlight docker"><figcaption><span>pull ajeetraina/opencv4-python3```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">### 2. docker镜像、容器的删除</span></span><br><span class="line">查看本地镜像: ```docker images</span><br></pre></td></tr></table></figure></p>
+<p>例如下载opencv4-python3的镜像：<code>docker pull ajeetraina/opencv4-python3</code></p>
+<h3 id="2-docker镜像、容器的删除"><a href="#2-docker镜像、容器的删除" class="headerlink" title="2. docker镜像、容器的删除"></a>2. docker镜像、容器的删除</h3><p>查看本地镜像: <code>docker images</code></p>
 <p>删除镜像： <code>docker rmi image_ID</code> (必须清理掉该镜像下所有处于终止状态的容器，可使用 <code>docker ps -a</code> 查看所有处于终止状态的容器) </p>
 <p>删除容器： <code>docker rm container_ID</code></p>
 <p>注意：删除镜像时需要把该镜像的容器全部删除，分为3步</p>
@@ -293,10 +294,7 @@
     <a href="/2020/06/29/Maximum-Likelihood-Estimation-md/" rel="prev" title="Maximum_Likelihood_Estimation.md">
       <i class="fa fa-chevron-left"></i> Maximum_Likelihood_Estimation.md
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2021/03/14/test-blog/" rel="next" title="test_blog">
-      test_blog <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -355,7 +353,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-docker镜像下载"><span class="nav-number">1.</span> <span class="nav-text">1. docker镜像下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-镜像的运行"><span class="nav-number">2.</span> <span class="nav-text">3. 镜像的运行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-docker-的参数："><span class="nav-number">2.1.</span> <span class="nav-text">3.1 docker 的参数：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-镜像的运行："><span class="nav-number">2.2.</span> <span class="nav-text">3.2 镜像的运行：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-容器快照、镜像的导入-导出"><span class="nav-number">3.</span> <span class="nav-text">4. 容器快照、镜像的导入&#x2F;导出</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-导出-导入容器快照："><span class="nav-number">3.1.</span> <span class="nav-text">4.1 导出&#x2F;导入容器快照：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-导出-导入镜像："><span class="nav-number">4.</span> <span class="nav-text">4.2 导出&#x2F;导入镜像：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-进入后台运行-退出的容器"><span class="nav-number">5.</span> <span class="nav-text">5. 进入后台运行&#x2F;退出的容器</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-docker镜像下载"><span class="nav-number">1.</span> <span class="nav-text">1. docker镜像下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-docker镜像、容器的删除"><span class="nav-number">2.</span> <span class="nav-text">2. docker镜像、容器的删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-镜像的运行"><span class="nav-number">3.</span> <span class="nav-text">3. 镜像的运行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-docker-的参数："><span class="nav-number">3.1.</span> <span class="nav-text">3.1 docker 的参数：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-镜像的运行："><span class="nav-number">3.2.</span> <span class="nav-text">3.2 镜像的运行：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-容器快照、镜像的导入-导出"><span class="nav-number">4.</span> <span class="nav-text">4. 容器快照、镜像的导入&#x2F;导出</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-导出-导入容器快照："><span class="nav-number">4.1.</span> <span class="nav-text">4.1 导出&#x2F;导入容器快照：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-导出-导入镜像："><span class="nav-number">5.</span> <span class="nav-text">4.2 导出&#x2F;导入镜像：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-进入后台运行-退出的容器"><span class="nav-number">6.</span> <span class="nav-text">5. 进入后台运行&#x2F;退出的容器</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -369,7 +367,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

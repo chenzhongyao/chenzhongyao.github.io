@@ -145,77 +145,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2021/03/14/test-blog/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="chennan">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chenzhongyao's website">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/14/test-blog/" class="post-title-link" itemprop="url">test_blog</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-14 19:43:35" itemprop="dateCreated datePublished" datetime="2021-03-14T19:43:35+08:00">2021-03-14</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>0</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2021/03/14/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -241,7 +170,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-03-14 19:23:20 / 修改时间：19:24:12" itemprop="dateCreated datePublished" datetime="2021-03-14T19:23:20+08:00">2021-03-14</time>
+              <time title="创建时间：2021-03-14 19:23:20 / 修改时间：19:47:23" itemprop="dateCreated datePublished" datetime="2021-03-14T19:23:20+08:00">2021-03-14</time>
             </span>
 
           <br>
@@ -270,7 +199,8 @@
 
       
           <h3 id="1-docker镜像下载"><a href="#1-docker镜像下载" class="headerlink" title="1. docker镜像下载"></a>1. docker镜像下载</h3><p>在 <a href="https://hub.docker.com/_/ubuntu" target="_blank" rel="noopener">https://hub.docker.com/_/ubuntu</a> 寻找想要的镜像，用<code>docker pull</code> 拉下来</p>
-<p>例如下载带opencv4-python3的镜像：<br><figure class="highlight docker"><figcaption><span>pull ajeetraina/opencv4-python3```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">### 2. docker镜像、容器的删除</span></span><br><span class="line">查看本地镜像: ```docker images</span><br></pre></td></tr></table></figure></p>
+<p>例如下载opencv4-python3的镜像：<code>docker pull ajeetraina/opencv4-python3</code></p>
+<h3 id="2-docker镜像、容器的删除"><a href="#2-docker镜像、容器的删除" class="headerlink" title="2. docker镜像、容器的删除"></a>2. docker镜像、容器的删除</h3><p>查看本地镜像: <code>docker images</code></p>
 <p>删除镜像： <code>docker rmi image_ID</code> (必须清理掉该镜像下所有处于终止状态的容器，可使用 <code>docker ps -a</code> 查看所有处于终止状态的容器) </p>
 <p>删除容器： <code>docker rm container_ID</code></p>
 <p>注意：删除镜像时需要把该镜像的容器全部删除，分为3步</p>
@@ -1277,6 +1207,256 @@ S_{w}^{-1}{S_{b}  u=\lambda u}
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/svd%E5%88%86%E8%A7%A3%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/18/svd%E5%88%86%E8%A7%A3%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">SVD奇异值分解逐步推导</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-18 23:02:52" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-20 20:12:09" itemprop="dateModified" datetime="2020-06-20T20:12:09+08:00">2020-06-20</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="SVD奇异值分解逐步推导"><a href="#SVD奇异值分解逐步推导" class="headerlink" title="SVD奇异值分解逐步推导"></a>SVD奇异值分解逐步推导</h2><h3 id="1-回顾特征值和特征向量"><a href="#1-回顾特征值和特征向量" class="headerlink" title="1. 回顾特征值和特征向量"></a>1. 回顾特征值和特征向量</h3><p>首先回顾下特征值和特征向量的定义：</p>
+<script type="math/tex; mode=display">
+Ax=\lambda x</script><p>其中，A是一个$n\times n$的矩阵，$x$是一个$n$维向量，则$\lambda$是矩阵A的一个特征值，而$x$是矩阵A的特征值$\lambda$对应的特征向量。</p>
+<p>求出特征值和特征向量有什么好处呢？就是我们可以将矩阵A特征分解。如果我们求出了矩阵A的n个特征值$\lambda _1\leq \lambda_2\leq … \leq\lambda_n$，以及这$n$个特征值所对应的特征向量$w_1, w_2, …, w_n$,那么矩阵A就可以用以下的特征分解表示：</p>
+<script type="math/tex; mode=display">
+W^{-1}AW=\Lambda \Leftrightarrow A=W\Lambda W^{-1}</script><p>其中，$W$是这$n$个特征向量所组成的$n\times n$维矩阵，而$\Lambda$是将这$n$个特征值作为主对角线的$n\times n$维矩阵。一般情况下，我们会把$W$的这$n$个特征向量标准化，即满足$||w_i||_2=1$，或者$w_i^Tw_i=1$,此时$W$的$n$个特征向量为标准正交基，满足$W^TW=I$，即$W^T=W^{-1}$,也就是说$W$为酉矩阵。这样我们的特征分解表达式可以写成：</p>
+<script type="math/tex; mode=display">
+A=W\Lambda W^T</script><blockquote>
+<p>题外延伸———矩阵压缩：</p>
+<p>设$W=(w_1, w_2, w_3,…,w_n)$，则:</p>
+<script type="math/tex; mode=display">W^T=\begin{pmatrix}
+ w_1^T\\ 
+ w_2^T\\ 
+ w_3^T\\ 
+... \\
+w_n^T
+\end{pmatrix}</script><p>那么:</p>
+<script type="math/tex; mode=display">
+A=(w_1, w_2, w_3,...,w_n)\begin{pmatrix}
+    \lambda_1&&&\\
+    &\lambda_2&&\\
+    &&\lambda_3&\\
+    &&&...\\
+    &&&&\lambda_n
+\end{pmatrix}\begin{pmatrix}
+ w_1^T\\ 
+ w_2^T\\ 
+ w_3^T\\ 
+... \\
+w_n^T
+\end{pmatrix}
+\\
+=\lambda_1w_1w_1^T+\lambda_2w_2w_2^T+\lambda_3w_3w_3^T+...+\lambda_nw_nw_n^T</script><p>假设A为$n\times n$维矩阵，如果正常表示矩阵A共需使用$n^2$个元素，如果将取得的特征值$\lambda_1,\lambda_2,\lambda_3,…,\lambda_n$按从大到小排序，即$\lambda_1\geq\lambda_2\geq\lambda_3\geq…\geq\lambda_n$，则将A的压缩表示为$\lambda_1w_1w_1^T$，即只需要$n+1$个元素。</p>
+</blockquote>
+<p>注意到要进行特征分解，矩阵A必须为方阵。</p>
+<p>那么如果A不是方阵，即行和列不相同时，我们还可以对矩阵进行分解吗？答案是可以，此时我们的SVD登场了。</p>
+<h3 id="2-SVD推导"><a href="#2-SVD推导" class="headerlink" title="2. SVD推导"></a>2. SVD推导</h3><h4 id="Step1：矩阵分解"><a href="#Step1：矩阵分解" class="headerlink" title="Step1：矩阵分解"></a>Step1：矩阵分解</h4><p>假如$A$为$m\times n$维矩阵，则$A^TA$为对称正定矩阵。</p>
+<blockquote>
+<p>证明：1)对称性：$(A^TA)^T=A^TA\Rightarrow 对称性$<br>2)正定性： $x^TA^TAx=(Ax)^T(Ax)\geq 0\Rightarrow正定性$</p>
+</blockquote>
+<p>对于矩阵A，有$(A^TA)v_i=\lambda _iv_i$，其中$\lambda_i$为特征值，$v_i$为特征向量。假定$(v_i, v_j)$是一组正交基，那么有$v_i^T\cdot v_j=0$，那么：</p>
+<script type="math/tex; mode=display">
+(Av_i, Av_j)=(Av_i)^T\cdot Av_j=v_i^TA^TAv_j=v_i^T\lambda_jv_j=\lambda_jv_i^Tv_j=0</script><p>因此，$Av_i,Av_j$也是一组正交基，根据上述公式可以推导出$(Av_i, Av_i)=\lambda_iv_i^Tv_i=\lambda_i$,从而可以得到：</p>
+<script type="math/tex; mode=display">
+|Av_i|^2=\lambda_i</script><script type="math/tex; mode=display">
+|Av_i|=\sqrt{\lambda_i}</script><p>根据上述公式，有$\frac{Av_i}{|Av_i|}=\frac{1}{\sqrt{\lambda_i}}Av_i$，令$\frac{1}{\sqrt{\lambda_i}}Av_i=u_i$，可得：</p>
+<script type="math/tex; mode=display">
+Av_i=\sqrt{\lambda_i}u_i=\delta_i u_i</script><p>其中，$\delta_i=\sqrt{\lambda_i}$，进一步推导：</p>
+<script type="math/tex; mode=display">
+AV=A(v_1,v_2,...,v_n)=(Av_1,Av_2,...,Av_n)=(\delta_1u_1,\delta_2u_2,...,\delta_nu_n)=U\Sigma</script><p>从而得出：</p>
+<script type="math/tex; mode=display">A=U\Sigma V^T</script><h4 id="Step2-矩阵计算"><a href="#Step2-矩阵计算" class="headerlink" title="Step2:矩阵计算"></a>Step2:矩阵计算</h4><p>得到矩阵A的表示后，我们应该如何计算向量$U$和$V$呢？继续往下面分析：</p>
+<p>首先计算出A的转置$A^T$：$A^T=V\Sigma ^TU^T$</p>
+<script type="math/tex; mode=display">
+A^TA=V\Sigma^TU^TU\Sigma V^T=V\Sigma^2V^T</script><p>利用上式可以得到，$A^TAv_i=\lambda_iv_i$，只需要求出$A^TA$的特征向量即可得到$V$.</p>
+<p>同理可得$AA^T$的值：</p>
+<script type="math/tex; mode=display">
+AA^T=U\Sigma V^TV\Sigma^TU^T=U\Sigma^2U^T</script><p>可以得到$AA^Tu_i=\lambda_iu_i$，只需要求出$AA^T$的特征向量即可得到$U$.</p>
+<blockquote>
+<p>题外延伸——-矩阵(图像)压缩：</p>
+<p>一个$m\times n$的矩阵A经SVD分解后，可以写成如下形式：</p>
+<script type="math/tex; mode=display">
+A_{m\times n}=U_{m\times m}\Sigma V^T_{n\times n}=(u_1,u_2,...,u_m)\begin{pmatrix}
+    \lambda_1^{\frac{1}{2}}&&\\
+    &\lambda_2^{\frac{1}{2}}&\\
+    &&...
+\end{pmatrix}\begin{pmatrix}
+    v_1^T\\
+    v_2^T\\
+    ...\\
+    v_n^T
+\end{pmatrix}\\
+=\lambda_1^{\frac{1}{2}}u_1v_1^T+\lambda_2^{\frac{1}{2}}u_2v_2^T+...</script><p>假设A为$m\times n$维矩阵，在没有压缩时表示矩阵A共需要$m\times n$个元素。如果将取得的特征值按从大到小排序，即$\lambda<em>1\geq\lambda_2\geq\lambda_3\geq…\geq\lambda</em>{min{m,n}}$，则A的压缩最小压缩表示为$\lambda_1^{\frac{1}{2}}u_1v_1^T$，即需要$m+n+1$个元素。<br>当压缩储存量为$(m+n+1)\times k$时，误差为</p>
+<script type="math/tex; mode=display">
+error=\frac{(m+n)\times\sum_{i=1}^{k}\lambda_i}{(m+n)\times\sum_{i=1}^{min(m,n)}\lambda_i}=\frac{\sum_{i=1}^{k}\lambda_i}{\sum_{i=1}^{min(m,n)}\lambda_i}</script></blockquote>
+<h3 id="例题讲解"><a href="#例题讲解" class="headerlink" title="例题讲解"></a>例题讲解</h3><p>我们举一个简单的例子讲解矩阵时如何进行奇异值分解的。定义矩阵A为：</p>
+<script type="math/tex; mode=display">
+A=\begin{pmatrix}
+0 &1 \\
+1&1\\
+1&0  
+\end{pmatrix}</script><p>首先求出$A^TA、AA^T$：</p>
+<script type="math/tex; mode=display">
+A^TA=\begin{pmatrix}
+    0&1&1\\
+    1&1&0
+\end{pmatrix}\begin{pmatrix}
+    0&1\\
+    1&1\\
+    1&0
+\end{pmatrix}=\begin{pmatrix}
+    2&1\\
+    1&2
+\end{pmatrix}</script><script type="math/tex; mode=display">
+AA^T=\begin{pmatrix}
+    0&1\\
+    1&1\\
+    1&0
+\end{pmatrix}\begin{pmatrix}
+    0&1&1\\
+    1&1&0
+\end{pmatrix}=\begin{pmatrix}
+    1&1&0\\
+    1&2&1\\
+    0&1&1
+\end{pmatrix}</script><p>进而求出$A^TA$的特征值和特征向量：</p>
+<script type="math/tex; mode=display">
+\lambda_1=3;v_1=\begin{pmatrix}
+    \frac{1}{\sqrt{2}}\\
+    \frac{1}{\sqrt{2}}
+\end{pmatrix};
+\lambda_2=1;v_2=\begin{pmatrix}
+    -\frac{1}{\sqrt{2}}\\
+    \frac{1}{\sqrt{2}}
+\end{pmatrix}</script><p>接着求出$AA^T$的特征值和特征向量：</p>
+<script type="math/tex; mode=display">
+\lambda_1=3;u_1=\begin{pmatrix}
+    \frac{1}{\sqrt{6}}\\
+    \frac{2}{\sqrt{6}}\\
+    \frac{1}{\sqrt{6}}
+\end{pmatrix};
+\lambda_2=1;u_2=\begin{pmatrix}
+    \frac{1}{\sqrt{2}}\\
+    0\\
+    -\frac{1}{\sqrt{2}}
+\end{pmatrix};\lambda_3=0;u_3=\begin{pmatrix}
+    \frac{1}{\sqrt{3}}\\
+    -\frac{1}{\sqrt{3}}\\
+    \frac{1}{\sqrt{3}}
+\end{pmatrix}</script><p>利用$Av_i=\delta_iu_i,i=1,2$求奇异值：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    0&1\\
+    1&1\\
+    1&0
+\end{pmatrix}\begin{pmatrix}
+    \frac{1}{\sqrt{2}}\\
+    \frac{1}{\sqrt{2}}
+\end{pmatrix}=\delta_1\begin{pmatrix}
+    \frac{1}{\sqrt{6}}\\
+    \frac{2}{\sqrt{6}}\\
+    \frac{1}{\sqrt{6}}
+\end{pmatrix} \Rightarrow\delta_1=\sqrt{3}</script><script type="math/tex; mode=display">
+\begin{pmatrix}
+    0&1\\
+    1&1\\
+    1&0
+\end{pmatrix}\begin{pmatrix}
+    -\frac{1}{\sqrt{2}}\\
+    \frac{1}{\sqrt{2}}
+\end{pmatrix}=\delta_2\begin{pmatrix}
+    \frac{1}{\sqrt{2}}\\
+    0\\
+    -\frac{1}{\sqrt{2}}
+\end{pmatrix} \Rightarrow\delta_2=1</script><p>也可以用$\delta_i=\sqrt{\lambda_i}$直接求出奇异值为$\sqrt{3}$和$1$.</p>
+<p>最终得到矩阵A的奇异值分解为：</p>
+<script type="math/tex; mode=display">
+A=U\Sigma V^T=\begin{pmatrix}
+    \frac{1}{\sqrt{6}}  &\frac{1}{\sqrt{2}}  & \frac{1}{\sqrt{3}} \\
+    \frac{2}{\sqrt{6}}  &0  & -\frac{1}{\sqrt{3}} \\
+    \frac{1}{\sqrt{6}}  &-\frac{1}{\sqrt{2}}  & \frac{1}{\sqrt{3}} 
+\end{pmatrix}\begin{pmatrix}
+    \sqrt{3}  & 0\\
+    0  & 1\\
+    0  & 0
+\end{pmatrix}\begin{pmatrix}
+    \frac{1}{\sqrt{2}}  & \frac{1}{\sqrt{2}} \\
+    -\frac{1}{\sqrt{2}}  & \frac{1}{\sqrt{2}}
+\end{pmatrix}</script><h3 id="SVD的一些性质"><a href="#SVD的一些性质" class="headerlink" title="SVD的一些性质"></a>SVD的一些性质</h3><p>对于奇异值，他跟我们特征分解中的特征值类似，在奇艺置矩阵中也是按照从大到小排列，而且奇异值的减少特别快，在很多情况下，前10\%甚至1\%的奇异值就占了全部的奇异值之和的99\%以上的比例。也就是说，我们也可以用最大的k个奇异值和对应的左右奇异向量来近似描述矩阵(与前面描述的题外延伸之矩阵压缩类似)，由于这个重要的性质，SVD也可以用于PCA降维，来做数据压缩和去噪，也可以用于推荐算法，将用户和喜好对应的矩阵做特征分解，进而得到隐含的用户需要来做推荐。同时也可以用于NLP中的算法，比如潜在语义索引（LSI）。</p>
+<blockquote>
+<p>参考：<a href="https://zhuanlan.zhihu.com/p/29846048" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/29846048</a> </p>
+<p>参考：<a href="https://www.csuldw.com/2017/03/09/2017-03-09-svd/" target="_blank" rel="noopener">https://www.csuldw.com/2017/03/09/2017-03-09-svd/</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -1346,7 +1526,7 @@ S_{w}^{-1}{S_{b}  u=\lambda u}
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
