@@ -145,6 +145,213 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2021/03/14/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/14/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">Docker常用命令总结</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-03-14 19:23:20 / 修改时间：19:24:12" itemprop="dateCreated datePublished" datetime="2021-03-14T19:23:20+08:00">2021-03-14</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="1-docker镜像下载"><a href="#1-docker镜像下载" class="headerlink" title="1. docker镜像下载"></a>1. docker镜像下载</h3><p>在 <a href="https://hub.docker.com/_/ubuntu" target="_blank" rel="noopener">https://hub.docker.com/_/ubuntu</a> 寻找想要的镜像，用<code>docker pull</code> 拉下来</p>
+<p>例如下载带opencv4-python3的镜像：<br><figure class="highlight docker"><figcaption><span>pull ajeetraina/opencv4-python3```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">### 2. docker镜像、容器的删除</span></span><br><span class="line">查看本地镜像: ```docker images</span><br></pre></td></tr></table></figure></p>
+<p>删除镜像： <code>docker rmi image_ID</code> (必须清理掉该镜像下所有处于终止状态的容器，可使用 <code>docker ps -a</code> 查看所有处于终止状态的容器) </p>
+<p>删除容器： <code>docker rm container_ID</code></p>
+<p>注意：删除镜像时需要把该镜像的容器全部删除，分为3步</p>
+<ul>
+<li><p>首先，查看已经退出的容器： <code>docker ps -a</code> </p>
+</li>
+<li><p>然后，删除退出的容器：<code>docker rm container_id</code> </p>
+</li>
+<li><p>最后，删除镜像 <code>docker rmi image_id</code> </p>
+</li>
+<li><p>前两步可以直接用 <code>docker container prune</code> 直接清理掉所有处于终止状态的容器</p>
+</li>
+</ul>
+<h3 id="3-镜像的运行"><a href="#3-镜像的运行" class="headerlink" title="3. 镜像的运行"></a>3. 镜像的运行</h3><h4 id="3-1-docker-的参数："><a href="#3-1-docker-的参数：" class="headerlink" title="3.1 docker 的参数："></a>3.1 docker 的参数：</h4><ul>
+<li><p>-i： 交互式操作。</p>
+</li>
+<li><p>-t： 终端 （<code>-it</code>  同时使用可以让 docker 运行的容器实现”对话”的能力）</p>
+</li>
+<li>-d： 参数默认不会进入容器，想要进入容器需要使用指令 docker exec(后边会讲到)</li>
+<li>-v：挂在本地目录到容器目录，格式：<strong>本地目录:容器目录</strong>，使用方法<code>docker run -it -v /d:/home image_id /bin/bash</code></li>
+<li>—rm: 在Docker容器退出时，默认容器内部的文件系统仍然被保留，以方便调试并保留用户数据(即通过 <code>docker ps -a</code> 查看到的处于终止状态的容器，还可以通过docker start container_ID再次进入)。 因而可以在容器启动时设置—rm选项，这样在容器退出时就能够自动清理容器内部的文件系统。使用示例：<code>docker run -it --rm -v /d:/home image_ID /bin/bash</code> 。显然，—rm选项不能与-d同时使用</li>
+</ul>
+<h4 id="3-2-镜像的运行："><a href="#3-2-镜像的运行：" class="headerlink" title="3.2 镜像的运行："></a>3.2 镜像的运行：</h4><ul>
+<li>查看镜像id: <code>docker images</code> </li>
+<li>运行镜像：<code>docker run -it -v /d:/home image_id /bin/bash</code></li>
+</ul>
+<h3 id="4-容器快照、镜像的导入-导出"><a href="#4-容器快照、镜像的导入-导出" class="headerlink" title="4. 容器快照、镜像的导入/导出"></a>4. 容器快照、镜像的导入/导出</h3><p>容器快照与镜像的区别：</p>
+<ul>
+<li>快照文件将丢弃所有的历史记录和元数据信息（即仅保存容器当时的快照状态），而镜像存储文件将保存完整记录，体积也更大。</li>
+<li>docker save 保存的是镜像（image），docker export 保存的是容器（container）；</li>
+<li>docker load 用来载入镜像包，docker import 用来载入容器包，但两者都会恢复为镜像；</li>
+<li>docker load 不能对载入的镜像重命名，而 docker import 可以为镜像指定新名称，如： <code>docker import ubuntu.tar merge_gt/ubuntu:v1(新名称)</code>。</li>
+</ul>
+<h4 id="4-1-导出-导入容器快照："><a href="#4-1-导出-导入容器快照：" class="headerlink" title="4.1 导出/导入容器快照："></a>4.1 导出/导入容器快照：</h4><p>导出容器快照:</p>
+<ul>
+<li><code>docker ps</code> 查看正在运行（想要导出）的容器id</li>
+<li><code>docker export 容器_id &gt; ubuntu.tar</code></li>
+</ul>
+<p>导入容器快照:</p>
+<ul>
+<li>将快照文件导入到merge_gt/ubuntu:v1: <code>docker import ubuntu.tar(绝对路径) merge_gt/ubuntu:v1</code> </li>
+<li><code>docker images</code> 查看 <code>merge_gt/ubuntu:v1</code> 镜像id</li>
+<li><code>docker run -it -v /d:/home 镜像_id /bin/bash</code></li>
+</ul>
+<h3 id="4-2-导出-导入镜像："><a href="#4-2-导出-导入镜像：" class="headerlink" title="4.2 导出/导入镜像："></a>4.2 导出/导入镜像：</h3><p>导出镜像：<code>docker save -o rocketmq.tar rocketmq</code> </p>
+<ul>
+<li>-o：指定保存的镜像的名字；rocketmq.tar：保存到本地的镜像名称；rocketmq：镜像名字或者IMAGE_ID，通过”docker images”查看</li>
+</ul>
+<p>导入镜像：<code>docker load -i racketmq.tar</code></p>
+<h3 id="5-进入后台运行-退出的容器"><a href="#5-进入后台运行-退出的容器" class="headerlink" title="5. 进入后台运行/退出的容器"></a>5. 进入后台运行/退出的容器</h3><p>如何进入退出的容器？</p>
+<ul>
+<li>查看退出的容器的方法是：<code>docker ps -a</code></li>
+<li>重新进入退出的容器：<code>docker start container_ID</code> (start后，容器后台运行)</li>
+</ul>
+<p>如何进入后台运行的docker？</p>
+<ul>
+<li><code>docker ps</code> 查看后台运行的docker<br>在使用 -d 参数时，容器启动后会进入后台。此时想要进入容器，可以通过以下指令进入：</li>
+<li>docker attach: 使用方法: <code>docker attach container_ID</code>。但是需要注意的是，如果从这个stdin中exit，会导致容器的停止。</li>
+<li>docker exec：推荐大家使用 docker exec 命令，因为此退出容器终端，不会导致容器的停止.使用方法：<code>docker exec -it container_ID /bin/bash</code></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/29/Maximum-Likelihood-Estimation-md/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/29/Maximum-Likelihood-Estimation-md/" class="post-title-link" itemprop="url">Maximum_Likelihood_Estimation.md</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-29 17:26:06 / 修改时间：20:20:16" itemprop="dateCreated datePublished" datetime="2020-06-29T17:26:06+08:00">2020-06-29</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>84</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="最大似然估计-Maximum-Likelihood-Estimation"><a href="#最大似然估计-Maximum-Likelihood-Estimation" class="headerlink" title="最大似然估计(Maximum Likelihood Estimation)"></a>最大似然估计(Maximum Likelihood Estimation)</h1><p>最大似然估计是利用已知的样本的结果，在使用某个模型的基础上，反推最有可能导致这样结果的模型参数值。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/22/%E9%82%AF%E9%83%B8%E8%B4%AD%E6%88%BF%E7%BC%B4%E7%A8%8E/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1249,334 +1456,6 @@ A=U\Sigma V^T=\begin{pmatrix}
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E6%8E%A8%E5%AF%BC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="chennan">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chenzhongyao's website">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/18/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E6%8E%A8%E5%AF%BC/" class="post-title-link" itemprop="url">反向传播算法推导</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-18 23:02:52" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-20 20:12:21" itemprop="dateModified" datetime="2020-06-20T20:12:21+08:00">2020-06-20</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>8.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>8 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="反向传播算法详细推导过程"><a href="#反向传播算法详细推导过程" class="headerlink" title="反向传播算法详细推导过程"></a><strong>反向传播算法详细推导过程</strong></h1><h2 id="1-前向传播"><a href="#1-前向传播" class="headerlink" title="1. 前向传播"></a><strong>1. 前向传播</strong></h2><p><img src="./images/feedfoward.jpg" alt></p>
-<p>假设$X$为$N\times m$的矩阵（其中，$N$为样本个数（batch size），$m$为特征维数）</p>
-<p>$h<em>1$与$Z_1$的维数为$m_1 \rightarrow W_1$为$m\times m_1$的矩阵，$b_1 \in \mathbb{R}^{m_1},\$<br>$h_2$与$Z_2$的维数为$m_2 \rightarrow W_2$为$m_1\times m_2$的矩阵，$b_2 \in \mathbb{R}^{m_2},\$<br>${\vdots}\$<br>$h_L$与$Z_L$的维数为$m_L \rightarrow W_L$为$m</em>{L-1}\times m_L$的矩阵，$b_L \in \mathbb{R}^{m_L}$</p>
-<h3 id="前向算法："><a href="#前向算法：" class="headerlink" title="前向算法："></a>前向算法：</h3><script type="math/tex; mode=display">
-\begin{array}{l}{h_{1}=x W_{1}+\tilde{b}_{1}, Z_{1}=f_{1}\left(h_{1}\right), \tilde{b}_{1}}为b_1^T沿着行方向扩展成N行 \\ {h_{2}=Z_{1} W_{2}+\tilde{b}_{2}, Z_{2}=f_{2}\left(h_{2}\right)} \\ {\vdots} \\ {h_{L}=Z_{L-1} W_{L}+\tilde{b}_{L}, Z_{L}=f_{L}\left(h_{L}\right)} \\ {\text { out }=Z_{L} W_{L+1}+\tilde{b}_{L+1}}\end{array}</script><p>假设输出为$n$维，则$out$为大小为$N\times n$的矩阵，根据MSE或CE准则可以求得$\frac{\partial J}{\partial out}$，对于回归问题与分类问题，$\frac{\partial J}{\partial out}$的求解方法如下：</p>
-<table align="center">
-    <tr>
-        <td><center><img height="200" src="./images/回归问题.jpg">回归问题</center></td>
-        <td><center><img height="200" src="./images/分类问题.jpg">分类问题</center></td>
-    </tr>
-</table>
-
-<ul>
-<li>对于回归问题，对out直接计算损失，损失函数为MSE。 损失：$J=\frac{1}{2N}\sum_{i=1}^{N}||y_i-\tilde{y_i}||^2$<script type="math/tex; mode=display">
-\begin{aligned}
-    \frac{\partial J}{\partial y_i}&=\frac{1}{2N}\sum_{i=1}^{N}(y_i-\tilde{y_i})\times 2 \\
-    &=\frac{1}{N}\sum_{i=1}^{N}(y_i-\tilde{y_i})
-\end{aligned}</script></li>
-<li>对于分类问题，out后接softmax进行分类，然后使用CE(cross entropy)计算loss.$S<em>k=\frac{e^{y_k}}{\sum</em>{i=1}^{n}e^{y_i}}$一个样本对应的网络的输出$S(s_1,s_2,…,s_n)$是一个概率分布，而这个样本的标注$\tilde{S}$一般为$(0,0,…,1,0,0,…,0)$，也可以看做一个概率分布（硬分布）。cross entropy可以看成是$S$与$\tilde{S}$之间的KL距离：<script type="math/tex; mode=display">D(\tilde{S}||S)=\Sigma\tilde{S}\log\frac{\tilde{S}}{S}</script><ul>
-<li>假设$\tilde{S}=(0,0,…,1,0,0,…,0)$，其中1为第$k$个元素(索引从0开始)，令$S=(s<em>0,s_1,…,s_k,…,s</em>{n-1})$.<br>损失：<script type="math/tex; mode=display">
-\begin{aligned}
-  J=D(\tilde{S}||S)&=1\times \log\frac{1}{s_k}\\&=-\log s_k \quad(CE损失函数,可看做目标类别概率最大)\\
-  &=-\log\frac{e^{y_k}}{\sum_{i=0}^{n-1}e^{y_i}}
-\end{aligned}</script><script type="math/tex; mode=display">
-\begin{aligned}
- &\frac{\partial J}{\partial y_m}=\frac{\partial J}{\partial y_m}(\log \sum_{i=0}^{n-1}e^{y_i}-y_k)=\frac{e^{y_m}}{\sum_{i=0}^{n-1}e^{y_i}}-\delta(m=k)=s_m-\delta(m=k) \\
-&写成向量形式为:\frac{\partial J}{\partial y}=S-\tilde{S}
-\end{aligned}</script></li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p><strong>KL距离（相对熵）</strong>：是Kullback-Leibler Divergence的简称，也叫相对熵(Relative Entropy).它衡量的是相同事件空间里的两个概率分布的差异情况。其物理意义是：在相同事件空间里，概率分布$P(x)$对应的每个事件，若用概率分布$Q(x)$编码时，平均每个基本事件(符号)编码长度增加了多少比特。我们用$D(P||Q)$表示KL距离，计算公式如下：</p>
-<script type="math/tex; mode=display">
-D(P||Q)=\sum_{x\in X}P(x)\log\frac{P(x)}{Q(x)}</script><p>当两个概率分布完全相同时，即$P(X)=Q(X)$,其相对熵为0.</p>
-<h2 id="2-反向传播"><a href="#2-反向传播" class="headerlink" title="2.反向传播"></a><strong>2.反向传播</strong></h2><p>$\text { out }=Z<em>{L} W</em>{L+1}+\tilde{b}<em>{L+1}$，为了便于详细说明反向传播算法，假设$Z_L$为$2\times 3$的向量，$W</em>{L+1}$为$3\times 2$的向量：</p>
-<script type="math/tex; mode=display">
-\begin{array}{l}{Z_{L}=\left(\begin{array}{ccc}{z_{11}} & {z_{12}} & {z_{13}} \\ {z_{21}} & {z_{22}} & {z_{23}}\end{array}\right)_{2 \times 3}, W_{L+1}=\left(\begin{array}{cc}{w_{11}} & {w_{12}} \\ {w_{21}} & {w_{22}} \\ {w_{31}} & {w_{32}}\end{array}\right)_{3 \times 2} \tilde{b}_{L+1}=\left(\begin{array}{cc}{b_{1}} & {b_{2}} \\ {b_{1}} & {b_{2}}\end{array}\right)_{2 \times 2}, \text { out }=\left(\begin{array}{cc}{o_{11}} & {o_{12}} \\ {o_{21}} & {o_{22}}\end{array}\right)} \\ \Rightarrow  {Z_{L}W_{L+1}+\tilde{b}_{L+1}=\left(\begin{array}{cc}{z_{11} w_{11}+z_{12} w_{21}+z_{13} w_{31}+b_1} & {z_{11} w_{12}+z_{12} w_{22}+z_{13} w_{32}+b_2} \\ {z_{21} w_{11}+z_{22} w_{21}+z_{23} w_{31}+b_1} & {z_{21} w_{12}+z_{22} w_{22}+z_{23} w_{32}+b_2}\end{array}\right)=\text{out}.}\end{array}</script><p>所以，</p>
-<script type="math/tex; mode=display">
-\begin{array}{l}{o_{11}=z_{11} w_{11}+z_{12} w_{21}+z_{13} w_{31}+b_{1}} \\ {o_{12}=z_{11} w_{12}+z_{12} w_{22}+z_{13} w_{32}+b_{2}} \\ {o_{21}=z_{21} w_{11}+z_{22} w_{21}+z_{23} w_{31}+b_{1}} \\ {o_{22}=z_{21} w_{12}+z_{22} w_{22}+z_{23} w_{32}+b_{2}}\end{array}</script><h4 id="1-损失-J-对-W-的导数："><a href="#1-损失-J-对-W-的导数：" class="headerlink" title="1) 损失$J$对$W$的导数："></a><strong>1) 损失$J$对$W$的导数：</strong></h4><script type="math/tex; mode=display">
-\begin{aligned} \frac{\partial J}{\partial w_{11}} &=\frac{\partial J}{\partial o_{11}} z_{11}+\frac{\partial J}{\partial o_{21}} z_{21}, \frac{\partial J}{\partial w_{12}}=\frac{\partial J}{\partial o_{12}} z_{11}+\frac{\partial J}{\partial o_{22}} z_{21} \\ \frac{\partial J}{\partial w_{21}} &=\frac{\partial J}{\partial o_{11}} z_{12}+\frac{\partial J}{\partial o_{21}} z_{22}, \frac{\partial J}{\partial w_{22}}=\frac{\partial J}{\partial o_{12}} z_{12}+\frac{\partial J}{\partial o_{22}} z_{22} \\ \frac{\partial J}{\partial w_{31}} &=\frac{\partial J}{\partial o_{11}} z_{13}+\frac{\partial J}{\partial o_{21}} z_{23}, \frac{\partial J}{\partial w_{32}}=\frac{\partial J}{\partial o_{12}} z_{13}+\frac{\partial J}{\partial o_{22}} z_{23} \end{aligned}</script><script type="math/tex; mode=display">
-\Rightarrow
-\left(\begin{array}{cc}{\frac{\partial J}{\partial w_{11}}} & {\frac{\partial J}{\partial w_{12}}} \\ {\frac{\partial J}{\partial w_{21}}} & {\frac{\partial J}{\partial w_{22}}} \\ {\frac{\partial J}{\partial w_{31}}} & {\frac{\partial J}{\partial w_{32}}}\end{array}\right)=\left(\begin{array}{cc}{z_{11}} & {z_{21}} \\ {z_{12}} & {z_{22}} \\ {z_{13}} & {z_{23}}\end{array}\right)\left(\begin{array}{cc}{\frac{\partial J}{\partial o_{11}}} & {\frac{\partial J}{\partial o_{12}}} \\ {\frac{\partial J}{\partial o_{21}}} & {\frac{\partial J}{\partial o_{22}}}\end{array}\right)</script><p>即，$\frac{\partial J}{\partial W_{L+1}}=Z_L^T\frac{\partial J}{\partial out}$</p>
-</blockquote>
-<h4 id="2-损失对偏置b的导数等于将-frac-partial-J-partial-out-的每一列加起来："><a href="#2-损失对偏置b的导数等于将-frac-partial-J-partial-out-的每一列加起来：" class="headerlink" title="2) 损失对偏置b的导数等于将$\frac{\partial J}{\partial out}$的每一列加起来："></a><strong>2) 损失对偏置b的导数等于将$\frac{\partial J}{\partial out}$的每一列加起来：</strong></h4><script type="math/tex; mode=display">
-\left\{\begin{array}{l}{\frac{\partial J}{\partial b_{1}}=\frac{\partial J}{\partial o_{11}}+\frac{\partial J}{\partial o_{21}}} \\ {\frac{\partial J}{\partial b_{2}}=\frac{\partial J}{\partial o_{12}}+\frac{\partial J}{\partial o_{22}}}\end{array} \Rightarrow\left(\frac{\partial J}{\partial b_{L+1}}\right)^{T}=\left(\frac{\partial J}{\partial b_{1}} \quad \frac{\partial J}{\partial b_{2}}\right)=\left(\frac{\partial J}{\partial o_{11}}+\frac{\partial J}{\partial o_{21}} \quad \frac{\partial J}{\partial o_{12}}+\frac{\partial J}{\partial o_{22}}\right)\right.</script><h4 id="3-损失-J-对-Z-的导数："><a href="#3-损失-J-对-Z-的导数：" class="headerlink" title="3) 损失$J$对$Z$的导数："></a><strong>3) 损失$J$对$Z$的导数：</strong></h4><script type="math/tex; mode=display">
-\begin{aligned} \frac{\partial J}{\partial z_{11}} &=\frac{\partial J}{\partial o_{11}} w_{11}+\frac{\partial J}{\partial o_{12}} w_{12} ; \frac{\partial J}{\partial z_{12}}=\frac{\partial J}{\partial o_{11}} w_{21}+\frac{\partial J}{\partial o_{12}} w_{22} ; \frac{\partial J}{\partial z_{13}}=\frac{\partial J}{\partial o_{11}} w_{31}+\frac{\partial J}{\partial o_{12}} w_{32} \\ \frac{\partial J}{\partial z_{21}} &=\frac{\partial J}{\partial o_{21}} w_{11}+\frac{\partial J}{\partial o_{22}} w_{12} ; \frac{\partial J}{\partial z_{22}}=\frac{\partial J}{\partial o_{21}} w_{21}+\frac{\partial J}{\partial o_{12}} w_{22} ; \frac{\partial J}{\partial z_{23}}=\frac{\partial J}{\partial o_{21}} w_{31}+\frac{\partial J}{\partial o_{22}} w_{32} \end{aligned}</script><p>即，</p>
-<script type="math/tex; mode=display">
-\left(\begin{array}{ccc}{\frac{\partial J}{\partial z_{11}}} & {\frac{\partial J}{\partial z_{12}}} & {\frac{\partial J}{\partial z_{13}}} \\ {\frac{\partial J}{\partial z_{21}}} & {\frac{\partial J}{\partial z_{22}}} & {\frac{\partial J}{\partial z_{23}}}\end{array}\right)=\left(\begin{array}{cc}{\frac{\partial J}{\partial o_{11}}} & {\frac{\partial J}{\partial o_{12}}} \\ {\frac{\partial J}{\partial \theta_{21}}} & {\frac{\partial J}{\partial o_{22}}}\end{array}\right)\left(\begin{array}{ccc}{w_{11}} & {w_{21}} & {w_{31}} \\ {w_{12}} & {w_{22}} & {w_{32}}\end{array}\right)</script><p>$\Rightarrow \frac{\partial J}{\partial Z<em>{L}}=\frac{\partial J}{\partial out}W</em>{L+1}^T$</p>
-<h4 id="4-损失-J-对-h-的导数："><a href="#4-损失-J-对-h-的导数：" class="headerlink" title="4) 损失$J$对$h$的导数："></a><strong>4) 损失$J$对$h$的导数：</strong></h4><script type="math/tex; mode=display">Z_L = f_L(h_L)</script><ul>
-<li>$f_L$为sigmoid时，$Z_L=\frac{1}{1+e^{-h_L}}$.<script type="math/tex; mode=display">
-\begin{array}{l}{\frac{\partial J}{\partial h_{L}}=\frac{\partial J}{\partial Z_{L}} \frac{d z_{L}}{d h_{L}}=\frac{\partial J}{\partial Z_{L}} \frac{e^{-h L}}{\left(1+e^{-h_{L}}\right)^{2}}=\frac{\partial J}{\partial Z_{L}} \frac{1}{1+e^{-h_{L}}} \frac{e^{-h_{L}}}{1+e^{-h_{L}}}} \\ {=\frac{\partial J}{\partial Z_{L}} Z_{L}\left(1-Z_{L}\right)}\end{array}</script></li>
-<li>$f<em>L$为tanh时，${Z</em>{L}=\frac{e^{h<em>{L}}-e^{-h</em>{L}}}{e^{h<em>{L}}+e^{-h</em>{L}}}}$.<script type="math/tex; mode=display">
-\begin{array}{l} {\frac{\partial J}{\partial h_{L}}=\frac{\partial J}{\partial Z_{L}} \frac{d Z_{L}}{d h_{L}}=\frac{\partial J}{\partial Z_{L}} \frac{4}{\left(e^{h_{L}}+e^{-h_{L}}\right)^{2}}=\frac{\partial J}{\partial Z_{L}}\left[1-\left(\frac{e^{h_{L}}-e^{-h_{L}}}{e^{h_{L}}+e^{-h_{L}}}\right)^{2}\right]} \\ {=\frac{\partial J}{\partial z_{L}}\left[1-z_{L}^{2}\right]}\end{array}</script></li>
-<li>$f_L$为relu时，$Z_L=relu(h_L)=\left{\begin{matrix}<br>0,&amp;h_L\leq 0 \<br>h_L,&amp;h_L &gt; 0<br>\end{matrix}\right.$.<script type="math/tex; mode=display">
-\begin{array}{l}
-  \frac{\partial J}{\partial h_L}=\frac{\partial J}{\partial Z_L}\frac{\partial Z_L}{\partial h_L}=\left\{\begin{matrix}
-0,&h_L\leq 0 \\ 
-\frac{\partial J}{\partial Z_L},&h_L > 0 
-\end{matrix}\right.
-\end{array}</script></li>
-</ul>
-<h2 id="3-梯度更新"><a href="#3-梯度更新" class="headerlink" title="3. 梯度更新"></a><strong>3. 梯度更新</strong></h2><p>对于不同算法 ，梯度更新方式如下：</p>
-<script type="math/tex; mode=display">
-\frac{\partial J}{\partial out} \Rightarrow \left \{\begin{matrix}
-    \frac{\partial J}{\partial W_{L+1}}=Z_L^T\frac{\partial J}{\partial out} \\
-    \frac{\partial J}{\partial Z_{L}}=\frac{\partial J}{\partial out}W_{L+1}^T \\
-    \left(\frac{\partial J}{\partial b}\right)^{T}=SumCol(\frac{\partial J}{\partial out}) \\
-    W_{L+1}^{t+1} = W_{L+1}^t-\eta \frac{\partial J}{\partial W_{L+1}} \\
-    b_{L+1}^{t+1} = b_{L+1}^t-\eta \frac{\partial J}{\partial b_{L+1}}
-\end{matrix} \right. \Rightarrow \frac{\partial J}{\partial h_L}=\frac{\partial J}{\partial Z_L}\frac{\partial Z_L}{\partial h_L} \Rightarrow \left \{\begin{matrix} 
-    \frac{\partial J}{\partial W_{L}}=Z_{L-1}^T\frac{\partial J}{\partial h_L} \\
-    \frac{\partial J}{\partial Z_{L-1}}=\frac{\partial J}{\partial h_L}W_{L}^T \\
-    \vdots \\
-    \vdots 
-\end{matrix}\right. \Rightarrow \cdots</script>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="chennan">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chenzhongyao's website">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">深度学习中的模型优化</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-18 23:02:52" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-20 20:12:21" itemprop="dateModified" datetime="2020-06-20T20:12:21+08:00">2020-06-20</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="深度学习中的模型优化"><a href="#深度学习中的模型优化" class="headerlink" title="深度学习中的模型优化"></a>深度学习中的模型优化</h1><h2 id="随机梯度下降"><a href="#随机梯度下降" class="headerlink" title="随机梯度下降"></a>随机梯度下降</h2><h3 id="Batch-Gradient-Descent-BGD"><a href="#Batch-Gradient-Descent-BGD" class="headerlink" title="Batch Gradient Descent(BGD)"></a>Batch Gradient Descent(BGD)</h3><p>BGD在训练中,每一步迭代都是用训练集中的所有数据,也就是说,利用现有参数对训练集中的每一个输入生成一个估计输出,然后跟实际输出比较,统计所有误差,求平均以后得到平均误差,并以此作为更新参数的依据.</p>
-<ul>
-<li><strong>优点:</strong> 由于每一步都利用了训练集中的所有数据,因此当损失函数达到最小值以后,能够保证此时计算出的梯度为0,换句话说,就是能够收敛(曲线比较平滑),因此,使用BGD时不需要逐渐降低学习率.</li>
-<li><strong>缺点:</strong> 由于每一步都要用到所有训练数据,因此随着数据集的增大,运行速度会越来越慢.<h3 id="SGD与MBGD"><a href="#SGD与MBGD" class="headerlink" title="SGD与MBGD"></a>SGD与MBGD</h3>MBGD是指在训练中,每次使用小批量(一个小批量训练m个样本)的随机采样进行梯度下降.训练方法与BGD一样,只是BGD最后对训练集的所有样本取平均,而MBGD只对小批量的m个样本取平均.SGD是指在训练中每次仅使用一个样本.MBGD与SGD统称为SGD.因为小批量不能代表整个训练集,使得梯度估计引入噪声源,因此SGD并不是每次迭代都向着整体最优化方向.虽然SGD包含一定的随机性(表现为损失函数的震荡),但是从期望来看,它是等于正确的导数的(表现为损失函数有减小的趋势).</li>
-<li><strong>优点:</strong> 训练速度比较快</li>
-<li><strong>缺点:</strong> 在样本数量较大的情况下,可能只用到了其中一部分数据就完成了训练,得到的只是局部最优解.另外,小批量样本的噪声较大,所以每次执行梯度下降,并不一定总是朝着最优的方向前进.<br><img src="./images/SGD与BGD.png" alt><h3 id="参数更新"><a href="#参数更新" class="headerlink" title="参数更新"></a>参数更新</h3><script type="math/tex; mode=display">\left \{
-\begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}\right) } \\ {\boldsymbol{\theta}_{t} =\boldsymbol{\theta}_{t-1}+\boldsymbol{v}_{t}}\end{array} \right.</script>其中，$\eta$代表学习率，$\theta<em>t$表示$t$时刻的参数，$\triangledown </em>\theta J(\theta_t)$代表参数$\theta$在$t$时刻的导数，$v_t$代表参数的更新速度。<h2 id="Momentum"><a href="#Momentum" class="headerlink" title="Momentum"></a>Momentum</h2>在训练中，采取的策略与SGD一样，不同的是学习率的更新方式。动量的参数更新方式为：<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}\right)+\alpha \boldsymbol{v}_{t-1}} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script>$\alpha$一般取值0.9.</li>
-</ul>
-<p>直观理解为：<br><img src="./images/momentum.jpg" alt><br>动量方法旨在加速学习（加快梯度的下降速度），特别是处理高曲率、小但一致的梯度，或是带噪声的梯度。动量算法累积了之前梯度指数级衰减的移动平均，并且继续沿该方向移动。</p>
-<table align="center">
-    <tr>
-        <td><center><img height="200" width="300" src="./images/momentum.gif"></center></td>
-    </tr>
-</table>
-
-<p>动量SGD算法引入$\alpha \boldsymbol{v}_{t-1}$使每一次的参数更新方向不仅仅取决于当前位置的梯度，还受到上一次参数更新方向的影响（如上图所示）。在某一维度上，当梯度方向不变时，更新速度变快，当梯度方向有所改变时，更新速度变慢，从而加快收敛速度，减少震荡。</p>
-<p>带有动量的SGD的优点：</p>
-<ul>
-<li>加快收敛速度</li>
-<li>抑制梯度下降时上下震荡的情况</li>
-<li>通过局部极小点</li>
-</ul>
-<blockquote>
-<p>分析：假设任意时刻参数的梯度均为$g<em>t=\triangledown</em>\theta J\left(\boldsymbol{\theta}_{t}\right)=g_0$，则使用SGD时,$t$时刻的梯度$g^{SGD}_t=g_0$,Momentum算法的梯度$g^{mom}_t=(\alpha^{t-1}+\alpha^{t-2}+…+\alpha+1)g_0=\frac{1-\alpha^{t}}{1-\alpha}g_0$.当$t\rightarrow +\infty$，因$\alpha&lt;1$,所以$\alpha^t\rightarrow 0$,所以$g_t^{mom}\rightarrow \frac{1}{1-\alpha}g_0$,当$\alpha=0.9$时，Momentum更新速度是SGD的10倍</p>
-</blockquote>
-<h2 id="Nesterov-NAG"><a href="#Nesterov-NAG" class="headerlink" title="Nesterov(NAG)"></a>Nesterov(NAG)</h2><p>Nesterov动量是Momentum的变种，即在计算参数梯度之前，前瞻一步，超前一个动量单位处：$\theta<em>t + \gamma v</em>{t-1}$,Nesterov动量可以理解为往Momentum动量中加入了一个校正因子。参数更新公式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{\boldsymbol{v}_{t}=-\eta \triangledown_\theta J\left(\boldsymbol{\theta}_{t}+\gamma \boldsymbol{v}_{t-1}\right)+\alpha \boldsymbol{v}_{t-1}} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>Momentum动量与Nesterov动量的对比如下图所示，其中$\eta \triangledown<em>1$代表A节点 ($\theta_t$)的梯度，$\eta \triangledown_2$代表B节点($\theta</em>{t}+\gamma \boldsymbol{v}<em>{t-1}$的梯度)，灰色实线代表$t-1$时刻的速度$\alpha v</em>{t-1}$.</p>
-<table align="center">
-    <tr>
-        <td><center><img height="230" width="250" src="./images/nesterov.png"></center></td>
-        <td><center><img height="230" width="300" src="./images/nesterov.bmp"></center></td>
-    </tr>
-</table>
-
-<blockquote>
-<p>注意：图中的$\eta \triangledown_1以及\eta \triangledown_2$应该为$-\eta \triangledown_1$、$-\eta \triangledown_2$因为梯度方向是增长速度最快的方向，而图中所示为梯度的反方向，所以应该为$-\eta \triangledown_1$、$-\eta \triangledown_2$.</p>
-</blockquote>
-<p>Nesterov动量相对于Momentum多了一个本次梯度相对上次梯度的变化量，这个变化量本质上是对目标函数二阶导的近似，由于令了二阶导的信息，Nesterov动量算法才会比Momentum具有更快的收敛速度。</p>
-<h2 id="AdaGrad"><a href="#AdaGrad" class="headerlink" title="AdaGrad"></a>AdaGrad</h2><p>AdaGrad其实是对学习率进行了约束，AdaGrad独立地适应所有模型参数的学习率，缩放每个参数反比于其它所有梯度历史平方值总和的平方根。损失较大偏导的参数相应地拥有一个快速下降的学习率，而较小偏导的参数在学习率上有相对较小的下降。净效果是在参数空间中更为平缓的倾斜方向会取得更大的进步。参数更新公式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{
-    g_t=\triangledown_\theta J(\theta_t)}\\
-    {n_t=n_{t-1}+g_t^2} \\
-    {\boldsymbol{v}_{t}=-\frac{\eta}{\sqrt{n_t+\epsilon}}g_t } \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>其中，$\epsilon$是个很小的数，用来保证分母非0。对$𝑔_𝑡$从1到t进行一个递推形成一个约束项regularizer——-$\frac{1}{\sqrt{n_t+\epsilon}}$。</p>
-<p><strong>优点：</strong><br>前期$g_t$较小的时候， $\frac{1}{\sqrt{n_t+\epsilon}}$较大，梯度更新较大，可以解决SGD中学习率一直不变的问题;后期$g_t$较大的时候，$\frac{1}{\sqrt{n_t+\epsilon}}$较小，能够约束梯度.适合处理稀疏梯度.</p>
-<p><strong>缺点：</strong><br>由公式可以看出，AdaGrad依赖于人工设置一个全局学习率𝜂，当$\eta$设置过大时，使regularizer过于敏感，对梯度的调节太大。在中后期，分母上梯度平方的累加将会越来越大，gradient→0，网络的更新能力会越来越弱，学习率会变的极小，使得训练提前结束。为了解决这样的问题，又提出了Adadelta算法。</p>
-<h2 id="Adadelta"><a href="#Adadelta" class="headerlink" title="Adadelta"></a>Adadelta</h2><p>Adadelta是对AdaGrad的扩展，AgaGrad会累加所有历史梯度的平方，而Adadelta只累加固定大小的项，并且也不直接存储这些项，仅仅是近似计算对应的平均值。参数更新方式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{
-    g_t=\triangledown_\theta J(\theta_t)}\\
-    {n_t=\gamma n_{t-1}+(1-\gamma)g_t^2}\\
-    {\boldsymbol{v}_{t}=-\frac{\eta}{\sqrt{n_t+\epsilon}}g_t } \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>但是，此时Adadelta其实仍然依赖于全局学习率，因此，又做了一些处理，新的参数更新方式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{
-    g_t=\triangledown_\theta J(\theta_t)}\\
-    {E|g^2|_t=\rho \times E|g^2|_{t-1}+(1-\rho)\times g_t^2}\\
-    {v_t=-\frac{\sqrt{\sum_{r=1}^{t-1}}v_r}{\sqrt{E|t^2|_t+\epsilon}}g_t}\\
-    {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p>新的参数更新方式，不依赖于全局学习率，并且，训练初中期，加速效果不错，很快；训练后期，反复在局部最小值附近抖动。</p>
-<h2 id="RMSprop"><a href="#RMSprop" class="headerlink" title="RMSprop"></a>RMSprop</h2><p>RMSprop可以算作Adadelta的一个特例：当$\rho=0.5$时，$E|g^2|<em>t=\rho \times E|g^2|</em>{t-1}+(1-\rho)\times g_t^2$就变为了求梯度平方和的平均数。</p>
-<p>如果再求根的话，就变成了RMS(均方根)：$RMS|g|_t=\sqrt{E|g^2|_t+\epsilon}$。RMSprop的参数更新方式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{
-    g_t=\triangledown_\theta J(\theta_t)}\\
-    {E|g^2|_t=\rho \times E|g^2|_{t-1}+(1-\rho)\times g_t^2} \\
-    {RMS|g|_t=\sqrt{E|g^2|_t+\epsilon}}\\
-    {\boldsymbol{v}_{t}=-\frac{\eta}{RMS|g|_t }g_t} \\ {\boldsymbol{\theta}_{t+1} =\boldsymbol{\theta}_{t}+\boldsymbol{v}_{t}}\end{array} \right.</script><p><strong>特点：</strong> (1)RMSprop依然依赖于全局学习率;(2)RMSprop算是Adagrad的一种发展，和Adadelta的变体，效果趋于二者之间;(3)适合处理非平稳目标 - 对于RNN效果很好</p>
-<h2 id="Adam"><a href="#Adam" class="headerlink" title="Adam"></a>Adam</h2><p>Adam优化器结合了AdaGrad与RMSProp两种算法的优点。对梯度的一阶距估计$m_t$（即梯度的均值）和二阶距估计$n_t$（即梯度的未中心化的方差）进行综合考虑，计算出更新步长。更新方式为：</p>
-<script type="math/tex; mode=display">\left \{
-\begin{array}{l}{
-    g_t=\triangledown_\theta J(\theta_t)}\\
-    {m_t=\beta_1m_{t-1}+(1-\beta_1)g_t}\\
-    {v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2}\\
-    {\hat{m_t}=\frac{m_t}{1-\beta_1^t}}\\
-    {\hat{v}_t=\frac{v_t}{1-\beta_2^t}}\\
-    {\boldsymbol{\theta}_{t+1}=\boldsymbol{\theta}_{t}-\frac{\eta}{\sqrt{\hat{v}_t+\epsilon}}\hat{m}_t}\\
-\end{array} \right.</script><blockquote>
-<p>注：所有的$t$均表示$t$时刻。$m_t$、$n_t$分别是梯度的一阶距估计和二阶距估计，可以看做是对期望$E|g_t|、E|g_t^2|$的估计；$\hat{m}_t、\hat{n}_t$是对$m_t$、$n_t$的校正，这样可以近似为对期望的无偏估计。</p>
-</blockquote>
-<p><strong>优点：</strong></p>
-<ol>
-<li>实现简单，计算高效，对内存需求少</li>
-<li>参数的更新不受梯度的伸缩变换影响</li>
-<li>超参数具有很好的解释性，且通常无需调整或仅需很少的微调</li>
-<li>更新的步长能够被限制在大致的范围内（初始学习率）</li>
-<li>能自然地实现步长退火过程（自动调整学习率）</li>
-<li>很适合应用于大规模的数据及参数的场景</li>
-<li>适用于不稳定目标函数</li>
-<li>适用于梯度稀疏或梯度存在很大噪声的问题</li>
-</ol>
-<blockquote>
-<p>参考资料：</p>
-<p><a href="https://zhuanlan.zhihu.com/p/73264637" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/73264637</a> </p>
-<p><a href="https://zhuanlan.zhihu.com/p/60088231" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/60088231</a></p>
-<p><a href="https://blog.csdn.net/u012759136/article/details/52302426" target="_blank" rel="noopener">https://blog.csdn.net/u012759136/article/details/52302426</a></p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1646,12 +1525,12 @@ D(P||Q)=\sum_{x\in X}P(x)\log\frac{P(x)}{Q(x)}</script><p>当两个概率分布�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -1691,7 +1570,7 @@ D(P||Q)=\sum_{x\in X}P(x)\log\frac{P(x)}{Q(x)}</script><p>当两个概率分布�
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1700,12 +1579,12 @@ D(P||Q)=\sum_{x\in X}P(x)\log\frac{P(x)}{Q(x)}</script><p>当两个概率分布�
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">72k</span>
+    <span title="站点总字数">74k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:05</span>
+    <span title="站点阅读时长">1:07</span>
 </div>
 
 <!--添加运行时间-->
@@ -1766,7 +1645,7 @@ D(P||Q)=\sum_{x\in X}P(x)\log\frac{P(x)}{Q(x)}</script><p>当两个概率分布�
     <!--
     <span class="site-pv">
       <i class="fa fa-pencil"></i>
-      本站博客共 <span class="post-count">26k</span> 字
+      本站博客共 <span class="post-count">27k</span> 字
     </span>
     -->
 </div>

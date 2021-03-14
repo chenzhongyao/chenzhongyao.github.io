@@ -20,19 +20,20 @@
     var CONFIG = {"hostname":"chenzhongyao.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+  <meta name="description" content="1. docker镜像下载在 https:&#x2F;&#x2F;hub.docker.com&#x2F;_&#x2F;ubuntu 寻找想要的镜像，用docker pull 拉下来 例如下载带opencv4-python3的镜像：pull ajeetraina&#x2F;opencv4-python3&#96;&#96;&#96;123### 2. docker镜像、容器的删除查看本地镜像: &#96;&#96;&#96;docker images 删除镜像： docker rmi imag">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://chenzhongyao.github.io/2020/06/20/hello-world/index.html">
+<meta property="og:title" content="Docker常用命令总结">
+<meta property="og:url" content="https://chenzhongyao.github.io/2021/03/14/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="chenzhongyao&#39;s website">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="1. docker镜像下载在 https:&#x2F;&#x2F;hub.docker.com&#x2F;_&#x2F;ubuntu 寻找想要的镜像，用docker pull 拉下来 例如下载带opencv4-python3的镜像：pull ajeetraina&#x2F;opencv4-python3&#96;&#96;&#96;123### 2. docker镜像、容器的删除查看本地镜像: &#96;&#96;&#96;docker images 删除镜像： docker rmi imag">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-06-20T12:11:59.345Z">
-<meta property="article:modified_time" content="2020-06-20T12:11:59.357Z">
+<meta property="article:published_time" content="2021-03-14T11:23:20.000Z">
+<meta property="article:modified_time" content="2021-03-14T11:24:12.185Z">
 <meta property="article:author" content="chennan">
+<meta property="article:tag" content="docker">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://chenzhongyao.github.io/2020/06/20/hello-world/">
+<link rel="canonical" href="https://chenzhongyao.github.io/2021/03/14/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/">
 
 
 <script id="page-configurations">
@@ -45,7 +46,7 @@
   };
 </script>
 
-  <title>Hello World | chenzhongyao's website</title>
+  <title>Docker常用命令总结 | chenzhongyao's website</title>
   
 
 
@@ -150,7 +151,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/20/hello-world/">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2021/03/14/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -163,7 +164,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Hello World
+          Docker常用命令总结
         </h1>
 
         <div class="post-meta">
@@ -172,8 +173,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-06-20 20:11:59" itemprop="dateCreated datePublished" datetime="2020-06-20T20:11:59+08:00">2020-06-20</time>
+              <time title="创建时间：2021-03-14 19:23:20 / 修改时间：19:24:12" itemprop="dateCreated datePublished" datetime="2021-03-14T19:23:20+08:00">2021-03-14</time>
             </span>
 
           
@@ -189,14 +191,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>357</span>
+              <span>1.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -208,15 +210,68 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <h3 id="1-docker镜像下载"><a href="#1-docker镜像下载" class="headerlink" title="1. docker镜像下载"></a>1. docker镜像下载</h3><p>在 <a href="https://hub.docker.com/_/ubuntu" target="_blank" rel="noopener">https://hub.docker.com/_/ubuntu</a> 寻找想要的镜像，用<code>docker pull</code> 拉下来</p>
+<p>例如下载带opencv4-python3的镜像：<br><figure class="highlight docker"><figcaption><span>pull ajeetraina/opencv4-python3```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">### 2. docker镜像、容器的删除</span></span><br><span class="line">查看本地镜像: ```docker images</span><br></pre></td></tr></table></figure></p>
+<p>删除镜像： <code>docker rmi image_ID</code> (必须清理掉该镜像下所有处于终止状态的容器，可使用 <code>docker ps -a</code> 查看所有处于终止状态的容器) </p>
+<p>删除容器： <code>docker rm container_ID</code></p>
+<p>注意：删除镜像时需要把该镜像的容器全部删除，分为3步</p>
+<ul>
+<li><p>首先，查看已经退出的容器： <code>docker ps -a</code> </p>
+</li>
+<li><p>然后，删除退出的容器：<code>docker rm container_id</code> </p>
+</li>
+<li><p>最后，删除镜像 <code>docker rmi image_id</code> </p>
+</li>
+<li><p>前两步可以直接用 <code>docker container prune</code> 直接清理掉所有处于终止状态的容器</p>
+</li>
+</ul>
+<h3 id="3-镜像的运行"><a href="#3-镜像的运行" class="headerlink" title="3. 镜像的运行"></a>3. 镜像的运行</h3><h4 id="3-1-docker-的参数："><a href="#3-1-docker-的参数：" class="headerlink" title="3.1 docker 的参数："></a>3.1 docker 的参数：</h4><ul>
+<li><p>-i： 交互式操作。</p>
+</li>
+<li><p>-t： 终端 （<code>-it</code>  同时使用可以让 docker 运行的容器实现”对话”的能力）</p>
+</li>
+<li>-d： 参数默认不会进入容器，想要进入容器需要使用指令 docker exec(后边会讲到)</li>
+<li>-v：挂在本地目录到容器目录，格式：<strong>本地目录:容器目录</strong>，使用方法<code>docker run -it -v /d:/home image_id /bin/bash</code></li>
+<li>—rm: 在Docker容器退出时，默认容器内部的文件系统仍然被保留，以方便调试并保留用户数据(即通过 <code>docker ps -a</code> 查看到的处于终止状态的容器，还可以通过docker start container_ID再次进入)。 因而可以在容器启动时设置—rm选项，这样在容器退出时就能够自动清理容器内部的文件系统。使用示例：<code>docker run -it --rm -v /d:/home image_ID /bin/bash</code> 。显然，—rm选项不能与-d同时使用</li>
+</ul>
+<h4 id="3-2-镜像的运行："><a href="#3-2-镜像的运行：" class="headerlink" title="3.2 镜像的运行："></a>3.2 镜像的运行：</h4><ul>
+<li>查看镜像id: <code>docker images</code> </li>
+<li>运行镜像：<code>docker run -it -v /d:/home image_id /bin/bash</code></li>
+</ul>
+<h3 id="4-容器快照、镜像的导入-导出"><a href="#4-容器快照、镜像的导入-导出" class="headerlink" title="4. 容器快照、镜像的导入/导出"></a>4. 容器快照、镜像的导入/导出</h3><p>容器快照与镜像的区别：</p>
+<ul>
+<li>快照文件将丢弃所有的历史记录和元数据信息（即仅保存容器当时的快照状态），而镜像存储文件将保存完整记录，体积也更大。</li>
+<li>docker save 保存的是镜像（image），docker export 保存的是容器（container）；</li>
+<li>docker load 用来载入镜像包，docker import 用来载入容器包，但两者都会恢复为镜像；</li>
+<li>docker load 不能对载入的镜像重命名，而 docker import 可以为镜像指定新名称，如： <code>docker import ubuntu.tar merge_gt/ubuntu:v1(新名称)</code>。</li>
+</ul>
+<h4 id="4-1-导出-导入容器快照："><a href="#4-1-导出-导入容器快照：" class="headerlink" title="4.1 导出/导入容器快照："></a>4.1 导出/导入容器快照：</h4><p>导出容器快照:</p>
+<ul>
+<li><code>docker ps</code> 查看正在运行（想要导出）的容器id</li>
+<li><code>docker export 容器_id &gt; ubuntu.tar</code></li>
+</ul>
+<p>导入容器快照:</p>
+<ul>
+<li>将快照文件导入到merge_gt/ubuntu:v1: <code>docker import ubuntu.tar(绝对路径) merge_gt/ubuntu:v1</code> </li>
+<li><code>docker images</code> 查看 <code>merge_gt/ubuntu:v1</code> 镜像id</li>
+<li><code>docker run -it -v /d:/home 镜像_id /bin/bash</code></li>
+</ul>
+<h3 id="4-2-导出-导入镜像："><a href="#4-2-导出-导入镜像：" class="headerlink" title="4.2 导出/导入镜像："></a>4.2 导出/导入镜像：</h3><p>导出镜像：<code>docker save -o rocketmq.tar rocketmq</code> </p>
+<ul>
+<li>-o：指定保存的镜像的名字；rocketmq.tar：保存到本地的镜像名称；rocketmq：镜像名字或者IMAGE_ID，通过”docker images”查看</li>
+</ul>
+<p>导入镜像：<code>docker load -i racketmq.tar</code></p>
+<h3 id="5-进入后台运行-退出的容器"><a href="#5-进入后台运行-退出的容器" class="headerlink" title="5. 进入后台运行/退出的容器"></a>5. 进入后台运行/退出的容器</h3><p>如何进入退出的容器？</p>
+<ul>
+<li>查看退出的容器的方法是：<code>docker ps -a</code></li>
+<li>重新进入退出的容器：<code>docker start container_ID</code> (start后，容器后台运行)</li>
+</ul>
+<p>如何进入后台运行的docker？</p>
+<ul>
+<li><code>docker ps</code> 查看后台运行的docker<br>在使用 -d 参数时，容器启动后会进入后台。此时想要进入容器，可以通过以下指令进入：</li>
+<li>docker attach: 使用方法: <code>docker attach container_ID</code>。但是需要注意的是，如果从这个stdin中exit，会导致容器的停止。</li>
+<li>docker exec：推荐大家使用 docker exec 命令，因为此退出容器终端，不会导致容器的停止.使用方法：<code>docker exec -it container_ID /bin/bash</code></li>
+</ul>
 
     </div>
 
@@ -225,6 +280,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+          </div>
 
         
 
@@ -232,13 +290,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/06/20/%E5%86%9B%E9%98%9F%E6%96%87%E8%81%8C%E5%8E%86%E5%B9%B4%E8%80%83%E8%AF%95%E7%9C%9F%E9%A2%98/" rel="prev" title="军队文职历年考试真题">
-      <i class="fa fa-chevron-left"></i> 军队文职历年考试真题
+    <a href="/2020/06/29/Maximum-Likelihood-Estimation-md/" rel="prev" title="Maximum_Likelihood_Estimation.md">
+      <i class="fa fa-chevron-left"></i> Maximum_Likelihood_Estimation.md
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/06/22/%E9%82%AF%E9%83%B8%E8%B4%AD%E6%88%BF%E7%BC%B4%E7%A8%8E/" rel="next" title="邯郸购房缴税">
-      邯郸购房缴税 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -297,7 +352,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-docker镜像下载"><span class="nav-number">1.</span> <span class="nav-text">1. docker镜像下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-镜像的运行"><span class="nav-number">2.</span> <span class="nav-text">3. 镜像的运行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-docker-的参数："><span class="nav-number">2.1.</span> <span class="nav-text">3.1 docker 的参数：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-镜像的运行："><span class="nav-number">2.2.</span> <span class="nav-text">3.2 镜像的运行：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-容器快照、镜像的导入-导出"><span class="nav-number">3.</span> <span class="nav-text">4. 容器快照、镜像的导入&#x2F;导出</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-导出-导入容器快照："><span class="nav-number">3.1.</span> <span class="nav-text">4.1 导出&#x2F;导入容器快照：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-导出-导入镜像："><span class="nav-number">4.</span> <span class="nav-text">4.2 导出&#x2F;导入镜像：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-进入后台运行-退出的容器"><span class="nav-number">5.</span> <span class="nav-text">5. 进入后台运行&#x2F;退出的容器</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
