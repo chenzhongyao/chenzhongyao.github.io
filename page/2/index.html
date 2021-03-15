@@ -145,6 +145,159 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E6%8E%A8%E5%AF%BC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chennan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenzhongyao's website">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/18/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E6%8E%A8%E5%AF%BC/" class="post-title-link" itemprop="url">反向传播算法推导</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-18 23:02:52" itemprop="dateCreated datePublished" datetime="2020-06-18T23:02:52+08:00">2020-06-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-20 20:12:21" itemprop="dateModified" datetime="2020-06-20T20:12:21+08:00">2020-06-20</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="反向传播算法详细推导过程"><a href="#反向传播算法详细推导过程" class="headerlink" title="反向传播算法详细推导过程"></a><strong>反向传播算法详细推导过程</strong></h1><h2 id="1-前向传播"><a href="#1-前向传播" class="headerlink" title="1. 前向传播"></a><strong>1. 前向传播</strong></h2><p><img src="./images/feedfoward.jpg" alt></p>
+<p>假设$X$为$N\times m$的矩阵（其中，$N$为样本个数（batch size），$m$为特征维数）</p>
+<p>$h<em>1$与$Z_1$的维数为$m_1 \rightarrow W_1$为$m\times m_1$的矩阵，$b_1 \in \mathbb{R}^{m_1},\$<br>$h_2$与$Z_2$的维数为$m_2 \rightarrow W_2$为$m_1\times m_2$的矩阵，$b_2 \in \mathbb{R}^{m_2},\$<br>${\vdots}\$<br>$h_L$与$Z_L$的维数为$m_L \rightarrow W_L$为$m</em>{L-1}\times m_L$的矩阵，$b_L \in \mathbb{R}^{m_L}$</p>
+<h3 id="前向算法："><a href="#前向算法：" class="headerlink" title="前向算法："></a>前向算法：</h3><script type="math/tex; mode=display">
+\begin{array}{l}{h_{1}=x W_{1}+\tilde{b}_{1}, Z_{1}=f_{1}\left(h_{1}\right), \tilde{b}_{1}}为b_1^T沿着行方向扩展成N行 \\ {h_{2}=Z_{1} W_{2}+\tilde{b}_{2}, Z_{2}=f_{2}\left(h_{2}\right)} \\ {\vdots} \\ {h_{L}=Z_{L-1} W_{L}+\tilde{b}_{L}, Z_{L}=f_{L}\left(h_{L}\right)} \\ {\text { out }=Z_{L} W_{L+1}+\tilde{b}_{L+1}}\end{array}</script><p>假设输出为$n$维，则$out$为大小为$N\times n$的矩阵，根据MSE或CE准则可以求得$\frac{\partial J}{\partial out}$，对于回归问题与分类问题，$\frac{\partial J}{\partial out}$的求解方法如下：</p>
+<table align="center">
+    <tr>
+        <td><center><img height="200" src="./images/回归问题.jpg">回归问题</center></td>
+        <td><center><img height="200" src="./images/分类问题.jpg">分类问题</center></td>
+    </tr>
+</table>
+
+<ul>
+<li>对于回归问题，对out直接计算损失，损失函数为MSE。 损失：$J=\frac{1}{2N}\sum_{i=1}^{N}||y_i-\tilde{y_i}||^2$<script type="math/tex; mode=display">
+\begin{aligned}
+    \frac{\partial J}{\partial y_i}&=\frac{1}{2N}\sum_{i=1}^{N}(y_i-\tilde{y_i})\times 2 \\
+    &=\frac{1}{N}\sum_{i=1}^{N}(y_i-\tilde{y_i})
+\end{aligned}</script></li>
+<li>对于分类问题，out后接softmax进行分类，然后使用CE(cross entropy)计算loss.$S<em>k=\frac{e^{y_k}}{\sum</em>{i=1}^{n}e^{y_i}}$一个样本对应的网络的输出$S(s_1,s_2,…,s_n)$是一个概率分布，而这个样本的标注$\tilde{S}$一般为$(0,0,…,1,0,0,…,0)$，也可以看做一个概率分布（硬分布）。cross entropy可以看成是$S$与$\tilde{S}$之间的KL距离：<script type="math/tex; mode=display">D(\tilde{S}||S)=\Sigma\tilde{S}\log\frac{\tilde{S}}{S}</script><ul>
+<li>假设$\tilde{S}=(0,0,…,1,0,0,…,0)$，其中1为第$k$个元素(索引从0开始)，令$S=(s<em>0,s_1,…,s_k,…,s</em>{n-1})$.<br>损失：<script type="math/tex; mode=display">
+\begin{aligned}
+  J=D(\tilde{S}||S)&=1\times \log\frac{1}{s_k}\\&=-\log s_k \quad(CE损失函数,可看做目标类别概率最大)\\
+  &=-\log\frac{e^{y_k}}{\sum_{i=0}^{n-1}e^{y_i}}
+\end{aligned}</script><script type="math/tex; mode=display">
+\begin{aligned}
+ &\frac{\partial J}{\partial y_m}=\frac{\partial J}{\partial y_m}(\log \sum_{i=0}^{n-1}e^{y_i}-y_k)=\frac{e^{y_m}}{\sum_{i=0}^{n-1}e^{y_i}}-\delta(m=k)=s_m-\delta(m=k) \\
+&写成向量形式为:\frac{\partial J}{\partial y}=S-\tilde{S}
+\end{aligned}</script></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>KL距离（相对熵）</strong>：是Kullback-Leibler Divergence的简称，也叫相对熵(Relative Entropy).它衡量的是相同事件空间里的两个概率分布的差异情况。其物理意义是：在相同事件空间里，概率分布$P(x)$对应的每个事件，若用概率分布$Q(x)$编码时，平均每个基本事件(符号)编码长度增加了多少比特。我们用$D(P||Q)$表示KL距离，计算公式如下：</p>
+<script type="math/tex; mode=display">
+D(P||Q)=\sum_{x\in X}P(x)\log\frac{P(x)}{Q(x)}</script><p>当两个概率分布完全相同时，即$P(X)=Q(X)$,其相对熵为0.</p>
+<h2 id="2-反向传播"><a href="#2-反向传播" class="headerlink" title="2.反向传播"></a><strong>2.反向传播</strong></h2><p>$\text { out }=Z<em>{L} W</em>{L+1}+\tilde{b}<em>{L+1}$，为了便于详细说明反向传播算法，假设$Z_L$为$2\times 3$的向量，$W</em>{L+1}$为$3\times 2$的向量：</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}{Z_{L}=\left(\begin{array}{ccc}{z_{11}} & {z_{12}} & {z_{13}} \\ {z_{21}} & {z_{22}} & {z_{23}}\end{array}\right)_{2 \times 3}, W_{L+1}=\left(\begin{array}{cc}{w_{11}} & {w_{12}} \\ {w_{21}} & {w_{22}} \\ {w_{31}} & {w_{32}}\end{array}\right)_{3 \times 2} \tilde{b}_{L+1}=\left(\begin{array}{cc}{b_{1}} & {b_{2}} \\ {b_{1}} & {b_{2}}\end{array}\right)_{2 \times 2}, \text { out }=\left(\begin{array}{cc}{o_{11}} & {o_{12}} \\ {o_{21}} & {o_{22}}\end{array}\right)} \\ \Rightarrow  {Z_{L}W_{L+1}+\tilde{b}_{L+1}=\left(\begin{array}{cc}{z_{11} w_{11}+z_{12} w_{21}+z_{13} w_{31}+b_1} & {z_{11} w_{12}+z_{12} w_{22}+z_{13} w_{32}+b_2} \\ {z_{21} w_{11}+z_{22} w_{21}+z_{23} w_{31}+b_1} & {z_{21} w_{12}+z_{22} w_{22}+z_{23} w_{32}+b_2}\end{array}\right)=\text{out}.}\end{array}</script><p>所以，</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}{o_{11}=z_{11} w_{11}+z_{12} w_{21}+z_{13} w_{31}+b_{1}} \\ {o_{12}=z_{11} w_{12}+z_{12} w_{22}+z_{13} w_{32}+b_{2}} \\ {o_{21}=z_{21} w_{11}+z_{22} w_{21}+z_{23} w_{31}+b_{1}} \\ {o_{22}=z_{21} w_{12}+z_{22} w_{22}+z_{23} w_{32}+b_{2}}\end{array}</script><h4 id="1-损失-J-对-W-的导数："><a href="#1-损失-J-对-W-的导数：" class="headerlink" title="1) 损失$J$对$W$的导数："></a><strong>1) 损失$J$对$W$的导数：</strong></h4><script type="math/tex; mode=display">
+\begin{aligned} \frac{\partial J}{\partial w_{11}} &=\frac{\partial J}{\partial o_{11}} z_{11}+\frac{\partial J}{\partial o_{21}} z_{21}, \frac{\partial J}{\partial w_{12}}=\frac{\partial J}{\partial o_{12}} z_{11}+\frac{\partial J}{\partial o_{22}} z_{21} \\ \frac{\partial J}{\partial w_{21}} &=\frac{\partial J}{\partial o_{11}} z_{12}+\frac{\partial J}{\partial o_{21}} z_{22}, \frac{\partial J}{\partial w_{22}}=\frac{\partial J}{\partial o_{12}} z_{12}+\frac{\partial J}{\partial o_{22}} z_{22} \\ \frac{\partial J}{\partial w_{31}} &=\frac{\partial J}{\partial o_{11}} z_{13}+\frac{\partial J}{\partial o_{21}} z_{23}, \frac{\partial J}{\partial w_{32}}=\frac{\partial J}{\partial o_{12}} z_{13}+\frac{\partial J}{\partial o_{22}} z_{23} \end{aligned}</script><script type="math/tex; mode=display">
+\Rightarrow
+\left(\begin{array}{cc}{\frac{\partial J}{\partial w_{11}}} & {\frac{\partial J}{\partial w_{12}}} \\ {\frac{\partial J}{\partial w_{21}}} & {\frac{\partial J}{\partial w_{22}}} \\ {\frac{\partial J}{\partial w_{31}}} & {\frac{\partial J}{\partial w_{32}}}\end{array}\right)=\left(\begin{array}{cc}{z_{11}} & {z_{21}} \\ {z_{12}} & {z_{22}} \\ {z_{13}} & {z_{23}}\end{array}\right)\left(\begin{array}{cc}{\frac{\partial J}{\partial o_{11}}} & {\frac{\partial J}{\partial o_{12}}} \\ {\frac{\partial J}{\partial o_{21}}} & {\frac{\partial J}{\partial o_{22}}}\end{array}\right)</script><p>即，$\frac{\partial J}{\partial W_{L+1}}=Z_L^T\frac{\partial J}{\partial out}$</p>
+</blockquote>
+<h4 id="2-损失对偏置b的导数等于将-frac-partial-J-partial-out-的每一列加起来："><a href="#2-损失对偏置b的导数等于将-frac-partial-J-partial-out-的每一列加起来：" class="headerlink" title="2) 损失对偏置b的导数等于将$\frac{\partial J}{\partial out}$的每一列加起来："></a><strong>2) 损失对偏置b的导数等于将$\frac{\partial J}{\partial out}$的每一列加起来：</strong></h4><script type="math/tex; mode=display">
+\left\{\begin{array}{l}{\frac{\partial J}{\partial b_{1}}=\frac{\partial J}{\partial o_{11}}+\frac{\partial J}{\partial o_{21}}} \\ {\frac{\partial J}{\partial b_{2}}=\frac{\partial J}{\partial o_{12}}+\frac{\partial J}{\partial o_{22}}}\end{array} \Rightarrow\left(\frac{\partial J}{\partial b_{L+1}}\right)^{T}=\left(\frac{\partial J}{\partial b_{1}} \quad \frac{\partial J}{\partial b_{2}}\right)=\left(\frac{\partial J}{\partial o_{11}}+\frac{\partial J}{\partial o_{21}} \quad \frac{\partial J}{\partial o_{12}}+\frac{\partial J}{\partial o_{22}}\right)\right.</script><h4 id="3-损失-J-对-Z-的导数："><a href="#3-损失-J-对-Z-的导数：" class="headerlink" title="3) 损失$J$对$Z$的导数："></a><strong>3) 损失$J$对$Z$的导数：</strong></h4><script type="math/tex; mode=display">
+\begin{aligned} \frac{\partial J}{\partial z_{11}} &=\frac{\partial J}{\partial o_{11}} w_{11}+\frac{\partial J}{\partial o_{12}} w_{12} ; \frac{\partial J}{\partial z_{12}}=\frac{\partial J}{\partial o_{11}} w_{21}+\frac{\partial J}{\partial o_{12}} w_{22} ; \frac{\partial J}{\partial z_{13}}=\frac{\partial J}{\partial o_{11}} w_{31}+\frac{\partial J}{\partial o_{12}} w_{32} \\ \frac{\partial J}{\partial z_{21}} &=\frac{\partial J}{\partial o_{21}} w_{11}+\frac{\partial J}{\partial o_{22}} w_{12} ; \frac{\partial J}{\partial z_{22}}=\frac{\partial J}{\partial o_{21}} w_{21}+\frac{\partial J}{\partial o_{12}} w_{22} ; \frac{\partial J}{\partial z_{23}}=\frac{\partial J}{\partial o_{21}} w_{31}+\frac{\partial J}{\partial o_{22}} w_{32} \end{aligned}</script><p>即，</p>
+<script type="math/tex; mode=display">
+\left(\begin{array}{ccc}{\frac{\partial J}{\partial z_{11}}} & {\frac{\partial J}{\partial z_{12}}} & {\frac{\partial J}{\partial z_{13}}} \\ {\frac{\partial J}{\partial z_{21}}} & {\frac{\partial J}{\partial z_{22}}} & {\frac{\partial J}{\partial z_{23}}}\end{array}\right)=\left(\begin{array}{cc}{\frac{\partial J}{\partial o_{11}}} & {\frac{\partial J}{\partial o_{12}}} \\ {\frac{\partial J}{\partial \theta_{21}}} & {\frac{\partial J}{\partial o_{22}}}\end{array}\right)\left(\begin{array}{ccc}{w_{11}} & {w_{21}} & {w_{31}} \\ {w_{12}} & {w_{22}} & {w_{32}}\end{array}\right)</script><p>$\Rightarrow \frac{\partial J}{\partial Z<em>{L}}=\frac{\partial J}{\partial out}W</em>{L+1}^T$</p>
+<h4 id="4-损失-J-对-h-的导数："><a href="#4-损失-J-对-h-的导数：" class="headerlink" title="4) 损失$J$对$h$的导数："></a><strong>4) 损失$J$对$h$的导数：</strong></h4><script type="math/tex; mode=display">Z_L = f_L(h_L)</script><ul>
+<li>$f_L$为sigmoid时，$Z_L=\frac{1}{1+e^{-h_L}}$.<script type="math/tex; mode=display">
+\begin{array}{l}{\frac{\partial J}{\partial h_{L}}=\frac{\partial J}{\partial Z_{L}} \frac{d z_{L}}{d h_{L}}=\frac{\partial J}{\partial Z_{L}} \frac{e^{-h L}}{\left(1+e^{-h_{L}}\right)^{2}}=\frac{\partial J}{\partial Z_{L}} \frac{1}{1+e^{-h_{L}}} \frac{e^{-h_{L}}}{1+e^{-h_{L}}}} \\ {=\frac{\partial J}{\partial Z_{L}} Z_{L}\left(1-Z_{L}\right)}\end{array}</script></li>
+<li>$f<em>L$为tanh时，${Z</em>{L}=\frac{e^{h<em>{L}}-e^{-h</em>{L}}}{e^{h<em>{L}}+e^{-h</em>{L}}}}$.<script type="math/tex; mode=display">
+\begin{array}{l} {\frac{\partial J}{\partial h_{L}}=\frac{\partial J}{\partial Z_{L}} \frac{d Z_{L}}{d h_{L}}=\frac{\partial J}{\partial Z_{L}} \frac{4}{\left(e^{h_{L}}+e^{-h_{L}}\right)^{2}}=\frac{\partial J}{\partial Z_{L}}\left[1-\left(\frac{e^{h_{L}}-e^{-h_{L}}}{e^{h_{L}}+e^{-h_{L}}}\right)^{2}\right]} \\ {=\frac{\partial J}{\partial z_{L}}\left[1-z_{L}^{2}\right]}\end{array}</script></li>
+<li>$f_L$为relu时，$Z_L=relu(h_L)=\left{\begin{matrix}<br>0,&amp;h_L\leq 0 \<br>h_L,&amp;h_L &gt; 0<br>\end{matrix}\right.$.<script type="math/tex; mode=display">
+\begin{array}{l}
+  \frac{\partial J}{\partial h_L}=\frac{\partial J}{\partial Z_L}\frac{\partial Z_L}{\partial h_L}=\left\{\begin{matrix}
+0,&h_L\leq 0 \\ 
+\frac{\partial J}{\partial Z_L},&h_L > 0 
+\end{matrix}\right.
+\end{array}</script></li>
+</ul>
+<h2 id="3-梯度更新"><a href="#3-梯度更新" class="headerlink" title="3. 梯度更新"></a><strong>3. 梯度更新</strong></h2><p>对于不同算法 ，梯度更新方式如下：</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial out} \Rightarrow \left \{\begin{matrix}
+    \frac{\partial J}{\partial W_{L+1}}=Z_L^T\frac{\partial J}{\partial out} \\
+    \frac{\partial J}{\partial Z_{L}}=\frac{\partial J}{\partial out}W_{L+1}^T \\
+    \left(\frac{\partial J}{\partial b}\right)^{T}=SumCol(\frac{\partial J}{\partial out}) \\
+    W_{L+1}^{t+1} = W_{L+1}^t-\eta \frac{\partial J}{\partial W_{L+1}} \\
+    b_{L+1}^{t+1} = b_{L+1}^t-\eta \frac{\partial J}{\partial b_{L+1}}
+\end{matrix} \right. \Rightarrow \frac{\partial J}{\partial h_L}=\frac{\partial J}{\partial Z_L}\frac{\partial Z_L}{\partial h_L} \Rightarrow \left \{\begin{matrix} 
+    \frac{\partial J}{\partial W_{L}}=Z_{L-1}^T\frac{\partial J}{\partial h_L} \\
+    \frac{\partial J}{\partial Z_{L-1}}=\frac{\partial J}{\partial h_L}W_{L}^T \\
+    \vdots \\
+    \vdots 
+\end{matrix}\right. \Rightarrow \cdots</script>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://chenzhongyao.github.io/2020/06/18/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -564,12 +717,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -623,7 +776,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:07</span>
+    <span title="站点阅读时长">1:08</span>
 </div>
 
 <!--添加运行时间-->
@@ -684,7 +837,7 @@
     <!--
     <span class="site-pv">
       <i class="fa fa-pencil"></i>
-      本站博客共 <span class="post-count">27k</span> 字
+      本站博客共 <span class="post-count">27.2k</span> 字
     </span>
     -->
 </div>
